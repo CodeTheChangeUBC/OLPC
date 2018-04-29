@@ -38,23 +38,47 @@ currentBlock = False
 block = None
 global blockPlaced
 blockPlaced = False
+global blockList
 blockList = []
+speed = 40
 
 
 TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
 clock = pygame.time.Clock()
 
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 def tick(pos_y):
     if block != None:
-        # block.setY(block.getY() + BLOCK_SIZE)
-        pos_y += BLOCK_SIZE
-        global blockPlaced
         global currentBlock
-        if (blockPlaced == True):
+        block.setY(pos_y + BLOCK_SIZE)
+        if checkCollision():
+            block.setY(pos_y)
             currentBlock = False
-            blockPlaced = False
-        return pos_y
+        else:
+            pos_y += BLOCK_SIZE
+    return pos_y
+
+def checkCollision():
+    global currentBlock
+    if not currentBlock:
+        return False
+    global blockList
+    blockPerimeter = block.getPerimeter()
+    for i in range (0, len(blockPerimeter)):
+        for j in range (0, len(blockList) - 1):
+            placedBlockPerimeter = blockList[j].getPerimeter()
+            for k in range (0, len(placedBlockPerimeter)):
+                if blockPerimeter[i].getX() == placedBlockPerimeter[k].getX() and blockPerimeter[i].getY() == placedBlockPerimeter[k].getY():
+                    return True
+    for i in range (0, len(blockPerimeter)):
+        if blockPerimeter[i].getX() < LEFT_BOUNDARY or blockPerimeter[i].getX() > RIGHT_BOUNDARY - BLOCK_SIZE or blockPerimeter[i].getY() > HEIGHT - BLOCK_SIZE:
+            return True
+
+    
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
 
 while not gameExit:
     for event in pygame.event.get():
@@ -70,8 +94,9 @@ while not gameExit:
                     dx = BLOCK_SIZE
                     dy = 0
             elif event.key == pygame.K_DOWN:
-                dy = 2*BLOCK_SIZE
+                dy = BLOCK_SIZE
                 dx = 0
+                speed = 20
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or pygame.K_RIGHT:
                 dx = 0
@@ -79,50 +104,57 @@ while not gameExit:
             if event.key == pygame.K_DOWN:
                 dy = 0
                 dx = 0
+                speed = 40
         if event.type == TICK:
-            #if pos_y < HEIGHT - 2*BLOCK_SIZE:
             pos_y = tick(pos_y)
 
-        #change to touch another block
-        #if pos_y >= (HEIGHT - BLOCK_SIZE):
-        #    dy = 0
 
-    # drawing bg & block
+    # drawing bg
     gameDisplay.fill(white)
     gameDisplay.fill(black, [0, 0, LEFT_BOUNDARY, HEIGHT])
     gameDisplay.fill(black, [RIGHT_BOUNDARY, 0, WIDTH - RIGHT_BOUNDARY, HEIGHT])
-    pygame.draw.rect(gameDisplay, black, [pos_x, pos_y, BLOCK_SIZE, BLOCK_SIZE])
-    pygame.draw.rect(gameDisplay, red, [pos_x, pos_y, BLOCK_SIZE - 1, BLOCK_SIZE - 1])
 
-    #test draw block obj
+    # drawing block objs
     if not currentBlock:
-        block = BlockT(BLOCK_SIZE, INIT_X, INIT_Y)
+        block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
         blockList.insert(len(blockList), block)
         pos_x = INIT_X
         pos_y = INIT_Y
         currentBlock = True
-    block.display(gameDisplay)
+    for i in range(0, len(blockList)):
+        blockList[i].display(gameDisplay)
     
     # score
     screen_text = font.render("score: " + str(score), True, white)
     gameDisplay.blit(screen_text, (RIGHT_BOUNDARY + LEFT_BOUNDARY / 10, HEIGHT / 20))
 
-    # boundary checking (maybe put block collison here too)
+    # collision checking
     if not hasMove:
-        clock.tick(10)
-        if not pos_x + dx <= LEFT_BOUNDARY and not pos_x + 2*dx >= RIGHT_BOUNDARY and block != None:
-            pos_x += dx
+        #clock.tick(10) - movement speed
+        block.setX(pos_x + dx)
+        block.setY(pos_y + dy)
+        if checkCollision():
             block.setX(pos_x)
-        if not pos_y + dy >= HEIGHT - BLOCK_SIZE and block != None:
-            pos_y += dy
             block.setY(pos_y)
         else:
-            blockPlaced = True
+            pos_x += dx
+            pos_y += dy
+            
+##        if not pos_x + dx <= LEFT_BOUNDARY and not pos_x + 2*dx >= RIGHT_BOUNDARY and block != None:
+##            pos_x += dx
+##            block.setX(pos_x)
+##        if not pos_y + dy >= HEIGHT - BLOCK_SIZE and block != None:
+##            pos_y += dy
+##            block.setY(pos_y)
+##        else:
+##            blockPlaced = True
+
+            
         hasMove = True
     
     pygame.display.update()
     
-    clock.tick(40)
+    clock.tick(speed)
     hasMove = False
 
 
