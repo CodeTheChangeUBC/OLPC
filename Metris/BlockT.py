@@ -13,7 +13,12 @@ class BlockT(object):
 ##      |_1_|_0_|_2_|   orientation 0
         
         self.blockList = [Block(x, y, size), Block(x-size, y, size), Block(x+size, y, size), Block(x, y-size, size)]
-        self.color = (175, 0, 125)
+
+##        self.block1 = Block(size, x, y)
+##        self.block2 = Block(size, x - size, y)
+##        self.block3 = Block(size, x + size, y)
+##        self.block4 = Block(size, x, y - size)
+        self.color = (210, 77, 255)
         
     def display(self, gameDisplay):
         for i in range (0, len(self.blockList)):
@@ -31,7 +36,7 @@ class BlockT(object):
 
     def getLeftBoundary(self):
         left = self.blockList[0].getX()
-        for i in range (1, len(blockList)):
+        for i in range (1, len(self.blockList)):
             if self.blockList[i].getX() < left:
                 left = self.blockList[i].getX()
         return left
