@@ -1,5 +1,7 @@
 import pygame
+from random import randint
 from BlockT import BlockT
+from BlockO import BlockO
 
 pygame.init()
 
@@ -166,7 +168,21 @@ while not gameExit:
 
     # drawing block objs
     if not currentBlock:
-        block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+        rand = randint(0, 6)
+        if rand == 0:
+            block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 1:
+            block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 2:
+            block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 3:
+            block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 4:
+            block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 5:
+            block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 6:
+            block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
         blockList.insert(len(blockList), block)
         pos_x = INIT_X
         pos_y = INIT_Y
