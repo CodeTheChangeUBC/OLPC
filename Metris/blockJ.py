@@ -1,8 +1,6 @@
 import pygame
 from Block import Block
 
-black = (0,0,0)
-
 class BlockJ(object):
     def __init__(self, x, y, size):
         self.x = x
@@ -21,7 +19,7 @@ class BlockJ(object):
 
     def display(self, gameDisplay):
         for i in range(0, len(self.blockList)):
-            pygame.draw.rect(gameDisplay, black, [self.blockList[i].getX(), self.blockList[i].getY(), self.size, self.size])
+            pygame.draw.rect(gameDisplay, Block.black, [self.blockList[i].getX(), self.blockList[i].getY(), self.size, self.size])
             pygame.draw.rect(gameDisplay, self.color, [self.blockList[i].getX(), self.blockList[i].getY(), self.size-1, self.size-1])
 
     def getLeftBoundary(self):
