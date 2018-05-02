@@ -1,6 +1,16 @@
 import pygame
+from random import randint
 from BlockT import BlockT
+<<<<<<< HEAD
 from BlockZ import BlockZ
+=======
+from BlockO import BlockO
+from BlockI import BlockI
+from BlockL import BlockL
+from BlockS import BlockS
+from BlockZ import BlockZ
+from BlockJ import BlockJ
+>>>>>>> 5a2c00eef35b0501186630a44cd474e470e96c13
 
 pygame.init()
 
@@ -167,7 +177,25 @@ while not gameExit:
 
     # drawing block objs
     if not currentBlock:
+<<<<<<< HEAD
         block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
+=======
+        rand = randint(0, 6)
+        if rand == 0:
+            block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 1:
+            block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 2:
+            block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 3:
+            block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 4:
+            block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 5:
+            block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 6:
+            block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
+>>>>>>> 5a2c00eef35b0501186630a44cd474e470e96c13
         blockList.insert(len(blockList), block)
         pos_x = INIT_X
         pos_y = INIT_Y

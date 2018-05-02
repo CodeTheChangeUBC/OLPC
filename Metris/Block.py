@@ -20,3 +20,5 @@ class Block(object):
 
     def setRelativeX(self, dx):
         self.x += dx
+
+    black = (0, 0, 0)
