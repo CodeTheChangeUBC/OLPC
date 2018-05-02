@@ -1,5 +1,6 @@
 import pygame
 from BlockT import BlockT
+from BlockZ import BlockZ
 
 pygame.init()
 
@@ -166,7 +167,7 @@ while not gameExit:
 
     # drawing block objs
     if not currentBlock:
-        block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+        block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
         blockList.insert(len(blockList), block)
         pos_x = INIT_X
         pos_y = INIT_Y
