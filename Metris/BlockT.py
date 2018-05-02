@@ -1,8 +1,6 @@
 import pygame
 from Block import Block
 
-black = (0, 0, 0)
-
 class BlockT(object):
     def __init__(self, x, y, size):
         self.x = x
@@ -19,11 +17,11 @@ class BlockT(object):
 ##        self.block2 = Block(size, x - size, y)
 ##        self.block3 = Block(size, x + size, y)
 ##        self.block4 = Block(size, x, y - size)
-        self.color = (175, 0, 125)
+        self.color = (210, 77, 255)
         
     def display(self, gameDisplay):
         for i in range (0, len(self.blockList)):
-            pygame.draw.rect(gameDisplay, black, [self.blockList[i].getX(), self.blockList[i].getY(), self.size, self.size])
+            pygame.draw.rect(gameDisplay, Block.black, [self.blockList[i].getX(), self.blockList[i].getY(), self.size, self.size])
             pygame.draw.rect(gameDisplay, self.color, [self.blockList[i].getX(), self.blockList[i].getY(), self.size - 1, self.size - 1])
         
 ##        pygame.draw.rect(gameDisplay, black, [self.block1.getX(), self.block1.getY(), self.size, self.size])
