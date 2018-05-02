@@ -19,28 +19,24 @@ This project is multi-part and includes:
 >Following is the information regarding the first part of the project.
 
 ### Project Toolkit
-1. Python `3.x`
+1. Python `2.7.x`
 2. HTML5
 3. JavaScript
 
 ## The Squad
-- **Gaurav Vasudev** - @gauravnv - 
+- **Gaurav Vasudev** - @gauravnv 
 - **Samantha Cho** - @samanthacho
-- **Boyi Yao** - 
+- **Boyi Yao** - @Eric1015
 - **Samuel Or** - @sor2
 - **Brandon Tai** - @beetai
+- **Tony Su** - @tonyxdsu
 ### **Installation instructions coming soon!**
 
-
 .
 .
 .
 .
 .
-
-
-
-
 
 ## Contact Info
 #### Code the Change UBC
