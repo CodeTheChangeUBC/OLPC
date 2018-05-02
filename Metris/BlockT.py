@@ -17,7 +17,7 @@ class BlockT(object):
 ##        self.block2 = Block(size, x - size, y)
 ##        self.block3 = Block(size, x + size, y)
 ##        self.block4 = Block(size, x, y - size)
-        self.color = (175, 0, 125)
+        self.color = (210, 77, 255)
         
     def display(self, gameDisplay):
         for i in range (0, len(self.blockList)):

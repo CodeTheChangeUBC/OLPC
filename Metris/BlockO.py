@@ -12,7 +12,7 @@ class BlockO(object):
 ##        |_0_|_1_|   orientation 0
         
         self.blockList = [Block(x, y, size), Block(x+size, y, size), Block(x, y-size, size), Block(x+size, y-size, size)]
-        self.color = (175, 100, 0)
+        self.color = (255, 255, 77)
 
     def display(self, gameDisplay):
         for i in range (0, len(self.blockList)):
