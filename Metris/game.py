@@ -25,7 +25,9 @@ pygame.display.update()
 gameExit = False
 
 block1 = [BLOCK_SIZE, BLOCK_SIZE]
+global pos_x
 pos_x = WIDTH / 2
+global pos_y
 pos_y = 10
 dx = 0
 dy = 0
@@ -40,7 +42,7 @@ global blockPlaced
 blockPlaced = False
 global blockList
 blockList = []
-speed = 40
+speed = 10
 
 
 TICK = pygame.USEREVENT + 1
@@ -76,6 +78,47 @@ def checkCollision():
         if blockPerimeter[i].getX() < LEFT_BOUNDARY or blockPerimeter[i].getX() > RIGHT_BOUNDARY - BLOCK_SIZE or blockPerimeter[i].getY() > HEIGHT - BLOCK_SIZE:
             return True
 
+def checkCollisionRotation():
+    global pos_x
+    global pos_y
+    global currentBlock
+    if not currentBlock:
+        return False
+    global blockList
+    blockPerimeter = block.getPerimeter()
+    for i in range (0, len(blockPerimeter)):
+        for j in range (0, len(blockList) - 1):
+            placedBlockPerimeter = blockList[j].getPerimeter()
+            for k in range (0, len(placedBlockPerimeter)):
+                if blockPerimeter[i].getX() == placedBlockPerimeter[k].getX() and blockPerimeter[i].getY() == placedBlockPerimeter[k].getY():
+                    return True
+    for i in range (0, len(blockPerimeter)):
+        if blockPerimeter[i].getX() < LEFT_BOUNDARY:
+            block.setX(block.getX() + BLOCK_SIZE)
+            pos_x += BLOCK_SIZE
+            if checkCollision():
+                block.setX(block.getX() - BLOCK_SIZE)
+                pos_x -= BLOCK_SIZE
+                return True
+            break;
+        elif blockPerimeter[i].getX() > RIGHT_BOUNDARY - BLOCK_SIZE:
+            block.setX(block.getX() - BLOCK_SIZE)
+            pos_x -= BLOCK_SIZE
+            if checkCollision():
+                block.setX(block.getX() + BLOCK_SIZE)
+                pos_x += BLOCK_SIZE
+                return True
+            break;
+        elif blockPerimeter[i].getY() > HEIGHT - BLOCK_SIZE:
+            block.setY(block.getY() - BLOCK_SIZE)
+            pos_y -= BLOCK_SIZE
+            if checkCollision():
+                block.setX(block.getX() + BLOCK_SIZE)
+                pos_y += BLOCK_SIZE
+                return True
+            break;
+    return False
+
     
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
@@ -89,14 +132,21 @@ while not gameExit:
                 if pos_x:
                     dx = -BLOCK_SIZE
                     dy = 0
+                    speed = 10
             elif event.key == pygame.K_RIGHT:
                 if pos_x:
                     dx = BLOCK_SIZE
                     dy = 0
+                    speed = 10
             elif event.key == pygame.K_DOWN:
                 dy = BLOCK_SIZE
                 dx = 0
                 speed = 20
+            elif event.key == pygame.K_UP:
+                if currentBlock:
+                    block.rotateL()
+                    if checkCollisionRotation():
+                        block.rotateR()
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or pygame.K_RIGHT:
                 dx = 0
@@ -104,7 +154,7 @@ while not gameExit:
             if event.key == pygame.K_DOWN:
                 dy = 0
                 dx = 0
-                speed = 40
+                speed = 10
         if event.type == TICK:
             pos_y = tick(pos_y)
 

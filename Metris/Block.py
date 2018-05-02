@@ -9,8 +9,14 @@ class Block(object):
     def getY(self):
         return self.y
 
-    def setY(self, dy):
+    def setY(self, y):
+        self.y = y
+
+    def setX(self, x):
+        self.x = x
+    
+    def setRelativeY(self, dy):
         self.y += dy
 
-    def setX(self, dx):
+    def setRelativeX(self, dx):
         self.x += dx
