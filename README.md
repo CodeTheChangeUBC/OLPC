@@ -30,8 +30,13 @@ This project is multi-part and includes:
 - **Samuel Or** - @sor2
 - **Brandon Tai** - @beetai
 - **Tony Su** - @tonyxdsu
-### **Installation instructions coming soon!**
+## *Installation instructions :*
 
+#### **Metris**
+1. Install Python 2.7.x
+    - Make sure Python is added to path
+2. Install PyGame
+3. 
 .
 .
 .

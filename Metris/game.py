@@ -1,5 +1,6 @@
 import pygame
 from BlockT import BlockT
+from BlockS import BlockS
 
 pygame.init()
 
