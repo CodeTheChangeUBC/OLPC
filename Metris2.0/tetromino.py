@@ -222,6 +222,12 @@ def runGame():
         char = K_4
     controlsOn = False
     numTries = 0
+    
+    diff1 = randint(1, 10)
+    diff2 = randint(1, 10)
+    diff3 = randint(1, 20)
+    num_q = 0
+    scr_mult = 5
 
     fallingPiece = getNewPiece()
     nextPiece = getNewPiece()
@@ -231,6 +237,7 @@ def runGame():
             # No falling piece in play, so start a new piece at the top
             numTries = 0
             controlsOn = False
+            num_q = 0
             fallingPiece = nextPiece
             nextPiece = getNewPiece()
             lastFallTime = time.time() # reset lastFallTime
@@ -305,6 +312,9 @@ def runGame():
                         o_upbound = bound_list[0]
                         q1_upbound = bound_list[1]
                         q2_upbound = bound_list[2]
+                        diff1 = randint(1, 10)
+                        diff2 = randint(1, 10)
+                        diff3 = randint(1, 20)
                         operator = randint(0,o_upbound)
                         q2 = randint(0,q2_upbound)
                         if operator == 3:
@@ -322,6 +332,9 @@ def runGame():
                             char = K_4
                         comp_input = randint(0,3)
                         controlsOn = True
+                        score += 10 + scr_mult*num_q
+                        level,fallFreq = calculateLevelAndFallFreq(score)
+                        num_q += 1
                 elif event.key != char and (event.key == K_1 or event.key == K_2 or event.key == K_3 or event.key == K_4):
                     numTries += 1
                     comp_input= randint(4,7)
@@ -351,12 +364,15 @@ def runGame():
                 numTries = 0
                 conrolsOn = False
                 bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, level)
+                diff1 = randint(1, 10)
+                diff2 = randint(1, 10)
+                diff3 = randint(1, 20)
                 o_upbound = bound_list[0]
                 q1_upbound = bound_list[1]
                 q2_upbound = bound_list[2]
                 operator = randint(0,o_upbound)
                 q2 = randint(0,q2_upbound)
-                if operator == 0:
+                if operator == 3:
                     q1 = q2*randint(0, q1_upbound)
                 else:
                     q1 = randint(0,q1_upbound)
@@ -377,7 +393,7 @@ def runGame():
         # drawing everything on the screen
         DISPLAYSURF.fill(BGCOLOR)
         drawBoard(board)
-        drawStatus(score, level, q1, q2, operator, keypress, sol_key)
+        drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, diff3)
         drawCompliment(comp_input)
         drawNextPiece(nextPiece)
         if fallingPiece != None:
@@ -474,7 +490,7 @@ def checkForQuit():
 def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
-    level = int(score / 10) + 1
+    level = int(score / 70) + 1
     fallFreq = 0.8 - (level * 0.02)
     return level, fallFreq
 
@@ -549,7 +565,16 @@ def removeCompleteLines(board):
             # complete, it will be removed.
         else:
             y -= 1 # move on to check next row up
-    return numLinesRemoved
+    if numLinesRemoved == 1:
+        return 10*numLinesRemoved
+    else:
+        ret = 0
+        multiplier = 1
+        pt_score = 5
+        for x in range(0, numLinesRemoved):
+            ret += multiplier*pt_score
+            multiplier += 1
+        return ret
 
 
 def convertToPixelCoords(boxx, boxy):
@@ -583,7 +608,7 @@ def drawBoard(board):
             drawBox(x, y, board[x][y])
 
 
-def drawStatus(score, level, q1, q2, operator, keypress, sol_key):
+def drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, diff3):
     # draw the score text
     scoreSurf = BASICFONT.render('Score: %s' % score, True, TEXTCOLOR)
     scoreRect = scoreSurf.get_rect()
@@ -622,7 +647,7 @@ def drawStatus(score, level, q1, q2, operator, keypress, sol_key):
     DISPLAYSURF.blit(answerSurf, answerRect)
 
     actual_ans = eval(str(q1) + o + str(q2))
-    fakeans_list = [eval(str(q1) + o + str(q2)) + 10, eval(str(q1) + o + str(q2)) - 10, eval(str(q1) + o + str(q2)) + 1]
+    fakeans_list = [eval(str(q1) + o + str(q2)) + diff1, eval(str(q1) + o + str(q2)) - diff2, eval(str(q1) + o + str(q2)) + diff3]
     list_count = 0
 
     for x in range(0,4):
