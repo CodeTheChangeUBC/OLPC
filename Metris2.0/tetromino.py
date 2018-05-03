@@ -667,6 +667,7 @@ def drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, 
         o = '/'
     elif operator == 4:
         o = '^'
+    rand = randint(0, 10)
     qSurf = BASICFONT.render('%s %s %s' % (q1, o, q2) , True, TEXTCOLOR)
     qRect = qSurf.get_rect()
     qRect.topleft= (20, 40)
