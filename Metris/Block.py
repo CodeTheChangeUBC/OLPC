@@ -12,6 +12,9 @@ class Block(object):
     def getY(self):
         return self.y
 
+    def getColor(self):
+        return self.color
+
     def setY(self, y):
         self.y = y
 
@@ -29,3 +32,4 @@ class Block(object):
         pygame.draw.rect(gameDisplay, self.color, [self.x, self.y, self.size - 1, self.size - 1])
 
     black = (0, 0, 0)
+    red = (255, 0, 0)
