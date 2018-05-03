@@ -50,7 +50,7 @@ blockPlaced = False
 global landed
 landed = []
 speed = 10
-landed = [[None for i in range(20)] for j in range(10)]
+landed = [[None for i in range(24)] for j in range(10)]
 
 TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
@@ -77,6 +77,7 @@ def checkLandedAndDelete():
     while (y < len(landed[0])):
         if (rowFilled(y)):
             rowsToDelete.append(y)
+            y = y + 1
         else:
             y = y + 1
 
@@ -90,15 +91,18 @@ def rowFilled(y):
 
 def deleteRows(rows):
     # move everything down 1
-    for y in range(rows[0], len(landed[0]) - 1):
+    while(len(rows) > 0):
+        y = rows.pop(0)
         for x in range(0, len(landed) - 1):
             # if not the top row
-            if (y + len(rows) < len(landed[0])):
-                landed[x][y] = landed[x][y - rows.len()]
+            if (y > 0):
+                for curr in range(y, 1, -1):
+                    landed[x][curr] = landed[x][curr - 1]
+                    if (landed[x][curr - 1] != None):
+                        landed[x][curr].setY(y + BLOCK_SIZE)
             # else we are at the top row
             else :
                 landed[x][y] = None
-            landed[x][y].setY(y + BLOCK_SIZE)
             
 def checkCollision():
     global currentBlock
@@ -106,7 +110,7 @@ def checkCollision():
         return False
     global landed
     blockPerimeter = block.getPerimeter()
-    for i in range (0, len(blockPerimeter)):
+    for i in range (0, len(blockPerimeter) - 1):
         for j in range (0, len(landed) - 1):
             for k in range (0, len(landed[j]) - 1):
                 if landed[j][k] != None:
@@ -124,7 +128,7 @@ def checkCollisionRotation():
         return False
     global landed
     blockPerimeter = block.getPerimeter()
-    for i in range (0, len(blockPerimeter)):
+    for i in range (0, len(blockPerimeter) - 1):
         for j in range (0, len(landed) - 1):
             for k in range (0, len(landed[j]) - 1):
                 if landed[j][k] != None:
@@ -158,10 +162,10 @@ def checkCollisionRotation():
     return False
 
 def x2Index(x):
-    return (x - LEFT_BOUNDARY) / BLOCK_SIZE
+    return (x - LEFT_BOUNDARY) / BLOCK_SIZE + 1
 
 def y2Index(y):
-    return (20 * BLOCK_SIZE - y) / BLOCK_SIZE
+    return (24 * BLOCK_SIZE - y) / BLOCK_SIZE
     
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
