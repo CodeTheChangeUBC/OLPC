@@ -5,6 +5,7 @@
 
 import random, time, pygame, sys
 from pygame.locals import *
+from random import randint
 
 FPS = 25
 WINDOWWIDTH = 640
@@ -166,19 +167,21 @@ def main():
 
     showTextScreen('Tetromino')
     while True: # game loop
-        if random.randint(0, 1) == 0:
+        num = randint(0, 4)
+        if num == 0:
             pygame.mixer.music.load('tetrisb.mid')
+        if num == 1:
+            pygame.mixer.music.load('ff7.mid')
+        if num == 2:
+            pygame.mixer.music.load('eye.mid')
+        if num == 3:
+            pygame.mixer.music.load('hip.mid')
         else:
-            pygame.mixer.music.load('tetrisc.mid')
+            pygame.mixer.music.load('mur.mid')
         pygame.mixer.music.play(-1, 0.0)
         runGame()
         pygame.mixer.music.stop()
         showTextScreen('Game Over')
-
-
-def randomQuestion():
-    question = '2+2'
-    return 2+2
 
 
 def runGame():
@@ -187,15 +190,38 @@ def runGame():
     lastMoveDownTime = time.time()
     lastMoveSidewaysTime = time.time()
     lastFallTime = time.time()
-    movingDown = False  # note: there is no movingUp variable
+    movingDown = False # note: there is no movingUp variable
     movingLeft = False
     movingRight = False
-    questionforText = randomQuestion()
-    question = '2+2'
-    realAnswer = 4
-    inputAnswer = 0
     score = 0
     level, fallFreq = calculateLevelAndFallFreq(score)
+    qSolved = False
+    comp_input = 10
+    o_upbound = 0
+    q1_upbound = 0
+    q2_upbound = 0
+    bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, level)
+    o_upbound = bound_list[0]
+    q1_upbound = bound_list[1]
+    q2_upbound = bound_list[2]
+    operator = randint(0,o_upbound)
+    q2 = randint(0,q2_upbound)
+    if operator == 3:
+        q1 = q2*randint(0, q1_upbound)
+    else:
+        q1 = randint(0,q1_upbound)
+    keypress = 1000
+    sol_key = randint(0,3)
+    if sol_key == 0:
+        char = K_1
+    if sol_key == 1:
+        char = K_2
+    if sol_key == 2:
+        char = K_3
+    if sol_key == 3:
+        char = K_4
+    controlsOn = False
+    numTries = 0
 
     fallingPiece = getNewPiece()
     nextPiece = getNewPiece()
@@ -203,6 +229,8 @@ def runGame():
     while True: # game loop
         if fallingPiece == None:
             # No falling piece in play, so start a new piece at the top
+            numTries = 0
+            controlsOn = False
             fallingPiece = nextPiece
             nextPiece = getNewPiece()
             lastFallTime = time.time() # reset lastFallTime
@@ -244,11 +272,11 @@ def runGame():
                     lastMoveSidewaysTime = time.time()
 
                 # rotating the piece (if there is room to rotate)
-                elif (event.key == K_UP or event.key == K_w):
+                elif (event.key == K_UP or event.key == K_w) and controlsOn == True:
                     fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(PIECES[fallingPiece['shape']])
                     if not isValidPosition(board, fallingPiece):
                         fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(PIECES[fallingPiece['shape']])
-                elif (event.key == K_q): # rotate the other direction
+                elif (event.key == K_q) and controlsOn == True: # rotate the other direction
                     fallingPiece['rotation'] = (fallingPiece['rotation'] - 1) % len(PIECES[fallingPiece['shape']])
                     if not isValidPosition(board, fallingPiece):
                         fallingPiece['rotation'] = (fallingPiece['rotation'] + 1) % len(PIECES[fallingPiece['shape']])
@@ -269,6 +297,35 @@ def runGame():
                         if not isValidPosition(board, fallingPiece, adjY=i):
                             break
                     fallingPiece['y'] += i - 1
+
+                # check for correct answer
+                elif event.key == char:
+                    if numTries < 1:
+                        bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, level)
+                        o_upbound = bound_list[0]
+                        q1_upbound = bound_list[1]
+                        q2_upbound = bound_list[2]
+                        operator = randint(0,o_upbound)
+                        q2 = randint(0,q2_upbound)
+                        if operator == 3:
+                            q1 = q2*randint(0, q1_upbound)
+                        else:
+                            q1 = randint(0,q1_upbound)
+                        sol_key = randint(0,3)
+                        if sol_key == 0:
+                            char = K_1
+                        if sol_key == 1:
+                            char = K_2
+                        if sol_key == 2:
+                            char = K_3
+                        if sol_key == 3:
+                            char = K_4
+                        comp_input = randint(0,3)
+                        controlsOn = True
+                elif event.key != char and (event.key == K_1 or event.key == K_2 or event.key == K_3 or event.key == K_4):
+                    numTries += 1
+                    comp_input= randint(4,7)
+                    controlsOn = False
 
         # handle moving the piece because of user input
         if (movingLeft or movingRight) and time.time() - lastMoveSidewaysTime > MOVESIDEWAYSFREQ:
@@ -291,6 +348,27 @@ def runGame():
                 score += removeCompleteLines(board)
                 level, fallFreq = calculateLevelAndFallFreq(score)
                 fallingPiece = None
+                numTries = 0
+                conrolsOn = False
+                bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, level)
+                o_upbound = bound_list[0]
+                q1_upbound = bound_list[1]
+                q2_upbound = bound_list[2]
+                operator = randint(0,o_upbound)
+                q2 = randint(0,q2_upbound)
+                if operator == 0:
+                    q1 = q2*randint(0, q1_upbound)
+                else:
+                    q1 = randint(0,q1_upbound)
+                sol_key = randint(0,3)
+                if sol_key == 0:
+                    char = K_1
+                if sol_key == 1:
+                    char = K_2
+                if sol_key == 2:
+                    char = K_3
+                if sol_key == 3:
+                    char = K_4
             else:
                 # piece did not land, just move the piece down
                 fallingPiece['y'] += 1
@@ -299,16 +377,45 @@ def runGame():
         # drawing everything on the screen
         DISPLAYSURF.fill(BGCOLOR)
         drawBoard(board)
-        drawStatus(score, level)
-        drawQuestion(question)
+        drawStatus(score, level, q1, q2, operator, keypress, sol_key)
+        drawCompliment(comp_input)
         drawNextPiece(nextPiece)
-        drawCompliment()
         if fallingPiece != None:
             drawPiece(fallingPiece)
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
+def calculateUpbound(o_upbound, q1_upbound, q2_upbound, level):
+    if level == 1:
+        o_upbound = 0
+        q1_upbound = 9
+        q2_upbound = 9
+    elif level == 2:
+        o_upbound = 1
+        q1_upbound = 9
+        q2_upbound = 9
+    elif level == 3:
+        o_upbound = 2
+        q1_upbound = 9
+        q2_upbound = 9
+    elif level == 4:
+        o_upbound = 3
+        q1_upbound = 9
+        q2_upbound = 9
+    elif level == 5:
+        o_upbound = 3
+        q1_upbound = 9
+        q2_upbound = 20
+    elif level == 6:
+        o_upbound = 3
+        q1_upbound = 20
+        q2_upbound = 20
+    elif level >= 7:
+        o_upbound = 3
+        q1_upbound = 40
+        q2_upbound = 40
+    return [o_upbound, q1_upbound, q2_upbound]
 
 def makeTextObjs(text, font, color):
     surf = font.render(text, True, color)
@@ -368,7 +475,7 @@ def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
     level = int(score / 10) + 1
-    fallFreq = 0.27 - (level * 0.02)
+    fallFreq = 0.8 - (level * 0.02)
     return level, fallFreq
 
 def getNewPiece():
@@ -476,7 +583,7 @@ def drawBoard(board):
             drawBox(x, y, board[x][y])
 
 
-def drawStatus(score, level):
+def drawStatus(score, level, q1, q2, operator, keypress, sol_key):
     # draw the score text
     scoreSurf = BASICFONT.render('Score: %s' % score, True, TEXTCOLOR)
     scoreRect = scoreSurf.get_rect()
@@ -489,15 +596,55 @@ def drawStatus(score, level):
     levelRect.topleft = (WINDOWWIDTH - 150, 50)
     DISPLAYSURF.blit(levelSurf, levelRect)
 
-def drawQuestion(question):
-    #draw the question text
-    questionSurf = BASICFONT.render('Question: %s' % question, True, TEXTCOLOR)
+    # draw the question text
+    questionSurf = BASICFONT.render('Question :', True, TEXTCOLOR)
     questionRect = questionSurf.get_rect()
-    questionRect.topleft = (20,20)
+    questionRect.topleft = (20, 20)
     DISPLAYSURF.blit(questionSurf, questionRect)
 
+    if operator == 0:
+        o = '+'
+    elif operator == 1:
+        o = '-'
+    elif operator == 2:
+        o = '*'
+    elif operator == 3:
+        o = '/'
+    qSurf = BASICFONT.render('%s %s %s' % (q1, o, q2) , True, TEXTCOLOR)
+    qRect = qSurf.get_rect()
+    qRect.topleft= (20, 40)
+    DISPLAYSURF.blit(qSurf, qRect)
 
+    # draw answer text
+    answerSurf = BASICFONT.render('Answer :', True, TEXTCOLOR)
+    answerRect = answerSurf.get_rect()
+    answerRect.topleft = (20, 60)
+    DISPLAYSURF.blit(answerSurf, answerRect)
 
+    actual_ans = eval(str(q1) + o + str(q2))
+    fakeans_list = [eval(str(q1) + o + str(q2)) + 10, eval(str(q1) + o + str(q2)) - 10, eval(str(q1) + o + str(q2)) + 1]
+    list_count = 0
+
+    for x in range(0,4):
+        if x == sol_key:
+            sol_print = actual_ans
+        else:
+            sol_print = fakeans_list[list_count]
+            list_count += 1
+        if x == 0:
+            char = '1)'
+        elif x == 1:
+            char = '2)'
+        elif x == 2:
+            char = '3)'
+        elif x == 3:
+            char = '4)'
+        aSurf = BASICFONT.render(char + '   %s' % (sol_print), True, TEXTCOLOR)
+        aRect = aSurf.get_rect()
+        aRect.topleft = (20, 80+x*20)
+        DISPLAYSURF.blit(aSurf, aRect)
+        if x == 3:
+            list_count = 0
 
 def drawPiece(piece, pixelx=None, pixely=None):
     shapeToDraw = PIECES[piece['shape']][piece['rotation']]
@@ -516,25 +663,39 @@ def drawNextPiece(piece):
     # draw the "next" text
     nextSurf = BASICFONT.render('Next:', True, TEXTCOLOR)
     nextRect = nextSurf.get_rect()
-    nextRect.topleft = (WINDOWWIDTH - 120, 80)
+    nextRect.topleft = (WINDOWWIDTH - 150, 80)
     DISPLAYSURF.blit(nextSurf, nextRect)
     # draw the "next" piece
-    drawPiece(piece, pixelx=WINDOWWIDTH-120, pixely=100)
+    drawPiece(piece, pixelx=WINDOWWIDTH-150, pixely=100)
 
-def drawCompliment():
-    rand = random.randint(0, 3)
+def drawCompliment(rand):
+    if rand == 10:
+        return
     if rand == 0:
-        compliment = "Not bad!"
+        compliment = "Could do better."
     elif rand == 1:
-        compliment = "Could do better!"
+        compliment = "Try harder."
     elif rand == 2:
-        compliment = "Try a little harder!"
+        compliment = "Nice."
     elif rand == 3:
-        compliment = "You are sooo good at this."
-    complimentSurf = BIGFONT.render(compliment, True, TEXTCOLOR)
+        compliment = "Great."
+    elif rand == 4:
+        compliment = "Incorrect."
+    elif rand == 5:
+        compliment = "Learn to add."
+    elif rand == 6:
+        compliment = "Wrong."
+    elif rand == 7:
+        compliment = "Wrong input."
+    complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
-    complimentRect.topleft = (WINDOWWIDTH / 2, 20)
+    complimentRect.midtop = (WINDOWWIDTH/2, 20)
     DISPLAYSURF.blit(complimentSurf, complimentRect)
+    if rand >= 4:
+        controlSurf = BASICFONT.render("Lost control.", True, TEXTCOLOR)
+        controlRect = controlSurf.get_rect()
+        controlRect.topleft = (WINDOWWIDTH - 150, 200)
+        DISPLAYSURF.blit(controlSurf, controlRect)
 
 
 if __name__ == '__main__':
