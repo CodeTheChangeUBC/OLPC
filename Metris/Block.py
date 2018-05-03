@@ -12,6 +12,9 @@ class Block(object):
     def getY(self):
         return self.y
 
+    def getColor(self):
+        return self.color
+
     def setY(self, y):
         self.y = y
 

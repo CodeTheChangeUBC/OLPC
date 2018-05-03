@@ -58,7 +58,6 @@ TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
 clock = pygame.time.Clock()
 
-BOTTOM = 562
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -203,6 +202,30 @@ def x2Index(x):
 
 def y2Index(y):
     return y / BLOCK_SIZE
+
+## function to get the minimum vertical difference between current block and
+#  the bottom landed Blocks
+def getShadowDifference(blockList):
+    maxIndex = len(landed[0]) - 1
+    difference = maxIndex * BLOCK_SIZE - blockList[0].getY() - 14
+    for i in range(0, len(blockList)):
+        if difference > maxIndex * BLOCK_SIZE - blockList[i].getY() - 14:
+            difference = maxIndex * BLOCK_SIZE - blockList[i].getY() - 14
+    for i in range(0, len(blockList)):
+        currX = x2Index(blockList[i].getX())
+        currY = y2Index(blockList[i].getY())
+        for y in range(currY, len(landed[0])):
+            if landed[currX][y] != None and difference > y * BLOCK_SIZE - blockList[i].getY() - 14:
+                difference = y * BLOCK_SIZE - blockList[i].getY() - 14
+    return difference
+
+def drawShadow(blockList, dy):
+    for i in range(0, len(blockList)):
+        pygame.draw.rect(gameDisplay, blockList[i].getColor(),
+             [blockList[i].getX(), blockList[i].getY() + dy, BLOCK_SIZE, BLOCK_SIZE])
+        pygame.draw.rect(gameDisplay, (255, 255, 255),
+             [blockList[i].getX() + 1, blockList[i].getY() + dy + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2])
+        
     
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -280,6 +303,8 @@ while not gameExit:
         pos_x = INIT_X
         pos_y = INIT_Y
         currentBlock = True
+    difference = getShadowDifference(block.getPerimeter())
+    drawShadow(block.getPerimeter(), difference)
     for i in range(0, len(landed)):
         for j in range(0, len(landed[i])):
             if (landed[i][j] != None):
