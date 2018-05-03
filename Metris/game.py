@@ -50,7 +50,7 @@ blockPlaced = False
 global blockList
 blockList = []
 speed = 10
-
+global landed = [][]
 
 TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
@@ -69,6 +69,35 @@ def tick(pos_y):
             pos_y += BLOCK_SIZE
     return pos_y
 
+def checkLandedAndDelete():
+    y = 0
+    rowsToDelete = []
+    while (y < landed[0].len)
+        if (rowFilled(y)):
+            rowsToDelete.append(y);
+        else
+            y++
+
+    deleteRows(rowsToDelete)
+
+def rowFilled(y):
+    for x in range (0, landed.len() - 1):
+            if (landed[x][y] == None)
+                return False
+    return True
+
+def deleteRows(rows):
+    # move everything down 1
+    for y in range(rows[0], landed[0].len() - 1)
+        for x in range(0, landed.len() - 1)
+            # if not the top row
+            if (y + rows.len() < landed[0].len()) 
+                landed[x][y] = landed[x][y + rows.len()];
+            # else we are at the top row
+            else 
+                landed[x][y] = None
+            landed[x][y].setY(y - size);
+            
 def checkCollision():
     global currentBlock
     if not currentBlock:
