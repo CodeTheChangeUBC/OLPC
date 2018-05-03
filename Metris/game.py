@@ -154,6 +154,11 @@ while not gameExit:
                     block.rotateL()
                     if checkCollisionRotation():
                         block.rotateR()
+            elif event.key == pygame.KMOD_SHIFT:
+                if currentBlock:
+                    block.rotateR()
+                    if checkCollisionRotation():
+                        block.rotateL()
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or pygame.K_RIGHT:
                 dx = 0
@@ -210,15 +215,6 @@ while not gameExit:
         else:
             pos_x += dx
             pos_y += dy
-            
-##        if not pos_x + dx <= LEFT_BOUNDARY and not pos_x + 2*dx >= RIGHT_BOUNDARY and block != None:
-##            pos_x += dx
-##            block.setX(pos_x)
-##        if not pos_y + dy >= HEIGHT - BLOCK_SIZE and block != None:
-##            pos_y += dy
-##            block.setY(pos_y)
-##        else:
-##            blockPlaced = True
 
             
         hasMove = True
