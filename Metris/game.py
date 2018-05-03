@@ -47,8 +47,8 @@ currentBlock = False
 block = None
 global blockPlaced
 blockPlaced = False
-global blockList
-blockList = []
+global landed
+landed = []
 speed = 10
 
 
@@ -73,13 +73,12 @@ def checkCollision():
     global currentBlock
     if not currentBlock:
         return False
-    global blockList
+    global landed
     blockPerimeter = block.getPerimeter()
     for i in range (0, len(blockPerimeter)):
-        for j in range (0, len(blockList) - 1):
-            placedBlockPerimeter = blockList[j].getPerimeter()
-            for k in range (0, len(placedBlockPerimeter)):
-                if blockPerimeter[i].getX() == placedBlockPerimeter[k].getX() and blockPerimeter[i].getY() == placedBlockPerimeter[k].getY():
+        for j in range (0, len(landed) - 1):
+            for k in range (0, len(landed[j]) - 1):
+                if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
                     return True
     for i in range (0, len(blockPerimeter)):
         if blockPerimeter[i].getX() < LEFT_BOUNDARY or blockPerimeter[i].getX() > RIGHT_BOUNDARY - BLOCK_SIZE or blockPerimeter[i].getY() > HEIGHT - BLOCK_SIZE:
@@ -91,13 +90,12 @@ def checkCollisionRotation():
     global currentBlock
     if not currentBlock:
         return False
-    global blockList
+    global landed
     blockPerimeter = block.getPerimeter()
     for i in range (0, len(blockPerimeter)):
-        for j in range (0, len(blockList) - 1):
-            placedBlockPerimeter = blockList[j].getPerimeter()
-            for k in range (0, len(placedBlockPerimeter)):
-                if blockPerimeter[i].getX() == placedBlockPerimeter[k].getX() and blockPerimeter[i].getY() == placedBlockPerimeter[k].getY():
+        for j in range (0, len(landed) - 1):
+            for k in range (0, len(landed[j]) - 1):
+                if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
                     return True
     for i in range (0, len(blockPerimeter)):
         if blockPerimeter[i].getX() < LEFT_BOUNDARY:
@@ -193,12 +191,13 @@ while not gameExit:
             block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
         elif rand == 6:
             block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
-        blockList.insert(len(blockList), block)
         pos_x = INIT_X
         pos_y = INIT_Y
         currentBlock = True
-    for i in range(0, len(blockList)):
-        blockList[i].display(gameDisplay)
+    for i in range(0, len(landed) - 1):
+        for j in range(0, len(landed[i]) - 1):
+            landed[i][j].display(gameDisplay)
+    block.display(gameDisplay)
     
     # score
     screen_text = font.render("score: " + str(score), True, white)
