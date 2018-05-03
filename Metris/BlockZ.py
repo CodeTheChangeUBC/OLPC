@@ -10,17 +10,17 @@ class BlockZ(object):
         self.isCurrent = False
         self.size = size
         self.orientation = 0
+        self.color = (255, 0, 0)
 
         ##      |_2_|_3_|
         ##          |_0_|_1_|   orientation 0
 
-        self.blockList = [Block(x, y, size), Block(x + size, y, size), Block(x - size, y - size, size),
-                          Block(x, y - size, size)]
+        self.blockList = [Block(x, y, size, self.color), Block(x + size, y, size, self.color), Block(x - size, y - size, size, self.color),
+                          Block(x, y - size, size, self.color)]
         ##        self.block1 = Block(size, x, y)
         ##        self.block2 = Block(size, x - size, y)
         ##        self.block3 = Block(size, x + size, y)
         ##        self.block4 = Block(size, x, y - size)
-        self.color = (255, 0, 0)
 
     def display(self, gameDisplay):
         for i in range(0, len(self.blockList)):

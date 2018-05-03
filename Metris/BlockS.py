@@ -8,17 +8,17 @@ class BlockS(object):
         self.isCurrent = False
         self.size = size
         self.orientation = 0
+        self.color = (0, 255, 0)
 
 
 ##   |0|
 ##   |1||2|
 ##      |3|         Orientation 0
 
-        self.blockList = [Block(x, y-size, size),
-                          Block(x, y, size),
-                          Block(x+size, y, size),
-                          Block(x+size, y+size, size)]
-        self.color = (0, 255, 0)
+        self.blockList = [Block(x, y-size, size, self.color),
+                          Block(x, y, size, self.color),
+                          Block(x+size, y, size, self.color),
+                          Block(x+size, y+size, size, self.color)]
 
     def display(self, gameDisplay):
         for i in range(0, len(self.blockList)):
