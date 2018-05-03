@@ -170,13 +170,13 @@ def main():
         num = randint(0, 4)
         if num == 0:
             pygame.mixer.music.load('tetrisb.mid')
-        if num == 1:
+        elif num == 1:
             pygame.mixer.music.load('ff7.mid')
-        if num == 2:
+        elif num == 2:
             pygame.mixer.music.load('eye.mid')
-        if num == 3:
+        elif num == 3:
             pygame.mixer.music.load('hip.mid')
-        else:
+        elif num == 4:
             pygame.mixer.music.load('mur.mid')
         pygame.mixer.music.play(-1, 0.0)
         runGame()
@@ -389,6 +389,7 @@ def runGame():
                     char = K_3
                 if sol_key == 3:
                     char = K_4
+                comp_input = -1
             else:
                 # piece did not land, just move the piece down
                 fallingPiece['y'] += 1
@@ -728,21 +729,23 @@ def drawCompliment(rand):
     if rand == 10:
         return
     if rand == 0:
-        compliment = "Could do better."
+        compliment = "Great!"
     elif rand == 1:
-        compliment = "Try harder."
+        compliment = "Good job!"
     elif rand == 2:
-        compliment = "Nice."
+        compliment = "Nice!"
     elif rand == 3:
-        compliment = "Great."
+        compliment = "Excellent!"
     elif rand == 4:
-        compliment = "Incorrect."
+        compliment = "Incorrect input."
     elif rand == 5:
-        compliment = "Learn to add."
+        compliment = "Nice try."
     elif rand == 6:
-        compliment = "Wrong."
+        compliment = "Keep going!"
     elif rand == 7:
-        compliment = "Wrong input."
+        compliment = "Better luck next time!"
+    elif rand == -1:
+        compliment = " "
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
     complimentRect.midtop = (WINDOWWIDTH/2, 20)
