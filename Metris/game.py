@@ -180,7 +180,7 @@ while not gameExit:
     if not currentBlock:
         rand = randint(0, 6)
         if rand == 0:
-            block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+            block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
         elif rand == 1:
             block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
         elif rand == 2:
