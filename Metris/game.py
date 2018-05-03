@@ -1,5 +1,12 @@
 import pygame
+from random import randint
 from BlockT import BlockT
+from BlockO import BlockO
+from BlockI import BlockI
+from BlockL import BlockL
+from BlockS import BlockS
+from BlockZ import BlockZ
+from BlockJ import BlockJ
 
 pygame.init()
 
@@ -147,6 +154,11 @@ while not gameExit:
                     block.rotateL()
                     if checkCollisionRotation():
                         block.rotateR()
+            elif event.key == pygame.K_z:
+                if currentBlock:
+                    block.rotateR()
+                    if checkCollisionRotation():
+                        block.rotateL()
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or pygame.K_RIGHT:
                 dx = 0
@@ -166,7 +178,21 @@ while not gameExit:
 
     # drawing block objs
     if not currentBlock:
-        block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+        rand = randint(0, 6)
+        if rand == 0:
+            block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 1:
+            block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 2:
+            block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 3:
+            block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 4:
+            block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 5:
+            block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 6:
+            block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
         blockList.insert(len(blockList), block)
         pos_x = INIT_X
         pos_y = INIT_Y
@@ -189,15 +215,6 @@ while not gameExit:
         else:
             pos_x += dx
             pos_y += dy
-            
-##        if not pos_x + dx <= LEFT_BOUNDARY and not pos_x + 2*dx >= RIGHT_BOUNDARY and block != None:
-##            pos_x += dx
-##            block.setX(pos_x)
-##        if not pos_y + dy >= HEIGHT - BLOCK_SIZE and block != None:
-##            pos_y += dy
-##            block.setY(pos_y)
-##        else:
-##            blockPlaced = True
 
             
         hasMove = True
