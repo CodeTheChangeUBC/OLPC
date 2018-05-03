@@ -56,7 +56,10 @@ TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
 clock = pygame.time.Clock()
 
+BOTTOM = 562
+
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 def tick(pos_y):
     if block != None:
@@ -65,12 +68,14 @@ def tick(pos_y):
         if checkCollision():
             block.setY(pos_y)
             currentBlock = False
-            for i in range (0, len(block.getPerimeter()) ):
-                landed[x2Index(block.getPerimeter()[i].getX())][y2Index(block.getPerimeter()[i].getY())] = block.getPerimeter()[i]
+            for i in range(0, len(block.getPerimeter())):
+                landed[x2Index(block.getPerimeter()[i].getX())][y2Index(
+                    block.getPerimeter()[i].getY())] = block.getPerimeter()[i]
             checkLandedAndDelete()
         else:
             pos_y += BLOCK_SIZE
     return pos_y
+
 
 def checkLandedAndDelete():
     y = 0
@@ -78,48 +83,52 @@ def checkLandedAndDelete():
     while (y < len(landed[0])):
         if (rowFilled(y)):
             rowsToDelete.append(y)
-            y = y + 1
-        else:
-            y = y + 1
+        y += 1
+        
 
     deleteRows(rowsToDelete)
 
+
 def rowFilled(y):
-    for x in range (0, len(landed)):
+    for x in range(0, len(landed)):
             if (landed[x][y] == None):
                 return False
     return True
+
 
 def deleteRows(rows):
     # move everything down 1
     while(len(rows) > 0):
         y = rows.pop(0)
-        for x in range(0, len(landed) ):
-            # if not the top row
-            if (y > 0):
-                for curr in range(y, 0, -1):
+        # if not the top row
+        if (y > 0):
+            for curr in range(y, 0, -1):
+                for x in range(0, len(landed)):
                     landed[x][curr] = landed[x][curr - 1]
                     if (landed[x][curr - 1] != None):
-                        landed[x][curr].setY(y + BLOCK_SIZE)
+                        landed[x][curr].setY(curr * BLOCK_SIZE + 10)
             # else we are at the top row
-            else :
+        else:
+            for x in range(0, len(landed)):
                 landed[x][y] = None
-            
+
+
 def checkCollision():
     global currentBlock
     if not currentBlock:
         return False
     global landed
     blockPerimeter = block.getPerimeter()
-    for i in range (0, len(blockPerimeter) ):
-        for j in range (0, len(landed) ):
-            for k in range (0, len(landed[j]) ):
+    for i in range(0, len(blockPerimeter)):
+        for j in range(0, len(landed)):
+            for k in range(0, len(landed[j])):
                 if landed[j][k] != None:
                     if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
                         return True
-    for i in range (0, len(blockPerimeter)):
+    for i in range(0, len(blockPerimeter)):
         if blockPerimeter[i].getX() < LEFT_BOUNDARY or blockPerimeter[i].getX() > RIGHT_BOUNDARY - BLOCK_SIZE or blockPerimeter[i].getY() > HEIGHT - BLOCK_SIZE:
             return True
+
 
 def checkCollisionRotation():
     global pos_x
@@ -129,13 +138,13 @@ def checkCollisionRotation():
         return False
     global landed
     blockPerimeter = block.getPerimeter()
-    for i in range (0, len(blockPerimeter)):
-        for j in range (0, len(landed) ):
-            for k in range (0, len(landed[j]) ):
+    for i in range(0, len(blockPerimeter)):
+        for j in range(0, len(landed)):
+            for k in range(0, len(landed[j])):
                 if landed[j][k] != None:
                     if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
                         return True
-    for i in range (0, len(blockPerimeter)):
+    for i in range(0, len(blockPerimeter)):
         if blockPerimeter[i].getX() < LEFT_BOUNDARY:
             block.setX(block.getX() + BLOCK_SIZE)
             pos_x += BLOCK_SIZE
@@ -143,7 +152,7 @@ def checkCollisionRotation():
                 block.setX(block.getX() - BLOCK_SIZE)
                 pos_x -= BLOCK_SIZE
                 return True
-            break;
+            break
         elif blockPerimeter[i].getX() > RIGHT_BOUNDARY - BLOCK_SIZE:
             block.setX(block.getX() - BLOCK_SIZE)
             pos_x -= BLOCK_SIZE
@@ -151,7 +160,7 @@ def checkCollisionRotation():
                 block.setX(block.getX() + BLOCK_SIZE)
                 pos_x += BLOCK_SIZE
                 return True
-            break;
+            break
         elif blockPerimeter[i].getY() > HEIGHT - BLOCK_SIZE:
             block.setY(block.getY() - BLOCK_SIZE)
             pos_y -= BLOCK_SIZE
@@ -159,24 +168,21 @@ def checkCollisionRotation():
                 block.setX(block.getX() + BLOCK_SIZE)
                 pos_y += BLOCK_SIZE
                 return True
-            break;
+            break
     return False
+
 
 def x2Index(x):
     return (x - LEFT_BOUNDARY) / BLOCK_SIZE
 
+
 def y2Index(y):
-    return (24 * BLOCK_SIZE - y) / BLOCK_SIZE
-    
+    return y / BLOCK_SIZE
+
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        
+
 
 while not gameExit:
-    if (block != None):
-        print block.getX()
-    print LEFT_BOUNDARY
-    print RIGHT_BOUNDARY
-    print BLOCK_SIZE
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameExit = True
@@ -216,11 +222,11 @@ while not gameExit:
         if event.type == TICK:
             pos_y = tick(pos_y)
 
-
     # drawing bg
     gameDisplay.fill(white)
     gameDisplay.fill(black, [0, 0, LEFT_BOUNDARY, HEIGHT])
-    gameDisplay.fill(black, [RIGHT_BOUNDARY, 0, WIDTH - RIGHT_BOUNDARY, HEIGHT])
+    gameDisplay.fill(
+        black, [RIGHT_BOUNDARY, 0, WIDTH - RIGHT_BOUNDARY, HEIGHT])
 
     # drawing block objs
     if not currentBlock:
@@ -242,15 +248,16 @@ while not gameExit:
         pos_x = INIT_X
         pos_y = INIT_Y
         currentBlock = True
-    for i in range(0, len(landed) ):
-        for j in range(0, len(landed[i]) ):
+    for i in range(0, len(landed)):
+        for j in range(0, len(landed[i])):
             if (landed[i][j] != None):
                 landed[i][j].display(gameDisplay)
     block.display(gameDisplay)
-    
+
     # score
     screen_text = font.render("score: " + str(score), True, white)
-    gameDisplay.blit(screen_text, (RIGHT_BOUNDARY + LEFT_BOUNDARY / 10, HEIGHT / 20))
+    gameDisplay.blit(screen_text, (RIGHT_BOUNDARY +
+                                   LEFT_BOUNDARY / 10, HEIGHT / 20))
 
     # collision checking
     if not hasMove:
@@ -264,11 +271,10 @@ while not gameExit:
             pos_x += dx
             pos_y += dy
 
-            
         hasMove = True
-    
+
     pygame.display.update()
-    
+
     clock.tick(speed)
     hasMove = False
 
