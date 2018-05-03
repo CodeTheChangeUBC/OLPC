@@ -50,7 +50,7 @@ blockPlaced = False
 global blockList
 blockList = []
 speed = 10
-
+landed = [[0 for i in range(20)] for j in range(10)]
 
 TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
@@ -65,6 +65,8 @@ def tick(pos_y):
         if checkCollision():
             block.setY(pos_y)
             currentBlock = False
+            for i in range (0, len(block.getPerimeter())):
+                landed[block.getPerimeter()[i].getX()][block.getPerimeter()[i].getY()]
         else:
             pos_y += BLOCK_SIZE
     return pos_y
