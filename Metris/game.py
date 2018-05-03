@@ -2,11 +2,11 @@ import pygame
 from random import randint
 from BlockT import BlockT
 from BlockO import BlockO
-#from BlockI import BlockI
+from BlockI import BlockI
 from BlockL import BlockL
 from BlockS import BlockS
-# from BlockZ import BlockZ
-# from BlockJ import BlockJ
+from BlockZ import BlockZ
+from BlockJ import BlockJ
 
 pygame.init()
 
@@ -50,7 +50,7 @@ blockPlaced = False
 global blockList
 blockList = []
 speed = 10
-global landed = [][]
+landed = [[0 for i in range(20)] for j in range(10)]
 
 TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
@@ -65,6 +65,8 @@ def tick(pos_y):
         if checkCollision():
             block.setY(pos_y)
             currentBlock = False
+            for i in range (0, len(block.getPerimeter())):
+                landed[block.getPerimeter()[i].getX()][block.getPerimeter()[i].getY()]
         else:
             pos_y += BLOCK_SIZE
     return pos_y
@@ -183,7 +185,7 @@ while not gameExit:
                     block.rotateL()
                     if checkCollisionRotation():
                         block.rotateR()
-            elif event.key == pygame.KMOD_SHIFT:
+            elif event.key == pygame.K_z:
                 if currentBlock:
                     block.rotateR()
                     if checkCollisionRotation():
@@ -213,13 +215,13 @@ while not gameExit:
         elif rand == 1:
             block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
         elif rand == 2:
-            block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+            block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
         elif rand == 3:
-            block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+            block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
         elif rand == 4:
-            block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+            block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
         elif rand == 5:
-            block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+            block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
         elif rand == 6:
             block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
         blockList.insert(len(blockList), block)

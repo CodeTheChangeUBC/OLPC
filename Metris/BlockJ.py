@@ -62,31 +62,29 @@ class BlockJ(object):
 
     def rotateR(self):
         if self.orientation % 4 == 0:
-            self.blockList[3].setRelativeY(self.size)
-            self.blockList[3].setRelativeX(self.size)
-            self.blockList[2].setRelativeY(-self.size)
-            self.blockList[2].setRelativeX(-self.size)
             self.blockList[1].setRelativeY(-2*self.size)
-        elif self.orientation % 4 == 1:
-            self.blockList[3].setRelativeY(self.size)
-            self.blockList[3].setRelativeX(-self.size)
-            self.blockList[2].setRelativeX(self.size)
+            self.blockList[2].setRelativeX(-self.size)
             self.blockList[2].setRelativeY(-self.size)
-            self.blockList[1].setRelativeX(2*self.size)
+            self.blockList[3].setRelativeX(self.size)
+            self.blockList[3].setRelativeY(self.size)
+        elif self.orientation % 4 == 1:
+            self.blockList[1].setRelativeX(-2*self.size)
+            self.blockList[2].setRelativeX(-self.size)
+            self.blockList[2].setRelativeY(self.size)
+            self.blockList[3].setRelativeX(self.size)
+            self.blockList[3].setRelativeY(-self.size)
         elif self.orientation % 4 == 2:
-            self.blockList[3].setY(self.blockList[0].getY())
-            self.blockList[3].setX(self.blockList[0].getX()-self.size)
-            self.blockList[2].setY(self.blockList[0].getY())
-            self.blockList[2].setX(self.blockList[0].getX()+self.size)
-            self.blockList[1].setX(self.blockList[2].getX())
-            self.blockList[1].setY(self.blockList[2].getY()+self.size)
+            self.blockList[1].setRelativeY(2*self.size)
+            self.blockList[2].setRelativeX(self.size)
+            self.blockList[2].setRelativeY(self.size)
+            self.blockList[3].setRelativeX(-self.size)
+            self.blockList[3].setRelativeY(-self.size)
         elif self.orientation % 4 == 3:
-            self.blockList[3].setX(self.blockList[0].getX())
-            self.blockList[3].setY(self.blockList[0].getY()-self.size)
-            self.blockList[2].setX(self.blockList[0].getX())
-            self.blockList[2].setY(self.blockList[0].getY()+self.size)
-            self.blockList[1].setY(self.blockList[2].getY())
-            self.blockList[1].setX(self.blockList[2].getX()-self.size)
+            self.blockList[1].setRelativeX(2*self.size)
+            self.blockList[2].setRelativeY(-self.size)
+            self.blockList[2].setRelativeX(self.size)
+            self.blockList[3].setRelativeX(-self.size)
+            self.blockList[3].setRelativeY(self.size)
 
         self.orientation = self.orientation - 1
             
