@@ -9,8 +9,8 @@ class BlockI(object):
         self.x = x
         self.y = y
         self.size = size
-        self.blockList = [Block(x, y + size, size), Block(x, y, size), Block(x, y - size, size), Block(x, y - 2*size, size)]
         self.color = (135,206,250)
+        self.blockList = [Block(x, y + size, size, self.color), Block(x, y, size, self.color), Block(x, y - size, size, self.color), Block(x, y - 2*size, size, self.color)]
         self.orientation = 0
 
     def display(self, gameDisplay):

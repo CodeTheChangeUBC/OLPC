@@ -28,7 +28,7 @@ black = (0, 0, 0)
 #pygame.display.flip()
 pygame.display.update()
 
-
+global gameExit
 gameExit = False
 
 block1 = [BLOCK_SIZE, BLOCK_SIZE]
@@ -39,6 +39,7 @@ pos_y = 10
 dx = 0
 dy = 0
 hasMove = False
+global score
 score = 0
 font = pygame.font.SysFont(None, 25)
 gone_down = False
@@ -50,7 +51,8 @@ blockPlaced = False
 global landed
 landed = []
 speed = 10
-landed = [[None for i in range(24)] for j in range(10)]
+
+landed = [[None for i in range(25)] for j in range(10)]
 
 TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
@@ -68,10 +70,11 @@ def tick(pos_y):
         if checkCollision():
             block.setY(pos_y)
             currentBlock = False
-            for i in range(0, len(block.getPerimeter())):
-                landed[x2Index(block.getPerimeter()[i].getX())][y2Index(
-                    block.getPerimeter()[i].getY())] = block.getPerimeter()[i]
+
+            for i in range (0, len(block.getPerimeter())):
+                landed[x2Index(block.getPerimeter()[i].getX())][y2Index(block.getPerimeter()[i].getY())] = block.getPerimeter()[i]
             checkLandedAndDelete()
+            checkGameOver()
         else:
             pos_y += BLOCK_SIZE
     return pos_y
@@ -82,46 +85,63 @@ def checkLandedAndDelete():
     rowsToDelete = []
     while (y < len(landed[0])):
         if (rowFilled(y)):
-            rowsToDelete.append(y)
-        y += 1
-        
-
+            rowsToDelete.insert(len(rowsToDelete), y)
+        y = y + 1
     deleteRows(rowsToDelete)
 
 
 def rowFilled(y):
-    for x in range(0, len(landed)):
-            if (landed[x][y] == None):
-                return False
+    for x in range (0, len(landed)):
+        if (landed[x][y] == None):
+            return False
     return True
 
 
 def deleteRows(rows):
-    # move everything down 1
-    while(len(rows) > 0):
-        y = rows.pop(0)
-        # if not the top row
-        if (y > 0):
-            for curr in range(y, 0, -1):
-                for x in range(0, len(landed)):
-                    landed[x][curr] = landed[x][curr - 1]
-                    if (landed[x][curr - 1] != None):
-                        landed[x][curr].setY(curr * BLOCK_SIZE + 10)
-            # else we are at the top row
-        else:
-            for x in range(0, len(landed)):
-                landed[x][y] = None
+    global score
+    # delete rows
+    for i in range (0, len(rows)):
+        for x in range (0, len(landed)):
+            landed[x][rows[i]] = None
+    # move rows above deleted rows down
+    for i in range (0, len(rows)):
+        for y in range (rows[i], 0, -1):
+            for x in range (0, len(landed)):
+                if y > 0:
+                    if landed[x][y - 1] != None:
+                        landed[x][y - 1].setRelativeY(BLOCK_SIZE)
+                    landed[x][y] = landed[x][y - 1]
+                    
+    # update score
+    score = score + len(rows)*len(rows)*10
+            
+##    # move everything down 1
+##    for y in range(rows[0], len(landed[0]) - 1):
+##        for x in range(0, len(landed) - 1):
+##            # if not the top row
+##            if (y + len(rows) < len(landed[0])):
+##                landed[x][y] = landed[x][y - rows.len()]
+##            # else we are at the top row
+##            else :
+##                landed[x][y] = None
+##            landed[x][y].setY(y + BLOCK_SIZE)
 
-
+def checkGameOver():
+    global gameExit
+    for y in range (0, len(landed[0]) - 20):
+        for x in range (0, len(landed)):
+            if landed[x][y] != None:
+                gameExit = True
+            
 def checkCollision():
     global currentBlock
     if not currentBlock:
         return False
     global landed
     blockPerimeter = block.getPerimeter()
-    for i in range(0, len(blockPerimeter)):
-        for j in range(0, len(landed)):
-            for k in range(0, len(landed[j])):
+    for i in range (0, len(blockPerimeter)):
+        for j in range (0, len(landed)):
+            for k in range (0, len(landed[j])):
                 if landed[j][k] != None:
                     if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
                         return True
@@ -138,13 +158,18 @@ def checkCollisionRotation():
         return False
     global landed
     blockPerimeter = block.getPerimeter()
-    for i in range(0, len(blockPerimeter)):
-        for j in range(0, len(landed)):
-            for k in range(0, len(landed[j])):
+    for i in range (0, len(blockPerimeter)):
+        for j in range (0, len(landed)):
+            for k in range (0, len(landed[j])):
                 if landed[j][k] != None:
                     if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
-                        return True
-    for i in range(0, len(blockPerimeter)):
+                        block.setY(block.getY() - BLOCK_SIZE)
+                        pos_y -= BLOCK_SIZE
+                        if checkCollision():
+                            block.setY(block.getY() + BLOCK_SIZE)
+                            pos_y += BLOCK_SIZE
+                            return True
+    for i in range (0, len(blockPerimeter)):
         if blockPerimeter[i].getX() < LEFT_BOUNDARY:
             block.setX(block.getX() + BLOCK_SIZE)
             pos_x += BLOCK_SIZE
@@ -165,7 +190,7 @@ def checkCollisionRotation():
             block.setY(block.getY() - BLOCK_SIZE)
             pos_y -= BLOCK_SIZE
             if checkCollision():
-                block.setX(block.getX() + BLOCK_SIZE)
+                block.setY(block.getX() + BLOCK_SIZE)
                 pos_y += BLOCK_SIZE
                 return True
             break
@@ -178,7 +203,7 @@ def x2Index(x):
 
 def y2Index(y):
     return y / BLOCK_SIZE
-
+    
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -190,46 +215,53 @@ while not gameExit:
             if event.key == pygame.K_LEFT:
                 if pos_x:
                     dx = -BLOCK_SIZE
-                    dy = 0
-                    speed = 10
+                    # dy = 0
+                    if event.key == pygame.K_DOWN:
+                        speed = 10
             elif event.key == pygame.K_RIGHT:
                 if pos_x:
                     dx = BLOCK_SIZE
-                    dy = 0
-                    speed = 10
+                    # dy = 0
+                    if event.key == pygame.K_DOWN:
+                        speed = 10
             elif event.key == pygame.K_DOWN:
                 dy = BLOCK_SIZE
-                dx = 0
+                # dx = 0
                 speed = 20
             elif event.key == pygame.K_UP:
-                if currentBlock:
-                    block.rotateL()
-                    if checkCollisionRotation():
-                        block.rotateR()
-            elif event.key == pygame.K_z:
                 if currentBlock:
                     block.rotateR()
                     if checkCollisionRotation():
                         block.rotateL()
+            elif event.key == pygame.K_z:
+                if currentBlock:
+                    block.rotateL()
+                    if checkCollisionRotation():
+                        block.rotateR()
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or pygame.K_RIGHT:
-                dx = 0
-                dy = 0
+            if event.key == pygame.K_LEFT:
+                if dx < 0:
+                    dx = 0
+                # dy = 0
+            if event.key == pygame.K_RIGHT:
+                if dx > 0:
+                    dx = 0
             if event.key == pygame.K_DOWN:
                 dy = 0
-                dx = 0
+                # dx = 0
                 speed = 10
         if event.type == TICK:
             pos_y = tick(pos_y)
+            
 
     # drawing bg
     gameDisplay.fill(white)
     gameDisplay.fill(black, [0, 0, LEFT_BOUNDARY, HEIGHT])
-    gameDisplay.fill(
-        black, [RIGHT_BOUNDARY, 0, WIDTH - RIGHT_BOUNDARY, HEIGHT])
+    gameDisplay.fill(black, [RIGHT_BOUNDARY, 0, WIDTH - RIGHT_BOUNDARY, HEIGHT])
+    gameDisplay.fill(black, [0, 0, WIDTH, HEIGHT - 20*BLOCK_SIZE])
 
     # drawing block objs
-    if not currentBlock:
+    if not currentBlock and not gameExit:
         rand = randint(0, 6)
         if rand == 0:
             block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
