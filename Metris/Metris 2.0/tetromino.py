@@ -176,15 +176,24 @@ def main():
         showTextScreen('Game Over')
 
 
+def randomQuestion():
+    question = '2+2'
+    return 2+2
+
+
 def runGame():
     # setup variables for the start of the game
     board = getBlankBoard()
     lastMoveDownTime = time.time()
     lastMoveSidewaysTime = time.time()
     lastFallTime = time.time()
-    movingDown = False # note: there is no movingUp variable
+    movingDown = False  # note: there is no movingUp variable
     movingLeft = False
     movingRight = False
+    questionforText = randomQuestion()
+    question = '2+2'
+    realAnswer = 4
+    inputAnswer = 0
     score = 0
     level, fallFreq = calculateLevelAndFallFreq(score)
 
@@ -291,7 +300,9 @@ def runGame():
         DISPLAYSURF.fill(BGCOLOR)
         drawBoard(board)
         drawStatus(score, level)
+        drawQuestion(question)
         drawNextPiece(nextPiece)
+        drawCompliment()
         if fallingPiece != None:
             drawPiece(fallingPiece)
 
@@ -478,6 +489,15 @@ def drawStatus(score, level):
     levelRect.topleft = (WINDOWWIDTH - 150, 50)
     DISPLAYSURF.blit(levelSurf, levelRect)
 
+def drawQuestion(question):
+    #draw the question text
+    questionSurf = BASICFONT.render('Question: %s' % question, True, TEXTCOLOR)
+    questionRect = questionSurf.get_rect()
+    questionRect.topleft = (20,20)
+    DISPLAYSURF.blit(questionSurf, questionRect)
+
+
+
 
 def drawPiece(piece, pixelx=None, pixely=None):
     shapeToDraw = PIECES[piece['shape']][piece['rotation']]
@@ -500,6 +520,21 @@ def drawNextPiece(piece):
     DISPLAYSURF.blit(nextSurf, nextRect)
     # draw the "next" piece
     drawPiece(piece, pixelx=WINDOWWIDTH-120, pixely=100)
+
+def drawCompliment():
+    rand = random.randint(0, 3)
+    if rand == 0:
+        compliment = "Not bad!"
+    elif rand == 1:
+        compliment = "Could do better!"
+    elif rand == 2:
+        compliment = "Try a little harder!"
+    elif rand == 3:
+        compliment = "You are sooo good at this."
+    complimentSurf = BIGFONT.render(compliment, True, TEXTCOLOR)
+    complimentRect = complimentSurf.get_rect()
+    complimentRect.topleft = (WINDOWWIDTH / 2, 20)
+    DISPLAYSURF.blit(complimentSurf, complimentRect)
 
 
 if __name__ == '__main__':
