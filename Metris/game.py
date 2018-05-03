@@ -200,6 +200,7 @@ while not gameExit:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameExit = True
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 if pos_x:
@@ -217,6 +218,7 @@ while not gameExit:
                 dy = BLOCK_SIZE
                 # dx = 0
                 speed = 20
+                
             elif event.key == pygame.K_UP:
                 if currentBlock:
                     block.rotateR()
@@ -227,6 +229,15 @@ while not gameExit:
                     block.rotateL()
                     if checkCollisionRotation():
                         block.rotateR()
+            elif event.key == pygame.K_SPACE:
+                while (not checkCollision()):
+                    block.setY(block.getY() + BLOCK_SIZE)
+                    pos_y += BLOCK_SIZE
+
+                block.setY(block.getY() - BLOCK_SIZE)
+                pos_y -= BLOCK_SIZE
+
+                pos_y = tick(pos_y)
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 if dx < 0:
