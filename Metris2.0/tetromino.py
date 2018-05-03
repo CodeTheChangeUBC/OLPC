@@ -167,10 +167,17 @@ def main():
 
     showTextScreen('Tetromino')
     while True: # game loop
-        if random.randint(0, 1) == 0:
+        num = randint(0, 4)
+        if num == 0:
             pygame.mixer.music.load('tetrisb.mid')
+        if num == 1:
+            pygame.mixer.music.load('ff7.mid')
+        if num == 2:
+            pygame.mixer.music.load('eye.mid')
+        if num == 3:
+            pygame.mixer.music.load('hip.mid')
         else:
-            pygame.mixer.music.load('tetrisc.mid')
+            pygame.mixer.music.load('mur.mid')
         pygame.mixer.music.play(-1, 0.0)
         runGame()
         pygame.mixer.music.stop()
