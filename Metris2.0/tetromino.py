@@ -200,11 +200,13 @@ def runGame():
     o_upbound = 0
     q1_upbound = 0
     q2_upbound = 0
-    bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, level)
+    o_lbound = 0
+    bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level)
     o_upbound = bound_list[0]
     q1_upbound = bound_list[1]
     q2_upbound = bound_list[2]
-    operator = randint(0,o_upbound)
+    o_lbound = bound_list[3]
+    operator = randint(o_lbound,o_upbound)
     q2 = randint(0,q2_upbound)
     if operator == 3:
         q1 = q2*randint(0, q1_upbound)
@@ -308,14 +310,15 @@ def runGame():
                 # check for correct answer
                 elif event.key == char:
                     if numTries < 1:
-                        bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, level)
+                        bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level)
                         o_upbound = bound_list[0]
                         q1_upbound = bound_list[1]
                         q2_upbound = bound_list[2]
+                        o_lbound = bound_list[3]
                         diff1 = randint(1, 10)
                         diff2 = randint(1, 10)
                         diff3 = randint(1, 20)
-                        operator = randint(0,o_upbound)
+                        operator = randint(o_lbound,o_upbound)
                         q2 = randint(0,q2_upbound)
                         if operator == 3:
                             q1 = q2*randint(0, q1_upbound)
@@ -363,14 +366,15 @@ def runGame():
                 fallingPiece = None
                 numTries = 0
                 conrolsOn = False
-                bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, level)
+                bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level)
                 diff1 = randint(1, 10)
                 diff2 = randint(1, 10)
                 diff3 = randint(1, 20)
                 o_upbound = bound_list[0]
                 q1_upbound = bound_list[1]
                 q2_upbound = bound_list[2]
-                operator = randint(0,o_upbound)
+                o_lbound = bound_list[3]
+                operator = randint(o_lbound,o_upbound)
                 q2 = randint(0,q2_upbound)
                 if operator == 3:
                     q1 = q2*randint(0, q1_upbound)
@@ -402,36 +406,62 @@ def runGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
-def calculateUpbound(o_upbound, q1_upbound, q2_upbound, level):
+def calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level):
     if level == 1:
         o_upbound = 0
+        o_lbound = 0
         q1_upbound = 9
         q2_upbound = 9
     elif level == 2:
         o_upbound = 1
+        o_lbound = 0
         q1_upbound = 9
         q2_upbound = 9
     elif level == 3:
         o_upbound = 2
+        o_lbound = 2
         q1_upbound = 9
         q2_upbound = 9
     elif level == 4:
         o_upbound = 3
+        o_lbound = 2
         q1_upbound = 9
         q2_upbound = 9
     elif level == 5:
-        o_upbound = 3
+        o_upbound = 1
+        o_lbound = 0
         q1_upbound = 9
         q2_upbound = 20
     elif level == 6:
+        o_upbound = 1
+        o_lbound = 0
+        q1_upbound = 20
+        q2_upbound = 20
+    elif level == 7:
+        o_upbound = 2
+        o_lbound = 0
+        q1_upbound = 20
+        q2_upbound = 20
+    elif level == 8:
         o_upbound = 3
         q1_upbound = 20
         q2_upbound = 20
-    elif level >= 7:
+    elif level == 9:
         o_upbound = 3
+        o_lbound = 0
         q1_upbound = 40
         q2_upbound = 40
-    return [o_upbound, q1_upbound, q2_upbound]
+    elif level == 10:
+        o_upbound = 4
+        o_lbound = 4
+        q1_upbound = 10
+        q2_upbound = 5
+    elif level >= 11:
+        o_upbound = 3
+        o_lbound = 0
+        q1_upbound = 60
+        q2_upbound= 60
+    return [o_upbound, q1_upbound, q2_upbound, o_lbound]
 
 def makeTextObjs(text, font, color):
     surf = font.render(text, True, color)
@@ -490,7 +520,7 @@ def checkForQuit():
 def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
-    level = int(score / 70) + 1
+    level = int(score / 80) + 1
     fallFreq = 0.8 - (level * 0.02)
     return level, fallFreq
 
@@ -626,7 +656,6 @@ def drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, 
     questionRect = questionSurf.get_rect()
     questionRect.topleft = (20, 20)
     DISPLAYSURF.blit(questionSurf, questionRect)
-
     if operator == 0:
         o = '+'
     elif operator == 1:
@@ -635,6 +664,8 @@ def drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, 
         o = '*'
     elif operator == 3:
         o = '/'
+    elif operator == 4:
+        o = '^'
     qSurf = BASICFONT.render('%s %s %s' % (q1, o, q2) , True, TEXTCOLOR)
     qRect = qSurf.get_rect()
     qRect.topleft= (20, 40)
