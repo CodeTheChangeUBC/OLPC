@@ -180,7 +180,7 @@ while not gameExit:
     if not currentBlock:
         rand = randint(0, 6)
         if rand == 0:
-            block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
+            block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
         elif rand == 1:
             block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
         elif rand == 2:
@@ -190,7 +190,7 @@ while not gameExit:
         elif rand == 4:
             block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
         elif rand == 5:
-            block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+            block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
         elif rand == 6:
             block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
         blockList.insert(len(blockList), block)
