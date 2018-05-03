@@ -50,7 +50,7 @@ blockPlaced = False
 global landed
 landed = []
 speed = 10
-landed = [[0 for i in range(20)] for j in range(10)]
+landed = [[None for i in range(20)] for j in range(10)]
 
 TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
@@ -66,7 +66,7 @@ def tick(pos_y):
             block.setY(pos_y)
             currentBlock = False
             for i in range (0, len(block.getPerimeter())):
-                landed[block.getPerimeter()[i].getX()][block.getPerimeter()[i].getY()]
+                landed[x2Index(block.getPerimeter()[i].getX())][y2Index(block.getPerimeter()[i].getY())] = block.getPerimeter()[i]
         else:
             pos_y += BLOCK_SIZE
     return pos_y
@@ -74,31 +74,31 @@ def tick(pos_y):
 def checkLandedAndDelete():
     y = 0
     rowsToDelete = []
-    while (y < landed[0].len)
+    while (y < len(landed[0])):
         if (rowFilled(y)):
-            rowsToDelete.append(y);
-        else
-            y++
+            rowsToDelete.append(y)
+        else:
+            y = y + 1
 
     deleteRows(rowsToDelete)
 
 def rowFilled(y):
     for x in range (0, landed.len() - 1):
-            if (landed[x][y] == None)
+            if (landed[x][y] == None):
                 return False
     return True
 
 def deleteRows(rows):
     # move everything down 1
-    for y in range(rows[0], landed[0].len() - 1)
-        for x in range(0, landed.len() - 1)
+    for y in range(rows[0], len(landed[0]) - 1):
+        for x in range(0, len(landed) - 1):
             # if not the top row
-            if (y + rows.len() < landed[0].len()) 
-                landed[x][y] = landed[x][y + rows.len()];
+            if (y + len(rows) < len(landed[0])):
+                landed[x][y] = landed[x][y - rows.len()]
             # else we are at the top row
-            else 
+            else :
                 landed[x][y] = None
-            landed[x][y].setY(y - size);
+            landed[x][y].setY(y + BLOCK_SIZE)
             
 def checkCollision():
     global currentBlock
@@ -109,8 +109,9 @@ def checkCollision():
     for i in range (0, len(blockPerimeter)):
         for j in range (0, len(landed) - 1):
             for k in range (0, len(landed[j]) - 1):
-                if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
-                    return True
+                if landed[j][k] != None:
+                    if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
+                        return True
     for i in range (0, len(blockPerimeter)):
         if blockPerimeter[i].getX() < LEFT_BOUNDARY or blockPerimeter[i].getX() > RIGHT_BOUNDARY - BLOCK_SIZE or blockPerimeter[i].getY() > HEIGHT - BLOCK_SIZE:
             return True
@@ -126,8 +127,9 @@ def checkCollisionRotation():
     for i in range (0, len(blockPerimeter)):
         for j in range (0, len(landed) - 1):
             for k in range (0, len(landed[j]) - 1):
-                if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
-                    return True
+                if landed[j][k] != None:
+                    if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
+                        return True
     for i in range (0, len(blockPerimeter)):
         if blockPerimeter[i].getX() < LEFT_BOUNDARY:
             block.setX(block.getX() + BLOCK_SIZE)
@@ -155,6 +157,11 @@ def checkCollisionRotation():
             break;
     return False
 
+def x2Index(x):
+    return (x - LEFT_BOUNDARY) / BLOCK_SIZE
+
+def y2Index(y):
+    return (20 * BLOCK_SIZE - y) / BLOCK_SIZE
     
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         
@@ -227,7 +234,8 @@ while not gameExit:
         currentBlock = True
     for i in range(0, len(landed) - 1):
         for j in range(0, len(landed[i]) - 1):
-            landed[i][j].display(gameDisplay)
+            if (landed[i][j] != None):
+                landed[i][j].display(gameDisplay)
     block.display(gameDisplay)
     
     # score

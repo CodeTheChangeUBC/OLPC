@@ -1,3 +1,5 @@
+import pygame
+
 class Block(object):
     def __init__(self, x, y, size):
         self.x = x
@@ -20,5 +22,9 @@ class Block(object):
 
     def setRelativeX(self, dx):
         self.x += dx
+
+    def display(self, gameDisplay):
+        pygame.draw.rect(gameDisplay, Block.black, [self.x, self.y, self.size, self.size])
+        pygame.draw.rect(gameDisplay, Block.black, [self.x, self.y, self.size, self.size])
 
     black = (0, 0, 0)
