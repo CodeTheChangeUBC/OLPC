@@ -1,4 +1,5 @@
 import pygame
+from random import shuffle
 from random import randint
 from BlockT import BlockT
 from BlockO import BlockO
@@ -226,6 +227,15 @@ def drawShadow(blockList, dy):
         pygame.draw.rect(gameDisplay, (255, 255, 255),
              [blockList[i].getX() + 1, blockList[i].getY() + dy + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2])
 
+def getRandomBlockSet(lastBlock):
+    set = [0, 1, 2, 3, 4, 5, 6]
+    shuffle(set)
+    if set[0] == lastBlock:
+        tmp = set[0]
+        set[0] = set[5]
+        set[5] = tmp
+    return set
+
 def paused():
     pause = True
 
@@ -280,6 +290,10 @@ def runGame():
     global dy
     global block
     global speed
+    global pos_y
+    global pos_x
+    blockSet = getRandomBlockSet(7)
+
     while not gameExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -348,7 +362,9 @@ def runGame():
 
         # drawing block objs
         if not currentBlock and not gameExit:
-            rand = randint(0, 6)
+            rand = blockSet.pop()
+            if (len(blockSet) == 0):
+                blockSet = getRandomBlockSet(rand)
             if rand == 0:
                 block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
             elif rand == 1:
