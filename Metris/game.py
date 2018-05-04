@@ -227,6 +227,15 @@ def drawShadow(blockList, dy):
         pygame.draw.rect(gameDisplay, (255, 255, 255),
              [blockList[i].getX() + 1, blockList[i].getY() + dy + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2])
 
+def getRandomBlockSet(lastBlock):
+    set = [0, 1, 2, 3, 4, 5, 6]
+    shuffle(set)
+    if set[0] == lastBlock:
+        tmp = set[0]
+        set[0] = set[5]
+        set[5] = tmp
+    return set
+
 def paused():
     pause = True
 
@@ -290,7 +299,9 @@ def runGame():
     global dy
     global block
     global speed
-    blockSet = getRandomBlockSet(7) # 7 as input means no bias first iteration
+    global pos_y
+    global pos_x
+    blockSet = getRandomBlockSet(7)
     
     while not gameExit:
         for event in pygame.event.get():
@@ -350,62 +361,61 @@ def runGame():
                     speed = 10
             if event.type == TICK:
                 pos_y = tick(pos_y)
-            
-    # drawing bg
-    gameDisplay.fill(white)
-    gameDisplay.fill(black, [0, 0, LEFT_BOUNDARY, HEIGHT])
-    gameDisplay.fill(black, [RIGHT_BOUNDARY, 0, WIDTH - RIGHT_BOUNDARY, HEIGHT])
-    gameDisplay.fill(black, [0, 0, WIDTH, HEIGHT - 20*BLOCK_SIZE])
 
-    # drawing block objs
-    if not currentBlock and not gameExit:
-        rand = blockSet.pop()
-        if len(blockSet) == 0:
-            blockSet = getRandomBlockSet(rand)
+        # drawing bg
+        gameDisplay.fill(white)
+        gameDisplay.fill(black, [0, 0, LEFT_BOUNDARY, HEIGHT])
+        gameDisplay.fill(black, [RIGHT_BOUNDARY, 0, WIDTH - RIGHT_BOUNDARY, HEIGHT])
+        gameDisplay.fill(black, [0, 0, WIDTH, HEIGHT - 20*BLOCK_SIZE])
 
-        if rand == 0:
-            block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif rand == 1:
-            block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif rand == 2:
-            block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif rand == 3:
-            block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif rand == 4:
-            block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif rand == 5:
-            block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif rand == 6:
-            block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
-        pos_x = INIT_X
-        pos_y = INIT_Y
-        currentBlock = True
-    difference = getShadowDifference(block.getPerimeter())
-    drawShadow(block.getPerimeter(), difference)
-    for i in range(0, len(landed)):
-        for j in range(0, len(landed[i])):
-            if (landed[i][j] != None):
-                landed[i][j].display(gameDisplay)
-    block.display(gameDisplay)
+        # drawing block objs
+        if not currentBlock and not gameExit:
+            rand = blockSet.pop()
+            if (len(blockSet) == 0):
+                blockSet = getRandomBlockSet(rand)
+            if rand == 0:
+                block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+            elif rand == 1:
+                block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+            elif rand == 2:
+                block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
+            elif rand == 3:
+                block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
+            elif rand == 4:
+                block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+            elif rand == 5:
+                block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
+            elif rand == 6:
+                block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
+            pos_x = INIT_X
+            pos_y = INIT_Y
+            currentBlock = True
+        difference = getShadowDifference(block.getPerimeter())
+        drawShadow(block.getPerimeter(), difference)
+        for i in range(0, len(landed)):
+            for j in range(0, len(landed[i])):
+                if (landed[i][j] != None):
+                    landed[i][j].display(gameDisplay)
+        block.display(gameDisplay)
 
-    # score
-    screen_text = font.render("score: " + str(score), True, white)
-    gameDisplay.blit(screen_text, (RIGHT_BOUNDARY +
-                                   LEFT_BOUNDARY / 10, HEIGHT / 20))
+        # score
+        screen_text = font.render("score: " + str(score), True, white)
+        gameDisplay.blit(screen_text, (RIGHT_BOUNDARY +
+                                    LEFT_BOUNDARY / 10, HEIGHT / 20))
 
-    # collision checking
-    if not hasMove:
-        #clock.tick(10) - movement speed
-        block.setX(pos_x + dx)
-        block.setY(pos_y + dy)
-        if checkCollision():
-            block.setX(pos_x)
-            block.setY(pos_y)
-        else:
-            pos_x += dx
-            pos_y += dy
-        
-        hasMove = True
+        # collision checking
+        if not hasMove:
+            #clock.tick(10) - movement speed
+            block.setX(pos_x + dx)
+            block.setY(pos_y + dy)
+            if checkCollision():
+                block.setX(pos_x)
+                block.setY(pos_y)
+            else:
+                pos_x += dx
+                pos_y += dy
+
+            hasMove = True
 
         pygame.display.update()
 
