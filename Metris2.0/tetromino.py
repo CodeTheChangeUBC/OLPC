@@ -681,7 +681,7 @@ def drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, mul
     if (diff1 < 9):
         qSurf = BASICFONT.render('%s %s %s' % (q1, o, q2) , True, TEXTCOLOR)
         qRect = qSurf.get_rect()
-        qRect.topleft= (20, 40)
+        qRect.topleft= (20, 50)
         DISPLAYSURF.blit(qSurf, qRect)
     else:
         if two_op == 0:
@@ -690,13 +690,13 @@ def drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, mul
             t = '-'
         qSurf = BASICFONT.render('%s %s %s %s %s' % (q1, o, q2, t, multi_var) , True, TEXTCOLOR)
         qRect = qSurf.get_rect()
-        qRect.topleft= (20, 40)
+        qRect.topleft= (20, 50)
         DISPLAYSURF.blit(qSurf, qRect)
 
     # draw answer text
     answerSurf = BASICFONT.render('Answer :', True, TEXTCOLOR)
     answerRect = answerSurf.get_rect()
-    answerRect.topleft = (20, 60)
+    answerRect.topleft = (20, 80)
     DISPLAYSURF.blit(answerSurf, answerRect)
 
     if (diff1 < 9):
@@ -724,7 +724,7 @@ def drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, mul
             char = '4)'
         aSurf = BASICFONT.render(char + '   %s' % (sol_print), True, TEXTCOLOR)
         aRect = aSurf.get_rect()
-        aRect.topleft = (20, 80+x*20)
+        aRect.topleft = (20, 110+x*30)
         DISPLAYSURF.blit(aSurf, aRect)
         if x == 3:
             list_count = 0
@@ -753,7 +753,7 @@ def drawNextPiece(piece):
 
 def drawCompliment(rand):
     if rand == 10:
-        return
+        compliment = "Welcome, player!"
     if rand == 0:
         compliment = "Great!"
     elif rand == 1:
@@ -765,7 +765,7 @@ def drawCompliment(rand):
     elif rand == 4:
         compliment = "Incorrect input."
     elif rand == 5:
-        compliment = "Nice try."
+        compliment = "Nice try!"
     elif rand == 6:
         compliment = "Keep going!"
     elif rand == 7:
@@ -776,8 +776,8 @@ def drawCompliment(rand):
     complimentRect = complimentSurf.get_rect()
     complimentRect.midtop = (WINDOWWIDTH/2, 20)
     DISPLAYSURF.blit(complimentSurf, complimentRect)
-    if rand >= 4:
-        controlSurf = BASICFONT.render("Lost control.", True, TEXTCOLOR)
+    if rand == 4 or rand == 5 or rand == 6 or rand == 7:
+        controlSurf = BASICFONT.render("Lost controls.", True, TEXTCOLOR)
         controlRect = controlSurf.get_rect()
         controlRect.topleft = (WINDOWWIDTH - 150, 200)
         DISPLAYSURF.blit(controlSurf, controlRect)
