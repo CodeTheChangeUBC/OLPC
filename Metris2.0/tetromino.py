@@ -311,6 +311,9 @@ def runGame():
                 # check for correct answer
                 elif event.key == char:
                     if numTries < 1:
+                        hard_q = False
+                        if (diff1 >= 9):
+                            hard_q = True
                         bound_list = calculateUpbound(level)
                         o_upbound = bound_list[0]
                         q1_upbound = bound_list[1]
@@ -342,6 +345,9 @@ def runGame():
                         comp_input = randint(0,3)
                         controlsOn = True
                         score += 10 + scr_mult*num_q
+                        if hard_q == True:
+                            score += 20
+                        hard_q = False
                         level,fallFreq = calculateLevelAndFallFreq(score)
                         num_q += 1
                 elif event.key != char and (event.key == K_1 or event.key == K_2 or event.key == K_3 or event.key == K_4):
