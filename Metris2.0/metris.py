@@ -171,15 +171,15 @@ def main():
     while True: # game loop
         num = randint(0, 4)
         if num == 0:
-            pygame.mixer.music.load('tetrisb.mid')
+            pygame.mixer.music.load('mids/tetrisb.mid')
         elif num == 1:
-            pygame.mixer.music.load('ff7.mid')
+            pygame.mixer.music.load('mids/ff7.mid')
         elif num == 2:
-            pygame.mixer.music.load('eye.mid')
+            pygame.mixer.music.load('mids/eye.mid')
         elif num == 3:
-            pygame.mixer.music.load('hip.mid')
+            pygame.mixer.music.load('mids/hip.mid')
         elif num == 4:
-            pygame.mixer.music.load('mur.mid')
+            pygame.mixer.music.load('mids/mur.mid')
         pygame.mixer.music.play(-1, 0.0)
         runGame()
         pygame.mixer.music.stop()
@@ -557,7 +557,6 @@ def drawLeaderboard(text):
     titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
     titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 50)
     DISPLAYSURF.blit(titleSurf, titleRect)
-
     # Draw the additional "Press a key to play." text.
     pressKeySurf, pressKeyRect = makeTextObjs('Press any key to play.', BASICFONT, TEXTCOLOR)
     pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 70)
