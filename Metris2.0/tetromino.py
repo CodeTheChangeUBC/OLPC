@@ -199,38 +199,11 @@ def runGame():
     level, fallFreq = calculateLevelAndFallFreq(score)
     qSolved = False
     comp_input = 10
-    o_upbound = 0
-    q1_upbound = 0
-    q2_upbound = 0
-    o_lbound = 0
-    multi_var = randint(0,10)
-    two_op = randint(0,1)
-    bound_list = calculateUpbound(level)
-    o_upbound = bound_list[0]
-    q1_upbound = bound_list[1]
-    q2_upbound = bound_list[2]
-    o_lbound = bound_list[3]
-    operator = randint(o_lbound,o_upbound)
-    q2 = randint(0,q2_upbound)
-    if operator == 3:
-        q1 = q2*randint(0, q1_upbound)
-    else:
-        q1 = randint(0,q1_upbound)
-    sol_key = randint(0,3)
-    if sol_key == 0:
-        char = K_1
-    if sol_key == 1:
-        char = K_2
-    if sol_key == 2:
-        char = K_3
-    if sol_key == 3:
-        char = K_4
+    out_list = generateQues(level)
     controlsOn = False
     numTries = 0
-    
-    diff1 = randint(1, 10)
-    diff2 = randint(1, 10)
-    diff3 = randint(1, 20)
+    diff1 = out_list[4]
+    char = out_list[9]
     num_q = 0
     scr_mult = 5
 
@@ -316,34 +289,6 @@ def runGame():
                         hard_q = False
                         if (diff1 >= 9):
                             hard_q = True
-                        bound_list = calculateUpbound(level)
-                        o_upbound = bound_list[0]
-                        q1_upbound = bound_list[1]
-                        q2_upbound = bound_list[2]
-                        o_lbound = bound_list[3]
-                        if level <= 4:
-                            multi_var = randint(0, 10)
-                        else:
-                            multi_var = randint(0, 40)
-                        two_op = randint(0,1)
-                        diff1 = randint(1, 10)
-                        diff2 = randint(1, 10)
-                        diff3 = randint(1, 20)
-                        operator = randint(o_lbound,o_upbound)
-                        q2 = randint(0,q2_upbound)
-                        if operator == 3:
-                            q1 = q2*randint(0, q1_upbound)
-                        else:
-                            q1 = randint(0,q1_upbound)
-                        sol_key = randint(0,3)
-                        if sol_key == 0:
-                            char = K_1
-                        if sol_key == 1:
-                            char = K_2
-                        if sol_key == 2:
-                            char = K_3
-                        if sol_key == 3:
-                            char = K_4
                         comp_input = randint(0,3)
                         controlsOn = True
                         score += 10 + scr_mult*num_q
@@ -352,6 +297,9 @@ def runGame():
                         hard_q = False
                         level,fallFreq = calculateLevelAndFallFreq(score)
                         num_q += 1
+                        out_list = generateQues(level)
+                        diff1 = out_list[4]
+                        char = out_list[9]
                 elif event.key != char and (event.key == K_1 or event.key == K_2 or event.key == K_3 or event.key == K_4):
                     numTries += 1
                     comp_input= randint(4,7)
@@ -380,34 +328,9 @@ def runGame():
                 fallingPiece = None
                 numTries = 0
                 conrolsOn = False
-                bound_list = calculateUpbound(level)
-                if level <= 4:
-                    multi_var = randint(0, 10)
-                else:
-                    multi_var = randint(0, 40)
-                two_op = randint(0,1)
-                diff1 = randint(1, 10)
-                diff2 = randint(1, 10)
-                diff3 = randint(1, 20)
-                o_upbound = bound_list[0]
-                q1_upbound = bound_list[1]
-                q2_upbound = bound_list[2]
-                o_lbound = bound_list[3]
-                operator = randint(o_lbound,o_upbound)
-                q2 = randint(0,q2_upbound)
-                if operator == 3:
-                    q1 = q2*randint(0, q1_upbound)
-                else:
-                    q1 = randint(0,q1_upbound)
-                sol_key = randint(0,3)
-                if sol_key == 0:
-                    char = K_1
-                if sol_key == 1:
-                    char = K_2
-                if sol_key == 2:
-                    char = K_3
-                if sol_key == 3:
-                    char = K_4
+                out_list = generateQues(level)
+                diff1 = out_list[4]
+                char = out_list[9]
                 comp_input = -1
             else:
                 # piece did not land, just move the piece down
@@ -417,7 +340,9 @@ def runGame():
         # drawing everything on the screen
         DISPLAYSURF.fill(BGCOLOR)
         drawBoard(board)
-        drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op)
+        drawStatus(score,level,out_list[0],out_list[1],out_list[2],out_list[3],out_list[4],
+                   out_list[5], out_list[6], out_list[7], out_list[8])
+        #drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op)
         drawCompliment(comp_input)
         drawNextPiece(nextPiece)
         if fallingPiece != None:
@@ -425,6 +350,38 @@ def runGame():
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
+def generateQues(level):
+    if level <= 4:
+        multi_var = randint(0, 10)
+    else:
+        multi_var = randint(0, 40)
+    two_op = randint(0,1)
+    bound_list = calculateUpbound(level)
+    o_upbound = bound_list[0]
+    q1_upbound = bound_list[1]
+    q2_upbound = bound_list[2]
+    o_lbound = bound_list[3]
+    operator = randint(o_lbound,o_upbound)
+    if operator == 3:
+        q2 = randint(1,q2_upbound)
+        q1 = q2*randint(0, q1_upbound)
+    else:
+        q2 = randint(0,q2_upbound)
+        q1 = randint(0,q1_upbound)
+    sol_key = randint(0,3)
+    if sol_key == 0:
+        char = K_1
+    if sol_key == 1:
+        char = K_2
+    if sol_key == 2:
+        char = K_3
+    if sol_key == 3:
+        char = K_4
+    diff1 = randint(1, 10)
+    diff2 = randint(1, 10)
+    diff3 = randint(1, 20)
+    return [q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op, char]
+
 
 def calculateUpbound(level):
     if level == 1:
