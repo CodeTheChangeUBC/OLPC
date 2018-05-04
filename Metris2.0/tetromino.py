@@ -3,7 +3,7 @@
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
 
-import random, time, pygame, sys
+import random, time, pygame, sys, math
 from pygame.locals import *
 from random import randint
 
@@ -462,6 +462,7 @@ def calculateUpbound(level):
         q2_upbound = 20
     elif level == 8:
         o_upbound = 3
+        o_lbound = 0
         q1_upbound = 20
         q2_upbound = 20
     elif level == 9:
@@ -674,6 +675,7 @@ def drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, mul
     questionRect = questionSurf.get_rect()
     questionRect.topleft = (20, 20)
     DISPLAYSURF.blit(questionSurf, questionRect)
+    operator = 4
     if operator == 0:
         o = '+'
     elif operator == 1:
@@ -706,11 +708,20 @@ def drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, mul
     DISPLAYSURF.blit(answerSurf, answerRect)
 
     if (diff1 < 9):
-        actual_ans = eval(str(q1) + o + str(q2))
+        if o == '^':
+            actual_ans = math.pow(q1,q2)
+        else:
+            actual_ans = eval(str(q1) + o + str(q2))
+        actual_ans = int(actual_ans)
         fakeans_list = [eval(str(q1) + o + str(q2)) + diff1, eval(str(q1) + o + str(q2)) - diff2, eval(str(q1) + o + str(q2)) + diff3]
         list_count = 0
     else:
-        actual_ans = eval(str(q1) + o + str(q2) + t + str(multi_var))
+        if o == '^':
+            inter_ans = math.pow(q1,q2)
+            actual_ans = eval(str(inter_ans) + t + str(multi_var))
+        else:
+            actual_ans = eval(str(q1) + o + str(q2) + t + str(multi_var))
+        actual_ans = int(actual_ans)
         fakeans_list = [actual_ans + diff1, actual_ans - diff2, actual_ans + diff3]
         list_count = 0
 
