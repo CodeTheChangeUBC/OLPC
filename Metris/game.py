@@ -253,6 +253,15 @@ def paused():
         gameDisplay.blit(pausedText, (WIDTH/3 + WIDTH/6, HEIGHT/2)) 
         pygame.display.update()
         clock.tick(15)    
+        
+def getRandomBlockSet(lastBlock):
+    set = [0, 1, 2, 3, 4, 5, 6]
+    shuffle(set)
+    if set[6] == lastBlock:
+        tmp = set[6]
+        set[6] = set[0]
+        set[0] = tmp
+    return set
     
 def gameOver():
     pause = True
@@ -293,7 +302,7 @@ def runGame():
     global pos_y
     global pos_x
     blockSet = getRandomBlockSet(7)
-
+    
     while not gameExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -352,7 +361,6 @@ def runGame():
                     speed = 10
             if event.type == TICK:
                 pos_y = tick(pos_y)
-                
 
         # drawing bg
         gameDisplay.fill(white)

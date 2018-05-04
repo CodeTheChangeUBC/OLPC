@@ -3,7 +3,7 @@
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
 
-import random, time, pygame, sys
+import random, time, pygame, sys, math
 from pygame.locals import *
 from random import randint
 
@@ -163,20 +163,34 @@ def main():
     DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
     BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
     BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
-    pygame.display.set_caption('Tetromino')
+    pygame.display.set_caption('Metris')
 
-    showTextScreen('Tetromino')
+    showTextScreen('Metris')
+
+    while checkForKeyPress() is None:
+        if checkForKeyPress() == K_SPACE:
+            drawInstructions('Instructions')
+            while not checkForSpacePress():
+                pygame.display.update()
+                FPSCLOCK.tick()
+        elif checkForKeyPress() == K_l:
+            drawLeaderboard('Leaderboard')
+            while not checkForLPress():
+                pygame.display.update()
+                FPSCLOCK.tick()
+
+
     while True: # game loop
         num = randint(0, 4)
         if num == 0:
             pygame.mixer.music.load('tetrisb.mid')
-        if num == 1:
+        elif num == 1:
             pygame.mixer.music.load('ff7.mid')
-        if num == 2:
+        elif num == 2:
             pygame.mixer.music.load('eye.mid')
-        if num == 3:
+        elif num == 3:
             pygame.mixer.music.load('hip.mid')
-        else:
+        elif num == 4:
             pygame.mixer.music.load('mur.mid')
         pygame.mixer.music.play(-1, 0.0)
         runGame()
@@ -201,7 +215,9 @@ def runGame():
     q1_upbound = 0
     q2_upbound = 0
     o_lbound = 0
-    bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level)
+    multi_var = randint(0,10)
+    two_op = randint(0,1)
+    bound_list = calculateUpbound(level)
     o_upbound = bound_list[0]
     q1_upbound = bound_list[1]
     q2_upbound = bound_list[2]
@@ -212,7 +228,6 @@ def runGame():
         q1 = q2*randint(0, q1_upbound)
     else:
         q1 = randint(0,q1_upbound)
-    keypress = 1000
     sol_key = randint(0,3)
     if sol_key == 0:
         char = K_1
@@ -310,11 +325,19 @@ def runGame():
                 # check for correct answer
                 elif event.key == char:
                     if numTries < 1:
-                        bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level)
+                        hard_q = False
+                        if (diff1 >= 9):
+                            hard_q = True
+                        bound_list = calculateUpbound(level)
                         o_upbound = bound_list[0]
                         q1_upbound = bound_list[1]
                         q2_upbound = bound_list[2]
                         o_lbound = bound_list[3]
+                        if level <= 4:
+                            multi_var = randint(0, 10)
+                        else:
+                            multi_var = randint(0, 40)
+                        two_op = randint(0,1)
                         diff1 = randint(1, 10)
                         diff2 = randint(1, 10)
                         diff3 = randint(1, 20)
@@ -336,6 +359,9 @@ def runGame():
                         comp_input = randint(0,3)
                         controlsOn = True
                         score += 10 + scr_mult*num_q
+                        if hard_q == True:
+                            score += 20
+                        hard_q = False
                         level,fallFreq = calculateLevelAndFallFreq(score)
                         num_q += 1
                 elif event.key != char and (event.key == K_1 or event.key == K_2 or event.key == K_3 or event.key == K_4):
@@ -366,7 +392,12 @@ def runGame():
                 fallingPiece = None
                 numTries = 0
                 conrolsOn = False
-                bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level)
+                bound_list = calculateUpbound(level)
+                if level <= 4:
+                    multi_var = randint(0, 10)
+                else:
+                    multi_var = randint(0, 40)
+                two_op = randint(0,1)
                 diff1 = randint(1, 10)
                 diff2 = randint(1, 10)
                 diff3 = randint(1, 20)
@@ -389,6 +420,7 @@ def runGame():
                     char = K_3
                 if sol_key == 3:
                     char = K_4
+                comp_input = -1
             else:
                 # piece did not land, just move the piece down
                 fallingPiece['y'] += 1
@@ -397,7 +429,7 @@ def runGame():
         # drawing everything on the screen
         DISPLAYSURF.fill(BGCOLOR)
         drawBoard(board)
-        drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, diff3)
+        drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op)
         drawCompliment(comp_input)
         drawNextPiece(nextPiece)
         if fallingPiece != None:
@@ -406,7 +438,7 @@ def runGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
-def calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level):
+def calculateUpbound(level):
     if level == 1:
         o_upbound = 0
         o_lbound = 0
@@ -444,6 +476,7 @@ def calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level):
         q2_upbound = 20
     elif level == 8:
         o_upbound = 3
+        o_lbound = 0
         q1_upbound = 20
         q2_upbound = 20
     elif level == 9:
@@ -484,28 +517,137 @@ def checkForKeyPress():
         return event.key
     return None
 
+def checkForSpacePress():
+    # Go through event queue looking for a KEYUP event.
+    # Grab KEYDOWN events to remove them from the event queue.
+    checkForQuit()
+
+    for event in pygame.event.get([KEYDOWN, KEYUP]):
+        if event.type == KEYDOWN:
+            if event.key == K_SPACE:
+                return True
+            continue
+        return False
+    return False
+
+def checkForLPress():
+    # Go through event queue looking for a KEYUP event.
+    # Grab KEYDOWN events to remove them from the event queue.
+    checkForQuit()
+
+    for event in pygame.event.get([KEYDOWN, KEYUP]):
+        if event.type == KEYDOWN:
+            if event.key == K_l:
+                return True
+            continue
+        return False
+    return False
+
+
+def drawInstructions(text):
+    # This function displays large text in the
+    # center of the screen until a key is pressed.
+    # Draw the text drop shadow
+    DISPLAYSURF.fill(BLACK)
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2)-3, int(WINDOWHEIGHT / 2) - 40)
+    DISPLAYSURF.blit(titleSurf, titleRect)
+
+    # Draw the text
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 50)
+    DISPLAYSURF.blit(titleSurf, titleRect)
+
+    # Instructions text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Press SPACE to go back', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 70)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+    while True:
+        if checkForKeyPress() == K_SPACE:
+            showTextScreen('Metris')
+        elif checkForKeyPress() is None:
+            pygame.display.update()
+            FPSCLOCK.tick()
+        else:
+            return
+
+
+def drawLeaderboard(text):
+    # This function displays large text in the
+    # center of the screen until a key is pressed.
+    # Draw the text drop shadow
+    DISPLAYSURF.fill(BLACK)
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2)-3, int(WINDOWHEIGHT / 2) - 40)
+    DISPLAYSURF.blit(titleSurf, titleRect)
+
+    # Draw the text
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 50)
+    DISPLAYSURF.blit(titleSurf, titleRect)
+
+    # Instructions text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Press L to go back', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 70)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+    while True:
+        if checkForKeyPress() == K_l:
+            showTextScreen('Metris')
+        elif checkForKeyPress() is None:
+            pygame.display.update()
+            FPSCLOCK.tick()
+        else:
+            return
+
+
 
 def showTextScreen(text):
     # This function displays large text in the
     # center of the screen until a key is pressed.
     # Draw the text drop shadow
+    DISPLAYSURF.fill(BLACK)
     titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
-    titleRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2))
+    titleRect.center = (int(WINDOWWIDTH / 2)-3, int(WINDOWHEIGHT / 2) - 40)
     DISPLAYSURF.blit(titleSurf, titleRect)
 
     # Draw the text
     titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
-    titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 3)
+    titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 50)
     DISPLAYSURF.blit(titleSurf, titleRect)
+
+    # Instructions text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Press SPACE for instructions', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 70)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+    # Leaderboard text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Press L for Leaderboard', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 95)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
 
     # Draw the additional "Press a key to play." text.
     pressKeySurf, pressKeyRect = makeTextObjs('Press a key to play.', BASICFONT, TEXTCOLOR)
-    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 100)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 120)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
 
-    while checkForKeyPress() == None:
-        pygame.display.update()
-        FPSCLOCK.tick()
+
+    # while checkForKeyPress() is None:
+    #     pygame.display.update()
+    #     FPSCLOCK.tick()
+
+    while not checkForKeyPress() is None:
+        if checkForKeyPress() == K_SPACE:
+            drawInstructions('Instructions')
+        elif checkForKeyPress() == K_l:
+            drawLeaderboard('Leaderboards')
+        elif checkForKeyPress() is None:
+            pygame.display.update()
+            FPSCLOCK.tick()
+
+
 
 
 def checkForQuit():
@@ -638,7 +780,7 @@ def drawBoard(board):
             drawBox(x, y, board[x][y])
 
 
-def drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, diff3):
+def drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op):
     # draw the score text
     scoreSurf = BASICFONT.render('Score: %s' % score, True, TEXTCOLOR)
     scoreRect = scoreSurf.get_rect()
@@ -656,6 +798,7 @@ def drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, 
     questionRect = questionSurf.get_rect()
     questionRect.topleft = (20, 20)
     DISPLAYSURF.blit(questionSurf, questionRect)
+    operator = 4
     if operator == 0:
         o = '+'
     elif operator == 1:
@@ -666,20 +809,44 @@ def drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, 
         o = '/'
     elif operator == 4:
         o = '^'
-    qSurf = BASICFONT.render('%s %s %s' % (q1, o, q2) , True, TEXTCOLOR)
-    qRect = qSurf.get_rect()
-    qRect.topleft= (20, 40)
-    DISPLAYSURF.blit(qSurf, qRect)
+    if (diff1 < 9):
+        qSurf = BASICFONT.render('%s %s %s' % (q1, o, q2) , True, TEXTCOLOR)
+        qRect = qSurf.get_rect()
+        qRect.topleft= (20, 50)
+        DISPLAYSURF.blit(qSurf, qRect)
+    else:
+        if two_op == 0:
+            t = '+'
+        else:
+            t = '-'
+        qSurf = BASICFONT.render('%s %s %s %s %s' % (q1, o, q2, t, multi_var) , True, TEXTCOLOR)
+        qRect = qSurf.get_rect()
+        qRect.topleft= (20, 50)
+        DISPLAYSURF.blit(qSurf, qRect)
 
     # draw answer text
     answerSurf = BASICFONT.render('Answer :', True, TEXTCOLOR)
     answerRect = answerSurf.get_rect()
-    answerRect.topleft = (20, 60)
+    answerRect.topleft = (20, 80)
     DISPLAYSURF.blit(answerSurf, answerRect)
 
-    actual_ans = eval(str(q1) + o + str(q2))
-    fakeans_list = [eval(str(q1) + o + str(q2)) + diff1, eval(str(q1) + o + str(q2)) - diff2, eval(str(q1) + o + str(q2)) + diff3]
-    list_count = 0
+    if (diff1 < 9):
+        if o == '^':
+            actual_ans = math.pow(q1,q2)
+        else:
+            actual_ans = eval(str(q1) + o + str(q2))
+        actual_ans = int(actual_ans)
+        fakeans_list = [eval(str(q1) + o + str(q2)) + diff1, eval(str(q1) + o + str(q2)) - diff2, eval(str(q1) + o + str(q2)) + diff3]
+        list_count = 0
+    else:
+        if o == '^':
+            inter_ans = math.pow(q1,q2)
+            actual_ans = eval(str(inter_ans) + t + str(multi_var))
+        else:
+            actual_ans = eval(str(q1) + o + str(q2) + t + str(multi_var))
+        actual_ans = int(actual_ans)
+        fakeans_list = [actual_ans + diff1, actual_ans - diff2, actual_ans + diff3]
+        list_count = 0
 
     for x in range(0,4):
         if x == sol_key:
@@ -697,7 +864,7 @@ def drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, 
             char = '4)'
         aSurf = BASICFONT.render(char + '   %s' % (sol_print), True, TEXTCOLOR)
         aRect = aSurf.get_rect()
-        aRect.topleft = (20, 80+x*20)
+        aRect.topleft = (20, 110+x*30)
         DISPLAYSURF.blit(aSurf, aRect)
         if x == 3:
             list_count = 0
@@ -726,29 +893,31 @@ def drawNextPiece(piece):
 
 def drawCompliment(rand):
     if rand == 10:
-        return
+        compliment = "Welcome, player!"
     if rand == 0:
-        compliment = "Could do better."
+        compliment = "Great!"
     elif rand == 1:
-        compliment = "Try harder."
+        compliment = "Good job!"
     elif rand == 2:
-        compliment = "Nice."
+        compliment = "Nice!"
     elif rand == 3:
-        compliment = "Great."
+        compliment = "Excellent!"
     elif rand == 4:
-        compliment = "Incorrect."
+        compliment = "Incorrect input."
     elif rand == 5:
-        compliment = "Learn to add."
+        compliment = "Nice try!"
     elif rand == 6:
-        compliment = "Wrong."
+        compliment = "Keep going!"
     elif rand == 7:
-        compliment = "Wrong input."
+        compliment = "Better luck next time!"
+    elif rand == -1:
+        compliment = " "
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
     complimentRect.midtop = (WINDOWWIDTH/2, 20)
     DISPLAYSURF.blit(complimentSurf, complimentRect)
-    if rand >= 4:
-        controlSurf = BASICFONT.render("Lost control.", True, TEXTCOLOR)
+    if rand == 4 or rand == 5 or rand == 6 or rand == 7:
+        controlSurf = BASICFONT.render("Lost controls.", True, TEXTCOLOR)
         controlRect = controlSurf.get_rect()
         controlRect.topleft = (WINDOWWIDTH - 150, 200)
         DISPLAYSURF.blit(controlSurf, controlRect)
