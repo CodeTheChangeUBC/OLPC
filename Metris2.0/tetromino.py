@@ -201,7 +201,7 @@ def runGame():
     q1_upbound = 0
     q2_upbound = 0
     o_lbound = 0
-    bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level)
+    bound_list = calculateUpbound(level)
     o_upbound = bound_list[0]
     q1_upbound = bound_list[1]
     q2_upbound = bound_list[2]
@@ -310,7 +310,7 @@ def runGame():
                 # check for correct answer
                 elif event.key == char:
                     if numTries < 1:
-                        bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level)
+                        bound_list = calculateUpbound(level)
                         o_upbound = bound_list[0]
                         q1_upbound = bound_list[1]
                         q2_upbound = bound_list[2]
@@ -366,7 +366,7 @@ def runGame():
                 fallingPiece = None
                 numTries = 0
                 conrolsOn = False
-                bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level)
+                bound_list = calculateUpbound(level)
                 diff1 = randint(1, 10)
                 diff2 = randint(1, 10)
                 diff3 = randint(1, 20)
@@ -407,7 +407,7 @@ def runGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
-def calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level):
+def calculateUpbound(level):
     if level == 1:
         o_upbound = 0
         o_lbound = 0
