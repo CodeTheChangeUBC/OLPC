@@ -798,7 +798,6 @@ def drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, mul
     questionRect = questionSurf.get_rect()
     questionRect.topleft = (20, 20)
     DISPLAYSURF.blit(questionSurf, questionRect)
-    operator = 4
     if operator == 0:
         o = '+'
     elif operator == 1:
