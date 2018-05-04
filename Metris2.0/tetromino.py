@@ -201,7 +201,7 @@ def runGame():
     q1_upbound = 0
     q2_upbound = 0
     o_lbound = 0
-    multi_var = randint(0,40)
+    multi_var = randint(0,10)
     two_op = randint(0,1)
     bound_list = calculateUpbound(level)
     o_upbound = bound_list[0]
@@ -316,7 +316,10 @@ def runGame():
                         q1_upbound = bound_list[1]
                         q2_upbound = bound_list[2]
                         o_lbound = bound_list[3]
-                        multi_var = randint(0,40)
+                        if level <= 4:
+                            multi_var = randint(0, 10)
+                        else:
+                            multi_var = randint(0, 40)
                         two_op = randint(0,1)
                         diff1 = randint(1, 10)
                         diff2 = randint(1, 10)
@@ -370,7 +373,10 @@ def runGame():
                 numTries = 0
                 conrolsOn = False
                 bound_list = calculateUpbound(level)
-                multi_var = randint(0,40)
+                if level <= 4:
+                    multi_var = randint(0, 10)
+                else:
+                    multi_var = randint(0, 40)
                 two_op = randint(0,1)
                 diff1 = randint(1, 10)
                 diff2 = randint(1, 10)
@@ -693,9 +699,14 @@ def drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, mul
     answerRect.topleft = (20, 60)
     DISPLAYSURF.blit(answerSurf, answerRect)
 
-    actual_ans = eval(str(q1) + o + str(q2))
-    fakeans_list = [eval(str(q1) + o + str(q2)) + diff1, eval(str(q1) + o + str(q2)) - diff2, eval(str(q1) + o + str(q2)) + diff3]
-    list_count = 0
+    if (diff1 < 9):
+        actual_ans = eval(str(q1) + o + str(q2))
+        fakeans_list = [eval(str(q1) + o + str(q2)) + diff1, eval(str(q1) + o + str(q2)) - diff2, eval(str(q1) + o + str(q2)) + diff3]
+        list_count = 0
+    else:
+        actual_ans = eval(str(q1) + o + str(q2) + t + str(multi_var))
+        fakeans_list = [actual_ans + diff1, actual_ans - diff2, actual_ans + diff3]
+        list_count = 0
 
     for x in range(0,4):
         if x == sol_key:
