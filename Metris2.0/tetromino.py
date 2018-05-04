@@ -170,13 +170,13 @@ def main():
         num = randint(0, 4)
         if num == 0:
             pygame.mixer.music.load('tetrisb.mid')
-        if num == 1:
+        elif num == 1:
             pygame.mixer.music.load('ff7.mid')
-        if num == 2:
+        elif num == 2:
             pygame.mixer.music.load('eye.mid')
-        if num == 3:
+        elif num == 3:
             pygame.mixer.music.load('hip.mid')
-        else:
+        elif num == 4:
             pygame.mixer.music.load('mur.mid')
         pygame.mixer.music.play(-1, 0.0)
         runGame()
@@ -201,7 +201,7 @@ def runGame():
     q1_upbound = 0
     q2_upbound = 0
     o_lbound = 0
-    bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level)
+    bound_list = calculateUpbound(level)
     o_upbound = bound_list[0]
     q1_upbound = bound_list[1]
     q2_upbound = bound_list[2]
@@ -310,7 +310,7 @@ def runGame():
                 # check for correct answer
                 elif event.key == char:
                     if numTries < 1:
-                        bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level)
+                        bound_list = calculateUpbound(level)
                         o_upbound = bound_list[0]
                         q1_upbound = bound_list[1]
                         q2_upbound = bound_list[2]
@@ -366,7 +366,7 @@ def runGame():
                 fallingPiece = None
                 numTries = 0
                 conrolsOn = False
-                bound_list = calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level)
+                bound_list = calculateUpbound(level)
                 diff1 = randint(1, 10)
                 diff2 = randint(1, 10)
                 diff3 = randint(1, 20)
@@ -389,6 +389,7 @@ def runGame():
                     char = K_3
                 if sol_key == 3:
                     char = K_4
+                comp_input = -1
             else:
                 # piece did not land, just move the piece down
                 fallingPiece['y'] += 1
@@ -406,7 +407,7 @@ def runGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
-def calculateUpbound(o_upbound, q1_upbound, q2_upbound, o_lbound, level):
+def calculateUpbound(level):
     if level == 1:
         o_upbound = 0
         o_lbound = 0
@@ -666,6 +667,7 @@ def drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, 
         o = '/'
     elif operator == 4:
         o = '^'
+    rand = randint(0, 10)
     qSurf = BASICFONT.render('%s %s %s' % (q1, o, q2) , True, TEXTCOLOR)
     qRect = qSurf.get_rect()
     qRect.topleft= (20, 40)
@@ -728,21 +730,23 @@ def drawCompliment(rand):
     if rand == 10:
         return
     if rand == 0:
-        compliment = "Could do better."
+        compliment = "Great!"
     elif rand == 1:
-        compliment = "Try harder."
+        compliment = "Good job!"
     elif rand == 2:
-        compliment = "Nice."
+        compliment = "Nice!"
     elif rand == 3:
-        compliment = "Great."
+        compliment = "Excellent!"
     elif rand == 4:
-        compliment = "Incorrect."
+        compliment = "Incorrect input."
     elif rand == 5:
-        compliment = "Learn to add."
+        compliment = "Nice try."
     elif rand == 6:
-        compliment = "Wrong."
+        compliment = "Keep going!"
     elif rand == 7:
-        compliment = "Wrong input."
+        compliment = "Better luck next time!"
+    elif rand == -1:
+        compliment = " "
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
     complimentRect.midtop = (WINDOWWIDTH/2, 20)

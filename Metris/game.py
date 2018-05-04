@@ -1,4 +1,5 @@
 import pygame
+from random import shuffle
 from random import randint
 from BlockT import BlockT
 from BlockO import BlockO
@@ -243,6 +244,15 @@ def paused():
         gameDisplay.blit(pausedText, (WIDTH/3 + WIDTH/6, HEIGHT/2)) 
         pygame.display.update()
         clock.tick(15)    
+        
+def getRandomBlockSet(lastBlock):
+    set = [0, 1, 2, 3, 4, 5, 6]
+    shuffle(set)
+    if set[6] == lastBlock:
+        tmp = set[6]
+        set[6] = set[0]
+        set[0] = tmp
+    return set
     
 def gameOver():
     pause = True
@@ -280,6 +290,8 @@ def runGame():
     global dy
     global block
     global speed
+    blockSet = getRandomBlockSet(7) # 7 as input means no bias first iteration
+    
     while not gameExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -338,60 +350,62 @@ def runGame():
                     speed = 10
             if event.type == TICK:
                 pos_y = tick(pos_y)
-                
+            
+    # drawing bg
+    gameDisplay.fill(white)
+    gameDisplay.fill(black, [0, 0, LEFT_BOUNDARY, HEIGHT])
+    gameDisplay.fill(black, [RIGHT_BOUNDARY, 0, WIDTH - RIGHT_BOUNDARY, HEIGHT])
+    gameDisplay.fill(black, [0, 0, WIDTH, HEIGHT - 20*BLOCK_SIZE])
 
-        # drawing bg
-        gameDisplay.fill(white)
-        gameDisplay.fill(black, [0, 0, LEFT_BOUNDARY, HEIGHT])
-        gameDisplay.fill(black, [RIGHT_BOUNDARY, 0, WIDTH - RIGHT_BOUNDARY, HEIGHT])
-        gameDisplay.fill(black, [0, 0, WIDTH, HEIGHT - 20*BLOCK_SIZE])
+    # drawing block objs
+    if not currentBlock and not gameExit:
+        rand = blockSet.pop()
+        if len(blockSet) == 0:
+            blockSet = getRandomBlockSet(rand)
 
-        # drawing block objs
-        if not currentBlock and not gameExit:
-            rand = randint(0, 6)
-            if rand == 0:
-                block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 1:
-                block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 2:
-                block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 3:
-                block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 4:
-                block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 5:
-                block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 6:
-                block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
-            pos_x = INIT_X
-            pos_y = INIT_Y
-            currentBlock = True
-        difference = getShadowDifference(block.getPerimeter())
-        drawShadow(block.getPerimeter(), difference)
-        for i in range(0, len(landed)):
-            for j in range(0, len(landed[i])):
-                if (landed[i][j] != None):
-                    landed[i][j].display(gameDisplay)
-        block.display(gameDisplay)
+        if rand == 0:
+            block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 1:
+            block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 2:
+            block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 3:
+            block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 4:
+            block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 5:
+            block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif rand == 6:
+            block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
+        pos_x = INIT_X
+        pos_y = INIT_Y
+        currentBlock = True
+    difference = getShadowDifference(block.getPerimeter())
+    drawShadow(block.getPerimeter(), difference)
+    for i in range(0, len(landed)):
+        for j in range(0, len(landed[i])):
+            if (landed[i][j] != None):
+                landed[i][j].display(gameDisplay)
+    block.display(gameDisplay)
 
-        # score
-        screen_text = font.render("score: " + str(score), True, white)
-        gameDisplay.blit(screen_text, (RIGHT_BOUNDARY +
-                                    LEFT_BOUNDARY / 10, HEIGHT / 20))
+    # score
+    screen_text = font.render("score: " + str(score), True, white)
+    gameDisplay.blit(screen_text, (RIGHT_BOUNDARY +
+                                   LEFT_BOUNDARY / 10, HEIGHT / 20))
 
-        # collision checking
-        if not hasMove:
-            #clock.tick(10) - movement speed
-            block.setX(pos_x + dx)
-            block.setY(pos_y + dy)
-            if checkCollision():
-                block.setX(pos_x)
-                block.setY(pos_y)
-            else:
-                pos_x += dx
-                pos_y += dy
-
-            hasMove = True
+    # collision checking
+    if not hasMove:
+        #clock.tick(10) - movement speed
+        block.setX(pos_x + dx)
+        block.setY(pos_y + dy)
+        if checkCollision():
+            block.setX(pos_x)
+            block.setY(pos_y)
+        else:
+            pos_x += dx
+            pos_y += dy
+        
+        hasMove = True
 
         pygame.display.update()
 
