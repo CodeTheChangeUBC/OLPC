@@ -201,6 +201,8 @@ def runGame():
     q1_upbound = 0
     q2_upbound = 0
     o_lbound = 0
+    multi_var = randint(0,40)
+    two_op = randint(0,1)
     bound_list = calculateUpbound(level)
     o_upbound = bound_list[0]
     q1_upbound = bound_list[1]
@@ -212,7 +214,6 @@ def runGame():
         q1 = q2*randint(0, q1_upbound)
     else:
         q1 = randint(0,q1_upbound)
-    keypress = 1000
     sol_key = randint(0,3)
     if sol_key == 0:
         char = K_1
@@ -315,6 +316,8 @@ def runGame():
                         q1_upbound = bound_list[1]
                         q2_upbound = bound_list[2]
                         o_lbound = bound_list[3]
+                        multi_var = randint(0,40)
+                        two_op = randint(0,1)
                         diff1 = randint(1, 10)
                         diff2 = randint(1, 10)
                         diff3 = randint(1, 20)
@@ -367,6 +370,8 @@ def runGame():
                 numTries = 0
                 conrolsOn = False
                 bound_list = calculateUpbound(level)
+                multi_var = randint(0,40)
+                two_op = randint(0,1)
                 diff1 = randint(1, 10)
                 diff2 = randint(1, 10)
                 diff3 = randint(1, 20)
@@ -398,7 +403,7 @@ def runGame():
         # drawing everything on the screen
         DISPLAYSURF.fill(BGCOLOR)
         drawBoard(board)
-        drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, diff3)
+        drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op)
         drawCompliment(comp_input)
         drawNextPiece(nextPiece)
         if fallingPiece != None:
@@ -639,7 +644,7 @@ def drawBoard(board):
             drawBox(x, y, board[x][y])
 
 
-def drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, diff3):
+def drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op):
     # draw the score text
     scoreSurf = BASICFONT.render('Score: %s' % score, True, TEXTCOLOR)
     scoreRect = scoreSurf.get_rect()
@@ -667,11 +672,20 @@ def drawStatus(score, level, q1, q2, operator, keypress, sol_key, diff1, diff2, 
         o = '/'
     elif operator == 4:
         o = '^'
-    rand = randint(0, 10)
-    qSurf = BASICFONT.render('%s %s %s' % (q1, o, q2) , True, TEXTCOLOR)
-    qRect = qSurf.get_rect()
-    qRect.topleft= (20, 40)
-    DISPLAYSURF.blit(qSurf, qRect)
+    if (diff1 < 9):
+        qSurf = BASICFONT.render('%s %s %s' % (q1, o, q2) , True, TEXTCOLOR)
+        qRect = qSurf.get_rect()
+        qRect.topleft= (20, 40)
+        DISPLAYSURF.blit(qSurf, qRect)
+    else:
+        if two_op == 0:
+            t = '+'
+        else:
+            t = '-'
+        qSurf = BASICFONT.render('%s %s %s %s %s' % (q1, o, q2, t, multi_var) , True, TEXTCOLOR)
+        qRect = qSurf.get_rect()
+        qRect.topleft= (20, 40)
+        DISPLAYSURF.blit(qSurf, qRect)
 
     # draw answer text
     answerSurf = BASICFONT.render('Answer :', True, TEXTCOLOR)
