@@ -167,6 +167,18 @@ def main():
 
     showTextScreen('Metris')
 
+    while checkForKeyPress() is None:
+        if checkForKeyPress() == K_SPACE:
+            drawInstructions('Instructions')
+            while not checkForSpacePress():
+                pygame.display.update()
+                FPSCLOCK.tick()
+        elif checkForKeyPress() == K_l:
+            drawLeaderboard('Leaderboard')
+            while not checkForLPress():
+                pygame.display.update()
+                FPSCLOCK.tick()
+
 
     while True: # game loop
         num = randint(0, 4)
@@ -487,11 +499,38 @@ def checkForKeyPress():
         return event.key
     return None
 
+def checkForSpacePress():
+    # Go through event queue looking for a KEYUP event.
+    # Grab KEYDOWN events to remove them from the event queue.
+    checkForQuit()
+
+    for event in pygame.event.get([KEYDOWN, KEYUP]):
+        if event.type == KEYDOWN:
+            if event.key == K_SPACE:
+                return True
+            continue
+        return False
+    return False
+
+def checkForLPress():
+    # Go through event queue looking for a KEYUP event.
+    # Grab KEYDOWN events to remove them from the event queue.
+    checkForQuit()
+
+    for event in pygame.event.get([KEYDOWN, KEYUP]):
+        if event.type == KEYDOWN:
+            if event.key == K_l:
+                return True
+            continue
+        return False
+    return False
+
 
 def drawInstructions(text):
     # This function displays large text in the
     # center of the screen until a key is pressed.
     # Draw the text drop shadow
+    DISPLAYSURF.fill(BLACK)
     titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
     titleRect.center = (int(WINDOWWIDTH / 2)-3, int(WINDOWHEIGHT / 2) - 40)
     DISPLAYSURF.blit(titleSurf, titleRect)
@@ -520,6 +559,7 @@ def drawLeaderboard(text):
     # This function displays large text in the
     # center of the screen until a key is pressed.
     # Draw the text drop shadow
+    DISPLAYSURF.fill(BLACK)
     titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
     titleRect.center = (int(WINDOWWIDTH / 2)-3, int(WINDOWHEIGHT / 2) - 40)
     DISPLAYSURF.blit(titleSurf, titleRect)
@@ -549,6 +589,7 @@ def showTextScreen(text):
     # This function displays large text in the
     # center of the screen until a key is pressed.
     # Draw the text drop shadow
+    DISPLAYSURF.fill(BLACK)
     titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
     titleRect.center = (int(WINDOWWIDTH / 2)-3, int(WINDOWHEIGHT / 2) - 40)
     DISPLAYSURF.blit(titleSurf, titleRect)
@@ -575,16 +616,18 @@ def showTextScreen(text):
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
 
 
-    while True:
+    # while checkForKeyPress() is None:
+    #     pygame.display.update()
+    #     FPSCLOCK.tick()
+
+    while not checkForKeyPress() is None:
         if checkForKeyPress() == K_SPACE:
             drawInstructions('Instructions')
         elif checkForKeyPress() == K_l:
-            drawLeaderboard('Leaderboard')
+            drawLeaderboard('Leaderboards')
         elif checkForKeyPress() is None:
             pygame.display.update()
             FPSCLOCK.tick()
-        else:
-            return
 
 
 
