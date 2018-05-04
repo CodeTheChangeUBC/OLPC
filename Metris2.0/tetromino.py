@@ -256,7 +256,7 @@ def runGame():
                     # Pausing the game
                     DISPLAYSURF.fill(BGCOLOR)
                     pygame.mixer.music.stop()
-                    showTextScreen('Paused') # pause until a key press
+                    showPauseScreen('Paused') # pause until a key press
                     pygame.mixer.music.play(-1, 0.0)
                     lastFallTime = time.time()
                     lastMoveDownTime = time.time()
@@ -476,6 +476,25 @@ def terminate():
     sys.exit()
 
 
+def checkForKeyPressPause():
+    # Go through event queue looking for a KEYUP event.
+    # Grab KEYDOWN events to remove them from the event queue.
+
+    checkForQuit()
+
+    for event in pygame.event.get([KEYDOWN, KEYUP]):
+        if event.type == KEYDOWN:
+            if event.key == K_SPACE:
+                drawInstructions('Instructions')
+            elif event.key == K_l:
+                drawLeaderboard('Leaderboard')
+            elif event.key == K_b:
+                showPauseScreen('Pause')
+            continue
+        return event.key
+    return None
+
+
 def checkForKeyPress():
     # Go through event queue looking for a KEYUP event.
     # Grab KEYDOWN events to remove them from the event queue.
@@ -588,6 +607,43 @@ def showTextScreen(text):
     while checkForKeyPress() is None:
         pygame.display.update()
         FPSCLOCK.tick()
+
+
+
+def showPauseScreen(text):
+    # This function displays large text in the
+    # center of the screen until a key is pressed.
+    # Draw the text drop shadow
+    DISPLAYSURF.fill(BLACK)
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2)-3, int(WINDOWHEIGHT / 2) - 40)
+    DISPLAYSURF.blit(titleSurf, titleRect)
+
+    # Draw the text
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 50)
+    DISPLAYSURF.blit(titleSurf, titleRect)
+
+    # Draw the additional "Press a key to play." text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Press any key to continue.', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 70)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+    # Instructions text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Press SPACE for instructions', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 95)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+    # Leaderboard text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Press L for Leaderboard', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 120)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+
+    while checkForKeyPressPause() is None:
+        pygame.display.update()
+        FPSCLOCK.tick()
+
 
 
 def checkForQuit():
