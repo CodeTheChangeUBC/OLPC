@@ -250,7 +250,7 @@ def paused():
                 if event.key == pygame.K_p:
                     pause = False
         
-        gameDisplay.fill(white, [LEFT_BOUNDARY, 0, WIDTH/3 + 10, HEIGHT])
+        gameDisplay.fill(white, [LEFT_BOUNDARY, TOP_BOUNDARY, 11*BLOCK_SIZE, 21*BLOCK_SIZE])
         pausedText = font.render("Paused", True, black)
         gameDisplay.blit(pausedText, (WIDTH/3 + WIDTH/6, HEIGHT/2)) 
         pygame.display.update()
@@ -286,8 +286,8 @@ def gameOver():
                         for j in range(0, len(landed[i])):
                             landed[i][j] = None
                     runGame()
-        pausedText = font.render("Game Over", True, black)
-        gameDisplay.blit(pausedText, (WIDTH/3 + WIDTH/6, HEIGHT/2)) 
+        gameOverText = font.render("Game Over", True, black)
+        gameDisplay.blit(gameOverText, (WIDTH/3 + WIDTH/6, HEIGHT/2)) 
         pygame.display.update()
         clock.tick(15)   
 
