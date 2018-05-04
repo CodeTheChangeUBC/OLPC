@@ -251,8 +251,16 @@ def paused():
                     pause = False
         
         gameDisplay.fill(white, [LEFT_BOUNDARY, TOP_BOUNDARY, 11*BLOCK_SIZE, 21*BLOCK_SIZE])
-        pausedText = font.render("Paused", True, black)
-        gameDisplay.blit(pausedText, (WIDTH/3 + WIDTH/6, HEIGHT/2)) 
+        myfont = pygame.font.SysFont('Comic Sans MS', 30)
+        pausedText = myfont.render("Paused", True, black)
+        textWidth = pausedText.get_rect().width
+        textHeight = pausedText.get_rect().height
+        gameDisplay.blit(pausedText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth/2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2) - textHeight)
+        myfont = pygame.font.SysFont('Comic Sans MS', 15)
+        additionalText = myfont.render("Press p to resume!", True, black)
+        additionalTextWidth = additionalText.get_rect().width
+        additionalTextHeight = additionalText.get_rect().height
+        gameDisplay.blit(pausedText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth/2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2) - textHeight)
         pygame.display.update()
         clock.tick(15)    
         
@@ -286,8 +294,13 @@ def gameOver():
                         for j in range(0, len(landed[i])):
                             landed[i][j] = None
                     runGame()
-        gameOverText = font.render("Game Over", True, black)
-        gameDisplay.blit(gameOverText, (WIDTH/3 + WIDTH/6, HEIGHT/2)) 
+
+        gameDisplay.fill(white, [LEFT_BOUNDARY, TOP_BOUNDARY, 11*BLOCK_SIZE, 21*BLOCK_SIZE])
+        myfont = pygame.font.SysFont('Comic Sans MS', 30)
+        gameOverText = myfont.render("Game Over", True, black)
+        textWidth = gameOverText.get_rect().width
+        textHeight = gameOverText.get_rect().height
+        gameDisplay.blit(gameOverText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth/2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2) - textHeight) 
         pygame.display.update()
         clock.tick(15)   
 
