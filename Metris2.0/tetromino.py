@@ -167,18 +167,6 @@ def main():
 
     showTextScreen('Metris')
 
-    while checkForKeyPress() is None:
-        if checkForKeyPress() == K_SPACE:
-            drawInstructions('Instructions')
-            while not checkForSpacePress():
-                pygame.display.update()
-                FPSCLOCK.tick()
-        elif checkForKeyPress() == K_l:
-            drawLeaderboard('Leaderboard')
-            while not checkForLPress():
-                pygame.display.update()
-                FPSCLOCK.tick()
-
 
     while True: # game loop
         num = randint(0, 4)
@@ -491,39 +479,20 @@ def terminate():
 def checkForKeyPress():
     # Go through event queue looking for a KEYUP event.
     # Grab KEYDOWN events to remove them from the event queue.
-    checkForQuit()
 
-    for event in pygame.event.get([KEYDOWN, KEYUP]):
-        if event.type == KEYDOWN:
-            continue
-        return event.key
-    return None
-
-def checkForSpacePress():
-    # Go through event queue looking for a KEYUP event.
-    # Grab KEYDOWN events to remove them from the event queue.
     checkForQuit()
 
     for event in pygame.event.get([KEYDOWN, KEYUP]):
         if event.type == KEYDOWN:
             if event.key == K_SPACE:
-                return True
+                drawInstructions('Instructions')
+            elif event.key == K_l:
+                drawLeaderboard('Leaderboard')
+            elif event.key == K_b:
+                showTextScreen('Metris')
             continue
-        return False
-    return False
-
-def checkForLPress():
-    # Go through event queue looking for a KEYUP event.
-    # Grab KEYDOWN events to remove them from the event queue.
-    checkForQuit()
-
-    for event in pygame.event.get([KEYDOWN, KEYUP]):
-        if event.type == KEYDOWN:
-            if event.key == K_l:
-                return True
-            continue
-        return False
-    return False
+        return event.key
+    return None
 
 
 def drawInstructions(text):
@@ -540,19 +509,19 @@ def drawInstructions(text):
     titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 50)
     DISPLAYSURF.blit(titleSurf, titleRect)
 
-    # Instructions text.
-    pressKeySurf, pressKeyRect = makeTextObjs('Press SPACE to go back', BASICFONT, TEXTCOLOR)
+    # Draw the additional "Press a key to play." text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Press any key to play.', BASICFONT, TEXTCOLOR)
     pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 70)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
 
-    while True:
-        if checkForKeyPress() == K_SPACE:
-            showTextScreen('Metris')
-        elif checkForKeyPress() is None:
-            pygame.display.update()
-            FPSCLOCK.tick()
-        else:
-            return
+    # Instructions text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Press B to go back', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 95)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+    while checkForKeyPress() is None:
+        pygame.display.update()
+        FPSCLOCK.tick()
 
 
 def drawLeaderboard(text):
@@ -569,19 +538,20 @@ def drawLeaderboard(text):
     titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 50)
     DISPLAYSURF.blit(titleSurf, titleRect)
 
-    # Instructions text.
-    pressKeySurf, pressKeyRect = makeTextObjs('Press L to go back', BASICFONT, TEXTCOLOR)
+    # Draw the additional "Press a key to play." text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Press any key to play.', BASICFONT, TEXTCOLOR)
     pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 70)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
 
-    while True:
-        if checkForKeyPress() == K_l:
-            showTextScreen('Metris')
-        elif checkForKeyPress() is None:
-            pygame.display.update()
-            FPSCLOCK.tick()
-        else:
-            return
+    # Instructions text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Press B to go back', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 95)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+    while checkForKeyPress() is None:
+        pygame.display.update()
+        FPSCLOCK.tick()
+
 
 
 
@@ -599,37 +569,25 @@ def showTextScreen(text):
     titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 50)
     DISPLAYSURF.blit(titleSurf, titleRect)
 
+    # Draw the additional "Press a key to play." text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Press any key to play.', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 70)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
     # Instructions text.
     pressKeySurf, pressKeyRect = makeTextObjs('Press SPACE for instructions', BASICFONT, TEXTCOLOR)
-    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 70)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 95)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
 
     # Leaderboard text.
     pressKeySurf, pressKeyRect = makeTextObjs('Press L for Leaderboard', BASICFONT, TEXTCOLOR)
-    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 95)
-    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
-
-
-    # Draw the additional "Press a key to play." text.
-    pressKeySurf, pressKeyRect = makeTextObjs('Press a key to play.', BASICFONT, TEXTCOLOR)
     pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 120)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
 
 
-    # while checkForKeyPress() is None:
-    #     pygame.display.update()
-    #     FPSCLOCK.tick()
-
-    while not checkForKeyPress() is None:
-        if checkForKeyPress() == K_SPACE:
-            drawInstructions('Instructions')
-        elif checkForKeyPress() == K_l:
-            drawLeaderboard('Leaderboards')
-        elif checkForKeyPress() is None:
-            pygame.display.update()
-            FPSCLOCK.tick()
-
-
+    while checkForKeyPress() is None:
+        pygame.display.update()
+        FPSCLOCK.tick()
 
 
 def checkForQuit():
