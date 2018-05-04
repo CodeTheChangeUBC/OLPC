@@ -520,22 +520,48 @@ def drawInstructions(text):
     # Draw the text drop shadow
     DISPLAYSURF.fill(BLACK)
     titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
-    titleRect.center = (int(WINDOWWIDTH / 2)-3, int(WINDOWHEIGHT / 2) - 40)
+    titleRect.center = (int(WINDOWWIDTH / 2)-3, int(WINDOWHEIGHT / 4) - 40)
     DISPLAYSURF.blit(titleSurf, titleRect)
 
     # Draw the text
     titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
-    titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 50)
+    titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 4) - 50)
     DISPLAYSURF.blit(titleSurf, titleRect)
 
     # Draw the additional "Press a key to play." text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Choose an answer by pressing keys 1, 2, 3, 4', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2)-50)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+    pressKeySurf, pressKeyRect = makeTextObjs('Rotate block with UP/W key (Only after answering correctly)', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2)-25)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+    pressKeySurf, pressKeyRect = makeTextObjs('Move the block with LEFT/A, RIGHT/D, DOWN/S', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2))
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+    pressKeySurf, pressKeyRect = makeTextObjs('Hard drop by pressing SPACE', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2)+25)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+    pressKeySurf, pressKeyRect = makeTextObjs('Pause the game by pressing P', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2)+50)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+    pressKeySurf, pressKeyRect = makeTextObjs('Exit the game pressing ESCAPE key', BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2)+75)
+    DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
+
+
+    # Draw the additional "Press a key to play." text.
     pressKeySurf, pressKeyRect = makeTextObjs('Press any key to play.', BASICFONT, TEXTCOLOR)
-    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 70)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 170)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
 
     # Instructions text.
     pressKeySurf, pressKeyRect = makeTextObjs('Press B to go back', BASICFONT, TEXTCOLOR)
-    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 95)
+    pressKeyRect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 195)
     DISPLAYSURF.blit(pressKeySurf, pressKeyRect)
 
     while checkForKeyPress() is None:
