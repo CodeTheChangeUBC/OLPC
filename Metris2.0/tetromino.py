@@ -211,10 +211,11 @@ def runGame():
     q2_upbound = bound_list[2]
     o_lbound = bound_list[3]
     operator = randint(o_lbound,o_upbound)
-    q2 = randint(0,q2_upbound)
     if operator == 3:
+        q2 = randint(1,q2_upbound)
         q1 = q2*randint(0, q1_upbound)
     else:
+        q2 = randint(0,q2_upbound)
         q1 = randint(0,q1_upbound)
     sol_key = randint(0,3)
     if sol_key == 0:
@@ -330,10 +331,11 @@ def runGame():
                         diff2 = randint(1, 10)
                         diff3 = randint(1, 20)
                         operator = randint(o_lbound,o_upbound)
-                        q2 = randint(0,q2_upbound)
                         if operator == 3:
+                            q2 = randint(1,q2_upbound)
                             q1 = q2*randint(0, q1_upbound)
                         else:
+                            q2 = randint(0,q2_upbound)
                             q1 = randint(0,q1_upbound)
                         sol_key = randint(0,3)
                         if sol_key == 0:
@@ -394,10 +396,11 @@ def runGame():
                 q2_upbound = bound_list[2]
                 o_lbound = bound_list[3]
                 operator = randint(o_lbound,o_upbound)
-                q2 = randint(0,q2_upbound)
                 if operator == 3:
+                    q2 = randint(1,q2_upbound)
                     q1 = q2*randint(0, q1_upbound)
                 else:
+                    q2 = randint(0,q2_upbound)
                     q1 = randint(0,q1_upbound)
                 sol_key = randint(0,3)
                 if sol_key == 0:
