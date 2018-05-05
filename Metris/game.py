@@ -58,7 +58,7 @@ speed = 10
 landed = [[None for i in range(24)] for j in range(10)]
 
 TICK = pygame.USEREVENT + 1
-pygame.time.set_timer(TICK, 3000)
+pygame.time.set_timer(TICK, 1000)
 clock = pygame.time.Clock()
 
 holdBlock = None;
@@ -174,6 +174,25 @@ def checkCollisionRotation():
                             block.setY(block.getY() + BLOCK_SIZE)
                             pos_y += BLOCK_SIZE
                             return True
+                        
+    for i in range (0, len(blockPerimeter)):
+        if blockPerimeter[i].getX() < LEFT_BOUNDARY - BLOCK_SIZE:
+            block.setX(block.getX() + 2*BLOCK_SIZE)
+            pos_x += 2*BLOCK_SIZE
+            if checkCollision():
+                block.setX(block.getX() - 2*BLOCK_SIZE)
+                pos_x -= 2*BLOCK_SIZE
+                return True
+            break
+        elif blockPerimeter[i].getX() > RIGHT_BOUNDARY:
+            block.setX(block.getX() - 2*BLOCK_SIZE)
+            pos_x -= 2*BLOCK_SIZE
+            if checkCollision():
+                block.setX(block.getX() + 2*BLOCK_SIZE)
+                pos_x += 2*BLOCK_SIZE
+                return True
+            break
+            
     for i in range (0, len(blockPerimeter)):
         if blockPerimeter[i].getX() < LEFT_BOUNDARY:
             block.setX(block.getX() + BLOCK_SIZE)
