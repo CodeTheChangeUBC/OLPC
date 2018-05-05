@@ -157,7 +157,9 @@ PIECES = {'S': S_SHAPE_TEMPLATE,
           'I': I_SHAPE_TEMPLATE,
           'O': O_SHAPE_TEMPLATE,
           'T': T_SHAPE_TEMPLATE}
-
+mid_files = ['mids/ff7.mid','mids/tetrisb.mid','mids/tetrisc.mid','mids/hip.mid',
+             'mids/marioParty.mid','mids/rock.mid','mids/tech.MID','mids/hip.MID',
+             'mids/ki.mid','mids/lg.MID','mids/eye.mid']
 
 def main():
     global FPSCLOCK, DISPLAYSURF, BASICFONT, BIGFONT
@@ -172,17 +174,7 @@ def main():
 
 
     while True: # game loop
-        num = randint(0, 4)
-        if num == 0:
-            pygame.mixer.music.load('mids/tetrisb.mid')
-        elif num == 1:
-            pygame.mixer.music.load('mids/ff7.mid')
-        elif num == 2:
-            pygame.mixer.music.load('mids/eye.mid')
-        elif num == 3:
-            pygame.mixer.music.load('mids/hip.mid')
-        elif num == 4:
-            pygame.mixer.music.load('mids/mur.mid')
+        pygame.mixer.music.load(mid_files[0])
         pygame.mixer.music.play(-1, 0.0)
         runGame()
         pygame.mixer.music.stop()
@@ -201,6 +193,7 @@ def runGame():
     movingRight = False
     score = 0
     level, fallFreq = calculateLevelAndFallFreq(score)
+    level_prev = level
     qSolved = False
     comp_input = 10
     out_list = generateQues(level)
@@ -347,16 +340,17 @@ def runGame():
         drawBoard(board)
         drawStatus(score,level,out_list[0],out_list[1],out_list[2],out_list[3],out_list[4],
                    out_list[5], out_list[6], out_list[7], out_list[8])
-        #drawStatus(score, level, q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op)
         drawCompliment(comp_input)
         drawNextPiece(nextPiece)
         if fallingPiece != None:
             drawPiece(fallingPiece)
-
+        if level_prev != level and level <= 11:
+            pygame.mixer.music.load(mid_files[level-1])
+            pygame.mixer.music.play(-1, 0.0)
+            level_prev = level
         pygame.display.update()
         SCORE = score
         FPSCLOCK.tick(FPS)
-
 
 def generateQues(level):
     if level <= 4:
@@ -385,9 +379,9 @@ def generateQues(level):
         char = K_3
     if sol_key == 3:
         char = K_4
-    diff1 = randint(1, 10)
+    diff1 = randint(1, 5)
     diff2 = randint(1, 10)
-    diff3 = randint(1, 20)
+    diff3 = randint(6, 20)
     return [q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op, char]
 
 
@@ -397,6 +391,7 @@ def calculateUpbound(level):
         o_lbound = 0
         q1_upbound = 9
         q2_upbound = 9
+        
     elif level == 2:
         o_upbound = 1
         o_lbound = 0
