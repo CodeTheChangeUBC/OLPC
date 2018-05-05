@@ -61,7 +61,7 @@ TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
 clock = pygame.time.Clock()
 
-holdBlock = None;
+holdBlock = None
 
 
 
@@ -266,9 +266,9 @@ def hold(blockSet, nextBlocks):
     global pos_y
     global holdBlock
 
-    tmp = holdBlock;
+    tmp = holdBlock
 
-    holdBlock = block;
+    holdBlock = block
     holdBlock.setX(INIT_X)
     holdBlock.setY(INIT_Y)
     pos_x = INIT_X
@@ -276,7 +276,7 @@ def hold(blockSet, nextBlocks):
 
     # first time if hold is empty
     if (tmp == None):
-        blockType = blockSet.pop(0);
+        blockType = blockSet.pop(0)
         if blockListTooShort(len(blockSet)):
             appendBlockList(blockSet)
 
@@ -296,7 +296,7 @@ def hold(blockSet, nextBlocks):
         elif blockType == 6:
             block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
     else:
-        block = tmp;
+        block = tmp
     setNextBlocks(blockSet, nextBlocks)
 
 def blockListTooShort(len):
@@ -367,6 +367,7 @@ def gameOver():
     global block
     global landed
     global score
+    global holdBlock
 
     pygame.mixer.music.stop()
     pygame.mixer.music.load('marioDeath.mid')
@@ -385,6 +386,7 @@ def gameOver():
                     for i in range(0, len(landed)):
                         for j in range(0, len(landed[i])):
                             landed[i][j] = None
+                    holdBlock = None
                     runGame()
 
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
