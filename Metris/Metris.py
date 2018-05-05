@@ -18,10 +18,7 @@ pygame.init()
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-ABOUT = ['Metris {0}'.format(__version__),
-         'Author: {0}'.format(__author__),
-         PYGAMEMENU_TEXT_NEWLINE,
-         'Email: {0}'.format(__email__)]
+
 
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
