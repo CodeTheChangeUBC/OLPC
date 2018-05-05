@@ -373,6 +373,8 @@ def gameOver():
     pygame.mixer.music.load('marioDeath.mid')
     pygame.mixer.music.play(0, 0.0)
 
+    initialSize = 16
+
     while pause:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -389,18 +391,25 @@ def gameOver():
                     holdBlock = None
                     runGame()
 
-        myfont = pygame.font.SysFont('Comic Sans MS', 30)
+        myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
         gameOverText = myfont.render("Game Over", True, black)
         textWidth = gameOverText.get_rect().width
         textHeight = gameOverText.get_rect().height
-        myfont = pygame.font.SysFont('Comic Sans MS', 15)
+        myfont = pygame.font.SysFont('Comic Sans MS', initialSize - 15)
         additionalText = myfont.render("Press \"s\" to restart!", True, black)
         additionalTextWidth = additionalText.get_rect().width
         additionalTextHeight = additionalText.get_rect().height
+        myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
+        gameOverText2 = myfont.render("Game Over", True, red)
+        textWidth2 = gameOverText2.get_rect().width
+        textHeight2 = gameOverText2.get_rect().height
         gameDisplay.fill(white, [LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight, 2*textWidth, 2*(textHeight + additionalTextHeight)])
         gameDisplay.blit(gameOverText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth/2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight/2))
         gameDisplay.blit(additionalText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth/2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + textHeight))
+        gameDisplay.blit(gameOverText2, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth/2 + 2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight/2))
         pygame.display.update()
+        if initialSize < 30:
+            initialSize += 1
         clock.tick(15)   
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -425,7 +434,7 @@ def runGame():
     blockO = BlockO(0, 0, BLOCK_SIZE)
     nextBlocks = []
 
-    MUSICS = ['marioUnderground.mp3', 'one_piece_party.mp3']
+    MUSICS = ['marioUnderground.mp3', 'one_piece_party.mp3', 'UchihaItachi.mp3']
     musicIndex = randint(0, len(MUSICS) - 1)
     pygame.mixer.music.load(MUSICS[musicIndex])
     pygame.mixer.music.play(-1, 0.0)
