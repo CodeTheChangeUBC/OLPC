@@ -315,6 +315,9 @@ def setNextBlocks(blockSet, nextBlocks):
 def paused():
     pause = True
 
+    pygame.mixer.music.pause()
+    startTime = pygame.mixer.music.get_pos()
+
     while pause:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -322,11 +325,20 @@ def paused():
                 quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
+                    pygame.mixer.music.unpause()
                     pause = False
         
         gameDisplay.fill(white, [LEFT_BOUNDARY, TOP_BOUNDARY, 11*BLOCK_SIZE, 21*BLOCK_SIZE])
-        pausedText = font.render("Paused", True, black)
-        gameDisplay.blit(pausedText, (WIDTH/3 + WIDTH/6, HEIGHT/2)) 
+        myfont = pygame.font.SysFont('Comic Sans MS', 30)
+        pausedText = myfont.render("Paused", True, black)
+        textWidth = pausedText.get_rect().width
+        textHeight = pausedText.get_rect().height
+        gameDisplay.blit(pausedText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth/2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight/2))
+        myfont = pygame.font.SysFont('Comic Sans MS', 15)
+        additionalText = myfont.render("Press \"p\" to resume!", True, black)
+        additionalTextWidth = additionalText.get_rect().width
+        additionalTextHeight = additionalText.get_rect().height
+        gameDisplay.blit(additionalText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth/2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + textHeight))
         pygame.display.update()
         clock.tick(15)    
     
@@ -336,6 +348,10 @@ def gameOver():
     global block
     global landed
     global score
+
+    pygame.mixer.music.stop()
+    pygame.mixer.music.load('marioDeath.mid')
+    pygame.mixer.music.play(0, 0.0)
 
     while pause:
         for event in pygame.event.get():
@@ -351,8 +367,18 @@ def gameOver():
                         for j in range(0, len(landed[i])):
                             landed[i][j] = None
                     runGame()
-        gameOverText = font.render("Game Over", True, black)
-        gameDisplay.blit(gameOverText, (WIDTH/3 + WIDTH/6, HEIGHT/2)) 
+
+        myfont = pygame.font.SysFont('Comic Sans MS', 30)
+        gameOverText = myfont.render("Game Over", True, black)
+        textWidth = gameOverText.get_rect().width
+        textHeight = gameOverText.get_rect().height
+        myfont = pygame.font.SysFont('Comic Sans MS', 15)
+        additionalText = myfont.render("Press \"s\" to restart!", True, black)
+        additionalTextWidth = additionalText.get_rect().width
+        additionalTextHeight = additionalText.get_rect().height
+        gameDisplay.fill(white, [LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight, 2*textWidth, 2*(textHeight + additionalTextHeight)])
+        gameDisplay.blit(gameOverText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth/2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight/2))
+        gameDisplay.blit(additionalText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth/2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + textHeight))
         pygame.display.update()
         clock.tick(15)   
 
@@ -377,7 +403,12 @@ def runGame():
     blockZ = BlockZ(0, 0, BLOCK_SIZE)
     blockO = BlockO(0, 0, BLOCK_SIZE)
     nextBlocks = []
+
+    pygame.mixer.music.load('marioUnderground.mp3')
+    pygame.mixer.music.play(-1, 0.0)
+
     hasSwap = True
+
     
     while not gameExit:
         for event in pygame.event.get():
