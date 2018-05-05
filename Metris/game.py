@@ -269,8 +269,8 @@ def hold(blockSet, nextBlocks):
     tmp = holdBlock
 
     holdBlock = block
-    holdBlock.setX(LEFT_BOUNDARY + 4 * BLOCK_SIZE)
-    holdBlock.setY(BOTTOM_BOUNDARY + 4 * BLOCK_SIZE)
+    holdBlock.setX(LEFT_BOUNDARY + 5 * BLOCK_SIZE)
+    holdBlock.setY(BOTTOM_BOUNDARY + 5 * BLOCK_SIZE)
 
     # first time if hold is empty
     if (tmp == None):
@@ -317,21 +317,21 @@ def setNextBlocks(blockSet, nextBlocks):
 
     for i in range (0, 4):
         if blockSet[i] == 0:
-            nextBlocks.insert(i, BlockT(0, 0, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockT(RIGHT_BOUNDARY + 3.5 * BLOCK_SIZE, (i+1)*BLOCK_SIZE*5 + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 1:
-            nextBlocks.insert(i, BlockS(0, 0, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockS(RIGHT_BOUNDARY + 3.5 * BLOCK_SIZE, (i+1)*BLOCK_SIZE*5 + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 2:
-            nextBlocks.insert(i, BlockJ(0, 0, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockJ(RIGHT_BOUNDARY + 4 * BLOCK_SIZE, (i+1)*BLOCK_SIZE*5 + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 3:
-            nextBlocks.insert(i, BlockI(0, 0, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockI(RIGHT_BOUNDARY + 3 * BLOCK_SIZE, (i+1)*BLOCK_SIZE*5 + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 4:
-            nextBlocks.insert(i, BlockL(0, 0, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockL(RIGHT_BOUNDARY + 3 * BLOCK_SIZE, (i+1)*BLOCK_SIZE*5 + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 5:
-            nextBlocks.insert(i, BlockZ(0, 0, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockZ(RIGHT_BOUNDARY + 3.5 * BLOCK_SIZE, (i+1)*BLOCK_SIZE*5 + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 6:
-            nextBlocks.insert(i, BlockO(0, 0, BLOCK_SIZE))
-        nextBlocks[i].setX(RIGHT_BOUNDARY + 4.5 * BLOCK_SIZE)
-        nextBlocks[i].setY((i+1)*BLOCK_SIZE*5)
+            nextBlocks.insert(i, BlockO(RIGHT_BOUNDARY + 3 * BLOCK_SIZE, (i+1)*BLOCK_SIZE*5 + BLOCK_SIZE, BLOCK_SIZE))
+        # nextBlocks[i].setX(RIGHT_BOUNDARY + 3 * BLOCK_SIZE)
+        # nextBlocks[i].setY((i+1)*BLOCK_SIZE*5 + BLOCK_SIZE)
         # nextBlocks[i].setX(RIGHT_BOUNDARY + LEFT_BOUNDARY / 3)
         # nextBlocks[i].setY((i+1)*BLOCK_SIZE*5)
 
@@ -343,7 +343,7 @@ def drawHoldBorder():
 
 def drawNextBlocksBorder():
     BORDER_WIDTH = 2
-    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + 6 * BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + BLOCK_SIZE, BOTTOM_BOUNDARY - BORDER_WIDTH), (RIGHT_BOUNDARY + 6 * BLOCK_SIZE, BOTTOM_BOUNDARY - BORDER_WIDTH)]
+    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + 7 * BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + 7 * BLOCK_SIZE, BOTTOM_BOUNDARY + BLOCK_SIZE - BORDER_WIDTH), (RIGHT_BOUNDARY + BLOCK_SIZE, BOTTOM_BOUNDARY + BLOCK_SIZE - BORDER_WIDTH)]
     pygame.draw.lines(gameDisplay, white, True, borderList, BORDER_WIDTH)
 
 
