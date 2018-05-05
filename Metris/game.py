@@ -58,7 +58,7 @@ speed = 10
 landed = [[None for i in range(24)] for j in range(10)]
 
 TICK = pygame.USEREVENT + 1
-pygame.time.set_timer(TICK, 1000)
+pygame.time.set_timer(TICK, 500)
 clock = pygame.time.Clock()
 
 holdBlock = None
@@ -269,10 +269,8 @@ def hold(blockSet, nextBlocks):
     tmp = holdBlock
 
     holdBlock = block
-    holdBlock.setX(INIT_X)
-    holdBlock.setY(INIT_Y)
-    pos_x = INIT_X
-    pos_y = INIT_Y
+    holdBlock.setX(LEFT_BOUNDARY + 4 * BLOCK_SIZE)
+    holdBlock.setY(BOTTOM_BOUNDARY + 4 * BLOCK_SIZE)
 
     # first time if hold is empty
     if (tmp == None):
@@ -297,6 +295,10 @@ def hold(blockSet, nextBlocks):
             block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
     else:
         block = tmp
+        block.setX(INIT_X)
+        block.setY(INIT_Y)
+        pos_x = INIT_X
+        pos_y = INIT_Y
     setNextBlocks(blockSet, nextBlocks)
 
 def blockListTooShort(len):
@@ -328,8 +330,22 @@ def setNextBlocks(blockSet, nextBlocks):
             nextBlocks.insert(i, BlockZ(0, 0, BLOCK_SIZE))
         elif blockSet[i] == 6:
             nextBlocks.insert(i, BlockO(0, 0, BLOCK_SIZE))
-        nextBlocks[i].setX(RIGHT_BOUNDARY + LEFT_BOUNDARY / 3)
+        nextBlocks[i].setX(RIGHT_BOUNDARY + 4.5 * BLOCK_SIZE)
         nextBlocks[i].setY((i+1)*BLOCK_SIZE*5)
+        # nextBlocks[i].setX(RIGHT_BOUNDARY + LEFT_BOUNDARY / 3)
+        # nextBlocks[i].setY((i+1)*BLOCK_SIZE*5)
+
+def drawHoldBorder():
+        # pygame.draw.rect(gameDisplay, blockList[i].getColor(),
+    BORDER_WIDTH = 2
+    borderList = [(LEFT_BOUNDARY, BOTTOM_BOUNDARY + 3 * BLOCK_SIZE), (RIGHT_BOUNDARY - BORDER_WIDTH, BOTTOM_BOUNDARY + 3 * BLOCK_SIZE), (RIGHT_BOUNDARY - BORDER_WIDTH, BOTTOM_BOUNDARY + 8 * BLOCK_SIZE) , (LEFT_BOUNDARY, BOTTOM_BOUNDARY + 8 * BLOCK_SIZE)]
+    pygame.draw.lines(gameDisplay, white, True, borderList, BORDER_WIDTH)
+
+def drawNextBlocksBorder():
+    BORDER_WIDTH = 2
+    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + 6 * BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + BLOCK_SIZE, BOTTOM_BOUNDARY - BORDER_WIDTH), (RIGHT_BOUNDARY + 6 * BLOCK_SIZE, BOTTOM_BOUNDARY - BORDER_WIDTH)]
+    pygame.draw.lines(gameDisplay, white, True, borderList, BORDER_WIDTH)
+
 
 def paused():
     pause = True
@@ -556,16 +572,26 @@ def runGame():
 
         # score
         screen_text = font.render("score: " + str(score), True, white)
-        gameDisplay.blit(screen_text, (RIGHT_BOUNDARY +
-                                    LEFT_BOUNDARY / 10, HEIGHT / 20))
+        gameDisplay.blit(screen_text, (LEFT_BOUNDARY, TOP_BOUNDARY - 1.5 * BLOCK_SIZE))
+        
+        # hold label
+        hold_text = font.render("hold:", True, white)
+        gameDisplay.blit(hold_text, (LEFT_BOUNDARY, BOTTOM_BOUNDARY + 1.5 * BLOCK_SIZE))
 
         # drawing next blocks
         for i in range (0, len(nextBlocks)):
             nextBlocks[i].display(gameDisplay)
+
+        # draw next blocks border
+            drawNextBlocksBorder()
         
         # drawing hold
             if (holdBlock != None):
                 holdBlock.display(gameDisplay)
+        
+        # draw hold border
+            drawHoldBorder()
+        
 
         # collision checking
         if not hasMove:
