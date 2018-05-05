@@ -90,6 +90,8 @@ def tick(pos_y):
                 landed[x2Index(block.getPerimeter()[i].getX())][y2Index(block.getPerimeter()[i].getY())] = \
                     block.getPerimeter()[i]
             checkLandedAndDelete()
+            landSound = pygame.mixer.Sound('landSound.wav')
+            landSound.play()
             checkGameOver()
         else:
             pos_y += BLOCK_SIZE
@@ -127,6 +129,8 @@ def deleteRows(rows):
                     if landed[x][y - 1] != None:
                         landed[x][y - 1].setRelativeY(BLOCK_SIZE)
                     landed[x][y] = landed[x][y - 1]
+        deleteRowSound = pygame.mixer.Sound('coin.wav')
+        deleteRowSound.play()
 
     # update score
     if len(rows) == 1:
@@ -516,7 +520,7 @@ def runGame():
                 elif event.key == pygame.K_DOWN:
                     dy = BLOCK_SIZE
                     # dx = 0
-                    effect = pygame.mixer.Sound('coin.wav')
+                    effect = pygame.mixer.Sound('beep.wav')
                     effect.play()
                     speed = 20
 
