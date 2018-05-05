@@ -9,9 +9,8 @@ from Block.BlockS import *
 from Block.BlockZ import *
 from Block.BlockJ import *
 
-import pygameMenu
-from pygameMenu.locals import *
-from pygameMenu import fonts
+from menu import *
+
 
 pygame.init()
 
@@ -26,7 +25,6 @@ INIT_X = WIDTH / 2
 INIT_Y = BLOCK_SIZE
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
-fontdir = pygameMenu.fonts.FONT_8BIT
 
 gameDisplay = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Metris')
@@ -620,16 +618,6 @@ def runGame():
 
 
 def main():
-    HELP = ['Press ESC to enable/disable Menu',
-            'Press ENTER to access a Sub-Menu or use an option',
-            'Press UP/DOWN to move through Menu',
-            'Press LEFT/RIGHT to move through Selectors']
-    menu = pygameMenu.Menu(gameDisplay, WIDTH, HEIGHT, fontdir, 'METRIS', bgfun=runGame())
-    for line in HELP:
-        menu.add_line(line)  # Add line
-    menu.add_option('Return to Menu', PYGAME_MENU_BACK)
-
-    menu.draw()
     runGame()
 
 
