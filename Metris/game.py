@@ -61,6 +61,9 @@ TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 3000)
 clock = pygame.time.Clock()
 
+holdBlock = None;
+
+
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -234,9 +237,80 @@ def getRandomBlockSet(lastBlock):
     shuffle(set)
     if set[0] == lastBlock:
         tmp = set[0]
-        set[0] = set[5]
-        set[5] = tmp
+        set[0] = set[1]
+        set[1] = tmp
     return set
+
+def hold(blockSet, nextBlocks):
+    global block
+    global pos_x
+    global pos_y
+    global holdBlock
+
+    tmp = holdBlock;
+
+    holdBlock = block;
+    holdBlock.setX(INIT_X)
+    holdBlock.setY(INIT_Y)
+    pos_x = INIT_X
+    pos_y = INIT_Y
+
+    # first time if hold is empty
+    if (tmp == None):
+        blockType = blockSet.pop(0);
+        if blockListTooShort(len(blockSet)):
+            appendBlockList(blockSet)
+
+        # TODO make function            
+        if blockType == 0:
+            block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif blockType == 1:
+            block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif blockType == 2:
+            block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif blockType == 3:
+            block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif blockType == 4:
+            block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif blockType == 5:
+            block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
+        elif blockType == 6:
+            block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
+    else:
+        block = tmp;
+    setNextBlocks(blockSet, nextBlocks)
+
+def blockListTooShort(len):
+    if len <= 5:
+        return True
+    return False
+
+def appendBlockList(blockSet):
+    nextBlockSet = getRandomBlockSet(blockSet[len(blockSet) - 1])
+    for i in range (0, len(nextBlockSet)):
+        blockSet.insert(len(blockSet), nextBlockSet[i])
+
+def setNextBlocks(blockSet, nextBlocks):
+    while (len(nextBlocks) != 0):
+        nextBlocks.pop()
+
+    for i in range (0, 4):
+        if blockSet[i] == 0:
+            nextBlocks.insert(i, BlockT(0, 0, BLOCK_SIZE))
+        elif blockSet[i] == 1:
+            nextBlocks.insert(i, BlockS(0, 0, BLOCK_SIZE))
+        elif blockSet[i] == 2:
+            nextBlocks.insert(i, BlockJ(0, 0, BLOCK_SIZE))
+        elif blockSet[i] == 3:
+            nextBlocks.insert(i, BlockI(0, 0, BLOCK_SIZE))
+        elif blockSet[i] == 4:
+            nextBlocks.insert(i, BlockL(0, 0, BLOCK_SIZE))
+        elif blockSet[i] == 5:
+            nextBlocks.insert(i, BlockZ(0, 0, BLOCK_SIZE))
+        elif blockSet[i] == 6:
+            nextBlocks.insert(i, BlockO(0, 0, BLOCK_SIZE))
+        nextBlocks[i].setX(RIGHT_BOUNDARY + LEFT_BOUNDARY / 3)
+        nextBlocks[i].setY((i+1)*BLOCK_SIZE*5)
 
 def paused():
     pause = True
@@ -267,15 +341,6 @@ def paused():
         gameDisplay.blit(additionalText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth/2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + textHeight))
         pygame.display.update()
         clock.tick(15)    
-        
-def getRandomBlockSet(lastBlock):
-    set = [0, 1, 2, 3, 4, 5, 6]
-    shuffle(set)
-    if set[6] == lastBlock:
-        tmp = set[6]
-        set[6] = set[0]
-        set[0] = tmp
-    return set
     
 def gameOver():
     pause = True
@@ -329,7 +394,7 @@ def runGame():
     global speed
     global pos_y
     global pos_x
-    blockSet = getRandomBlockSet(7)
+    blockSet = getRandomBlockSet(None)
     blockT = BlockT(0, 0, BLOCK_SIZE)
     blockS = BlockS(0, 0, BLOCK_SIZE)
     blockJ = BlockJ(0, 0, BLOCK_SIZE)
@@ -341,6 +406,9 @@ def runGame():
 
     pygame.mixer.music.load('marioUnderground.mp3')
     pygame.mixer.music.play(-1, 0.0)
+
+    hasSwap = True
+
     
     while not gameExit:
         for event in pygame.event.get():
@@ -354,12 +422,14 @@ def runGame():
                         # dy = 0
                         if event.key == pygame.K_DOWN:
                             speed = 10
+
                 elif event.key == pygame.K_RIGHT:
                     if pos_x:
                         dx = BLOCK_SIZE
                         # dy = 0
                         if event.key == pygame.K_DOWN:
                             speed = 10
+
                 elif event.key == pygame.K_DOWN:
                     dy = BLOCK_SIZE
                     # dx = 0
@@ -370,11 +440,13 @@ def runGame():
                         block.rotateR()
                         if checkCollisionRotation():
                             block.rotateL()
+
                 elif event.key == pygame.K_z:
                     if currentBlock:
                         block.rotateL()
                         if checkCollisionRotation():
                             block.rotateR()
+
                 elif event.key == pygame.K_SPACE:
                     while (not checkCollision()):
                         block.setY(block.getY() + BLOCK_SIZE)
@@ -384,8 +456,15 @@ def runGame():
                     pos_y -= BLOCK_SIZE
                     
                     pos_y = tick(pos_y)
+
                 elif event.key == pygame.K_p:
                     paused()
+                
+                elif event.key == pygame.K_LSHIFT:
+                    if (hasSwap == True):
+                        hold(blockSet, nextBlocks)
+                        hasSwap = False
+
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     if dx < 0:
@@ -411,33 +490,14 @@ def runGame():
 
         # drawing block objs
         if not currentBlock and not gameExit:
-            while len(nextBlocks) != 0:
-                nextBlocks.pop()
+            # while len(nextBlocks) != 0:
+            #     nextBlocks.pop()
             rand = blockSet.pop(0)
-            if (len(blockSet) == 5):
-                nextBlockSet = getRandomBlockSet(blockSet[len(blockSet) - 1])
-                for i in range (0, len(nextBlockSet)):
-                    blockSet.insert(len(blockSet), nextBlockSet[i])
+            if blockListTooShort(len(blockSet)):
+                appendBlockList(blockSet)
+            
+            setNextBlocks(blockSet, nextBlocks)
 
-            # next blocks
-            for i in range (0, 4):
-                if blockSet[i] == 0:
-                    nextBlocks.insert(i, BlockT(0, 0, BLOCK_SIZE))
-                elif blockSet[i] == 1:
-                    nextBlocks.insert(i, BlockS(0, 0, BLOCK_SIZE))
-                elif blockSet[i] == 2:
-                    nextBlocks.insert(i, BlockJ(0, 0, BLOCK_SIZE))
-                elif blockSet[i] == 3:
-                    nextBlocks.insert(i, BlockI(0, 0, BLOCK_SIZE))
-                elif blockSet[i] == 4:
-                    nextBlocks.insert(i, BlockL(0, 0, BLOCK_SIZE))
-                elif blockSet[i] == 5:
-                    nextBlocks.insert(i, BlockZ(0, 0, BLOCK_SIZE))
-                elif blockSet[i] == 6:
-                    nextBlocks.insert(i, BlockO(0, 0, BLOCK_SIZE))
-                nextBlocks[i].setX(RIGHT_BOUNDARY + LEFT_BOUNDARY / 3)
-                nextBlocks[i].setY((i+1)*BLOCK_SIZE*5)
-                    
             if rand == 0:
                 block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
             elif rand == 1:
@@ -455,6 +515,7 @@ def runGame():
             pos_x = INIT_X
             pos_y = INIT_Y
             currentBlock = True
+            hasSwap = True
         difference = getShadowDifference(block.getPerimeter())
         drawShadow(block.getPerimeter(), difference)
         
@@ -477,6 +538,9 @@ def runGame():
         for i in range (0, len(nextBlocks)):
             nextBlocks[i].display(gameDisplay)
         
+        # drawing hold
+            if (holdBlock != None):
+                holdBlock.display(gameDisplay)
 
         # collision checking
         if not hasMove:
@@ -496,7 +560,6 @@ def runGame():
 
         clock.tick(speed)
         hasMove = False
-
 
     pygame.quit()
     quit()
