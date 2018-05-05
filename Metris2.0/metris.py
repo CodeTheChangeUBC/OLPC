@@ -3,9 +3,12 @@
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
 
+
+import inputbox
 import random, time, pygame, sys, math
 from pygame.locals import *
 from random import randint
+from leaderboard import *
 
 FPS = 25
 WINDOWWIDTH = 640
@@ -175,7 +178,8 @@ def main():
         pygame.mixer.music.play(-1, 0.0)
         runGame()
         pygame.mixer.music.stop()
-        showTextScreen('Game Over')
+        gameOver()
+        #showTextScreen('Game Over')
 
 
 def runGame():
@@ -199,6 +203,7 @@ def runGame():
     char = out_list[9]
     num_q = 0
     scr_mult = 5
+    global SCORE
 
     fallingPiece = getNewPiece()
     nextPiece = getNewPiece()
@@ -344,6 +349,7 @@ def runGame():
             pygame.mixer.music.play(-1, 0.0)
             level_prev = level
         pygame.display.update()
+        SCORE = score
         FPSCLOCK.tick(FPS)
 
 def generateQues(level):
@@ -568,6 +574,30 @@ def drawLeaderboard(text):
         pygame.display.update()
         FPSCLOCK.tick()
 
+
+def drawNewHighScore(text, name, score):
+    # This function displays large text in the
+    # center of the screen until a key is pressed.
+    # Draw the text drop shadow
+    DISPLAYSURF.fill(BLACK)
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2)-3, int(WINDOWHEIGHT / 4) - 40)
+    DISPLAYSURF.blit(titleSurf, titleRect)
+
+    # Draw the text
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
+    titleRect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 4) - 50)
+    DISPLAYSURF.blit(titleSurf, titleRect)
+
+    # Draw name and score
+    nameSurf, nameRect = makeTextObjs(name + score, BASICFONT, TEXTCOLOR)
+    nameRect.center = (int(WINDOWWIDTH / 2)-3, int(WINDOWHEIGHT / 4) - 40)
+    DISPLAYSURF.blit(nameSurf, nameRect)
+
+
+    while checkForKeyPress() is None:
+        pygame.display.update()
+        FPSCLOCK.tick()
 
 
 
@@ -914,6 +944,22 @@ def drawCompliment(rand):
         controlRect.topleft = (WINDOWWIDTH - 150, 200)
         DISPLAYSURF.blit(controlSurf, controlRect)
 
+def gameOver():
+    global name
+    global leaderboard
+    drawLeaderboard('Leaderboard')
+    name = inputbox.ask(DISPLAYSURF, "Name")
+    leaderboard = Leaderboard(name, SCORE)
+    leaderboard.load_previous_scores()
+    leaderboard.save_score()
+    if leaderboard.new_score > leaderboard.topScore:
+        showHighscore()
+
+def showHighscore():
+    global leaderboard
+    drawNewHighScore('You made a new HIGH SCORE!', leaderboard.new_name, leaderboard.new_score)
+    # leaderboard.draw(DISPLAYSURF)
+    pygame.display.update()
 
 if __name__ == '__main__':
     main()
