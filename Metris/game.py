@@ -339,7 +339,9 @@ def runGame():
     blockO = BlockO(0, 0, BLOCK_SIZE)
     nextBlocks = []
 
-    pygame.mixer.music.load('marioUnderground.mp3')
+    MUSICS = ['marioUnderground.mp3', 'one_piece_party.mp3']
+    musicIndex = randint(0, len(MUSICS) - 1)
+    pygame.mixer.music.load(MUSICS[musicIndex])
     pygame.mixer.music.play(-1, 0.0)
     
     while not gameExit:
@@ -363,6 +365,8 @@ def runGame():
                 elif event.key == pygame.K_DOWN:
                     dy = BLOCK_SIZE
                     # dx = 0
+                    effect = pygame.mixer.Sound('coin.wav')
+                    effect.play()
                     speed = 20
                     
                 elif event.key == pygame.K_UP:
