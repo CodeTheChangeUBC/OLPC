@@ -66,6 +66,17 @@ global landed
 landed = []
 speed = 10
 
+global isSoundOn
+isSoundOn = True
+global soundOn
+soundOn = pygame.image.load('soundon.png')
+soundOn.convert()
+global soundOff
+soundOff = pygame.image.load('soundoff.png')
+soundOff.convert()
+global soundPosition
+soundPosition = (LEFT_BOUNDARY - 2*soundOn.get_rect().width, HEIGHT/2)
+
 landed = [[None for i in range(24)] for j in range(10)]
 
 TICK = pygame.USEREVENT + 1
@@ -90,8 +101,7 @@ def tick(pos_y):
                 landed[x2Index(block.getPerimeter()[i].getX())][y2Index(block.getPerimeter()[i].getY())] = \
                     block.getPerimeter()[i]
             checkLandedAndDelete()
-            landSound = pygame.mixer.Sound('landSound.wav')
-            landSound.play()
+            playSound('landSound.wav')
             checkGameOver()
         else:
             pos_y += BLOCK_SIZE
@@ -129,8 +139,7 @@ def deleteRows(rows):
                     if landed[x][y - 1] != None:
                         landed[x][y - 1].setRelativeY(BLOCK_SIZE)
                     landed[x][y] = landed[x][y - 1]
-        deleteRowSound = pygame.mixer.Sound('coin.wav')
-        deleteRowSound.play()
+        playSound('coin.wav')
 
     # update score
     if len(rows) == 1:
@@ -379,10 +388,16 @@ def paused():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = event.pos
+                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT/2 + soundOn.get_rect().height/2 and y >= HEIGHT/2 - soundOn.get_rect().height/2:
+                    flipSoundIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     pygame.mixer.music.unpause()
                     pause = False
+                elif event.key == pygame.K_m:
+                    flipSoundIcon()
 
         GAMEDISPLAY.fill(WHITE, [LEFT_BOUNDARY, TOP_BOUNDARY, 11 * BLOCK_SIZE, 21 * BLOCK_SIZE])
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
@@ -424,6 +439,10 @@ def gameOver():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = event.pos
+                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT/2 + soundOn.get_rect().height/2 and y >= HEIGHT/2 - soundOn.get_rect().height/2:
+                    flipSoundIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_s:
                     currentBlock = False
@@ -434,6 +453,8 @@ def gameOver():
                             landed[i][j] = None
                     holdBlock = None
                     runGame()
+                elif event.key == pygame.K_m:
+                    flipSoundIcon()                   
 
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
         gameOverText = myfont.render("Game Over", True, black)
@@ -468,6 +489,7 @@ def runGame():
     global pos_y
     global pos_x
     global score
+    global soundOn
     blockSet = getRandomBlockSet(None)
     blockT = BlockT(0, 0, BLOCK_SIZE)
     blockS = BlockS(0, 0, BLOCK_SIZE)
@@ -502,6 +524,10 @@ def runGame():
             if event.type == pygame.QUIT:
                 gameExit = True
 
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = event.pos
+                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT/2 + soundOn.get_rect().height/2 and y >= HEIGHT/2 - soundOn.get_rect().height/2:
+                    flipSoundIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     if pos_x:
@@ -520,10 +546,8 @@ def runGame():
                 elif event.key == pygame.K_DOWN:
                     dy = BLOCK_SIZE
                     # dx = 0
-                    effect = pygame.mixer.Sound('beep.wav')
-                    effect.play()
+                    playSound('beep.wav')
                     speed = 20
-
 
                 elif event.key == pygame.K_UP and controlsOn == True:
                     if currentBlock:
@@ -554,6 +578,8 @@ def runGame():
                     if (hasSwap == True):
                         hold(blockSet, nextBlocks)
                         hasSwap = False
+                elif event.key == pygame.K_m:
+                    flipSoundIcon()
                 # check for correct answer
                 elif event.key == out_list[9]:
                     if numTries < 1:
@@ -767,7 +793,8 @@ def runGame():
                 pos_y += dy
 
             hasMove = True
-
+        
+        drawSoundIcon()
         pygame.display.update()
 
         clock.tick(speed)
@@ -908,6 +935,36 @@ def drawCompliment(rand):
         controlRect = controlSurf.get_rect()
         controlRect.topleft = (RIGHT_BOUNDARY + LEFT_BOUNDARY / 3 - 20, HEIGHT - 200)
         GAMEDISPLAY.blit(controlSurf, controlRect)
+
+def playSound(soundSource):
+    global isSoundOn
+    if isSoundOn:
+        sound = pygame.mixer.Sound(soundSource)
+        sound.play()
+
+def flipSoundIcon():
+    global isSoundOn
+    global soundOn
+    global soundOff
+    global soundPosition
+    if isSoundOn:
+        pygame.mixer.music.set_volume(0)
+        isSoundOn = False
+    else:
+        pygame.mixer.music.set_volume(0.9)
+        isSoundOn = True
+    drawSoundIcon()
+    pygame.display.update()
+
+def drawSoundIcon():
+    global isSoundOn
+    global soundOn
+    global soundOff
+    global soundPosition
+    if isSoundOn:
+        GAMEDISPLAY.blit(soundOn, soundPosition)
+    else:
+        GAMEDISPLAY.blit(soundOff, soundPosition)
 
 
 # =================================================================
