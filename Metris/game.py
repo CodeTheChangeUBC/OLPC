@@ -39,6 +39,7 @@ pygame.display.set_caption('Metris')
 white = (255, 255, 255)
 red = (255, 0, 0)
 black = (0, 0, 0)
+borderColor = white
 
 pygame.display.update()
 
@@ -301,8 +302,19 @@ def hold(blockSet, nextBlocks):
 
     while (holdBlock.orientation % 4 != 0):
         holdBlock.rotateR
-    holdBlock.setX(LEFT_BOUNDARY + 5 * BLOCK_SIZE)
-    holdBlock.setY(BOTTOM_BOUNDARY + 5 * BLOCK_SIZE)
+
+    offset_y = TOP_BOUNDARY + BLOCK_SIZE * 14
+    offset_x = RIGHT_BOUNDARY + BLOCK_SIZE * 4
+
+    # TODO THIS IS INFURIATING
+    # solution: Use an int to store hold instead
+    # if type(holdBlock) == BlockT:
+    #     offset_x += 0.5 * BLOCK_SIZE
+
+    holdBlock.setX(offset_x)
+    holdBlock.setY(offset_y)
+
+
 
     # first time if hold is empty
     if (tmp == None):
@@ -326,9 +338,9 @@ def hold(blockSet, nextBlocks):
         elif blockType == 6:
             block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
     else:
+        tmp.setX(int (INIT_X))
+        tmp.setY(int (INIT_Y))
         block = tmp
-        block.setX(INIT_X)
-        block.setY(INIT_Y)
         pos_x = INIT_X
         pos_y = INIT_Y
     setNextBlocks(blockSet, nextBlocks)
@@ -374,13 +386,22 @@ def drawHoldBorder():
     BORDER_WIDTH = 2
     borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 12 * BLOCK_SIZE), (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 12 * BLOCK_SIZE),
                   (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 17 * BLOCK_SIZE), (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 17 * BLOCK_SIZE)]
-    pygame.draw.lines(GAMEDISPLAY, white, True, borderList, BORDER_WIDTH)
+    pygame.draw.lines(GAMEDISPLAY, borderColor, True, borderList, BORDER_WIDTH)
+
+def drawHoldLabel():
+    screen_text = BASICFONT.render("Hold: ", True, WHITE)
+    GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + 1.2 * BLOCK_SIZE, TOP_BOUNDARY + 12.2 * BLOCK_SIZE))
+
 
 def drawNextBlocksBorder():
     BORDER_WIDTH = 2
     borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE), (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE),
                   (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 11 * BLOCK_SIZE), (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 11 * BLOCK_SIZE)]
-    pygame.draw.lines(GAMEDISPLAY, white, True, borderList, BORDER_WIDTH)
+    pygame.draw.lines(GAMEDISPLAY, borderColor, True, borderList, BORDER_WIDTH)
+
+def drawNextBlocksLabel():
+    screen_text = BASICFONT.render("Next: ", True, WHITE)
+    GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + 1.2 * BLOCK_SIZE, TOP_BOUNDARY + 6.2 * BLOCK_SIZE))
 
 def paused():
     pause = True
@@ -734,6 +755,9 @@ def runGame():
 
         # draw next blocks border
         drawNextBlocksBorder()
+
+        # draw next blocks label
+        drawNextBlocksLabel()
         
         # drawing hold
         if (holdBlock != None):
@@ -741,6 +765,9 @@ def runGame():
         
         # draw hold border
         drawHoldBorder()
+
+        # draw hold label
+        drawHoldLabel()
 
         questionSurf = BASICFONT.render('Question :', True, TEXTCOLOR)
         questionRect = questionSurf.get_rect()
