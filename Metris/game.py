@@ -298,6 +298,9 @@ def hold(blockSet, nextBlocks):
     tmp = holdBlock
 
     holdBlock = block
+
+    while (holdBlock.orientation % 4 != 0):
+        holdBlock.rotateR
     holdBlock.setX(LEFT_BOUNDARY + 5 * BLOCK_SIZE)
     holdBlock.setY(BOTTOM_BOUNDARY + 5 * BLOCK_SIZE)
 
@@ -347,34 +350,37 @@ def setNextBlocks(blockSet, nextBlocks):
     while (len(nextBlocks) != 0):
         nextBlocks.pop()
     
-    offset_y = BLOCK_SIZE * 5
+    y_spacing = BLOCK_SIZE * 5
+    offset_y = TOP_BOUNDARY + BLOCK_SIZE * 7
+    offset_x = RIGHT_BOUNDARY + BLOCK_SIZE * 4
 
-    for i in range (0, 3):
+    for i in range (0, 1):
         if blockSet[i] == 0:
-            nextBlocks.insert(i, BlockT(RIGHT_BOUNDARY + 3.5 * BLOCK_SIZE, (i+1) * offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockT(offset_x + 0.5 * BLOCK_SIZE, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 1:
-            nextBlocks.insert(i, BlockS(RIGHT_BOUNDARY + 3.5 * BLOCK_SIZE, (i+1) * offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockS(offset_x + 0.5 * BLOCK_SIZE, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 2:
-            nextBlocks.insert(i, BlockJ(RIGHT_BOUNDARY + 4 * BLOCK_SIZE, (i+1) * offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockJ(offset_x + BLOCK_SIZE, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 3:
-            nextBlocks.insert(i, BlockI(RIGHT_BOUNDARY + 3 * BLOCK_SIZE, (i+1) * offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockI(offset_x , i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 4:
-            nextBlocks.insert(i, BlockL(RIGHT_BOUNDARY + 3 * BLOCK_SIZE, (i+1)* offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockL(offset_x, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 5:
-            nextBlocks.insert(i, BlockZ(RIGHT_BOUNDARY + 3.5 * BLOCK_SIZE, (i+1)* offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockZ(offset_x + 0.5 * BLOCK_SIZE, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 6:
-            nextBlocks.insert(i, BlockO(RIGHT_BOUNDARY + 3 * BLOCK_SIZE, (i+1)* offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockO(offset_x, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
 
 def drawHoldBorder():
     BORDER_WIDTH = 2
-    borderList = [(LEFT_BOUNDARY, BOTTOM_BOUNDARY + 3 * BLOCK_SIZE), (RIGHT_BOUNDARY - BORDER_WIDTH, BOTTOM_BOUNDARY + 3 * BLOCK_SIZE), (RIGHT_BOUNDARY - BORDER_WIDTH, BOTTOM_BOUNDARY + 8 * BLOCK_SIZE) , (LEFT_BOUNDARY, BOTTOM_BOUNDARY + 8 * BLOCK_SIZE)]
+    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 12 * BLOCK_SIZE), (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 12 * BLOCK_SIZE),
+                  (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 17 * BLOCK_SIZE), (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 17 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, white, True, borderList, BORDER_WIDTH)
 
 def drawNextBlocksBorder():
     BORDER_WIDTH = 2
-    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + 7 * BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + 7 * BLOCK_SIZE, BOTTOM_BOUNDARY + BLOCK_SIZE - BORDER_WIDTH), (RIGHT_BOUNDARY + BLOCK_SIZE, BOTTOM_BOUNDARY + BLOCK_SIZE - BORDER_WIDTH)]
+    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE), (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE),
+                  (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 11 * BLOCK_SIZE), (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 11 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, white, True, borderList, BORDER_WIDTH)
-
 
 def paused():
     pause = True
@@ -484,7 +490,8 @@ def runGame():
     blockL = BlockL(0, 0, BLOCK_SIZE)
     blockZ = BlockZ(0, 0, BLOCK_SIZE)
     blockO = BlockO(0, 0, BLOCK_SIZE)
-    nextBlocks = []
+    nextBlocks = []     #going to keep nextBlocks as an array even though we're just displaying 1 next block
+
 
     MUSICS = ['marioUnderground.mp3', 'one_piece_party.mp3', 'UchihaItachi.mp3']
     musicIndex = randint(0, len(MUSICS) - 1)
