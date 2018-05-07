@@ -298,10 +298,8 @@ def hold(blockSet, nextBlocks):
     tmp = holdBlock
 
     holdBlock = block
-    holdBlock.setX(INIT_X)
-    holdBlock.setY(INIT_Y)
-    pos_x = INIT_X
-    pos_y = INIT_Y
+    holdBlock.setX(LEFT_BOUNDARY + 5 * BLOCK_SIZE)
+    holdBlock.setY(BOTTOM_BOUNDARY + 5 * BLOCK_SIZE)
 
     # first time if hold is empty
     if (tmp == None):
@@ -326,6 +324,10 @@ def hold(blockSet, nextBlocks):
             block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
     else:
         block = tmp
+        block.setX(INIT_X)
+        block.setY(INIT_Y)
+        pos_x = INIT_X
+        pos_y = INIT_Y
     setNextBlocks(blockSet, nextBlocks)
 
 
@@ -344,24 +346,40 @@ def appendBlockList(blockSet):
 def setNextBlocks(blockSet, nextBlocks):
     while (len(nextBlocks) != 0):
         nextBlocks.pop()
+    
+    offset_y = BLOCK_SIZE * 5
 
-    for i in range(0, 4):
+    for i in range (0, 3):
         if blockSet[i] == 0:
-            nextBlocks.insert(i, BlockT(0, 0, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockT(RIGHT_BOUNDARY + 3.5 * BLOCK_SIZE, (i+1) * offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 1:
-            nextBlocks.insert(i, BlockS(0, 0, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockS(RIGHT_BOUNDARY + 3.5 * BLOCK_SIZE, (i+1) * offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 2:
-            nextBlocks.insert(i, BlockJ(0, 0, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockJ(RIGHT_BOUNDARY + 4 * BLOCK_SIZE, (i+1) * offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 3:
-            nextBlocks.insert(i, BlockI(0, 0, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockI(RIGHT_BOUNDARY + 3 * BLOCK_SIZE, (i+1) * offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 4:
-            nextBlocks.insert(i, BlockL(0, 0, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockL(RIGHT_BOUNDARY + 3 * BLOCK_SIZE, (i+1)* offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 5:
-            nextBlocks.insert(i, BlockZ(0, 0, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockZ(RIGHT_BOUNDARY + 3.5 * BLOCK_SIZE, (i+1)* offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 6:
-            nextBlocks.insert(i, BlockO(0, 0, BLOCK_SIZE))
-        nextBlocks[i].setX(RIGHT_BOUNDARY + LEFT_BOUNDARY / 3)
-        nextBlocks[i].setY((i + 1) * BLOCK_SIZE * 5)
+            nextBlocks.insert(i, BlockO(RIGHT_BOUNDARY + 3 * BLOCK_SIZE, (i+1)* offset_y + BLOCK_SIZE, BLOCK_SIZE))
+
+def drawHoldBorder():
+    BORDER_WIDTH = 2
+    borderList = [(LEFT_BOUNDARY, BOTTOM_BOUNDARY + 3 * BLOCK_SIZE), (RIGHT_BOUNDARY - BORDER_WIDTH, BOTTOM_BOUNDARY + 3 * BLOCK_SIZE), (RIGHT_BOUNDARY - BORDER_WIDTH, BOTTOM_BOUNDARY + 8 * BLOCK_SIZE) , (LEFT_BOUNDARY, BOTTOM_BOUNDARY + 8 * BLOCK_SIZE)]
+    pygame.draw.lines(GAMEDISPLAY, white, True, borderList, BORDER_WIDTH)
+
+def drawNextBlocksBorder():
+    BORDER_WIDTH = 2
+    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + 7 * BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + 7 * BLOCK_SIZE, BOTTOM_BOUNDARY + BLOCK_SIZE - BORDER_WIDTH), (RIGHT_BOUNDARY + BLOCK_SIZE, BOTTOM_BOUNDARY + BLOCK_SIZE - BORDER_WIDTH)]
+    pygame.draw.lines(GAMEDISPLAY, white, True, borderList, BORDER_WIDTH)
+
+def drawVarsBorder():
+    BORDER_WIDTH = 2
+    borderList = [(RIGHT_BOUNDARY+BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY+9*BLOCK_SIZE, TOP_BOUNDARY),
+                  (RIGHT_BOUNDARY+9*BLOCK_SIZE, TOP_BOUNDARY+5*BLOCK_SIZE), (RIGHT_BOUNDARY+BLOCK_SIZE, TOP_BOUNDARY+5*BLOCK_SIZE)]
+    pygame.draw.lines(GAMEDISPLAY, WHITE, True, borderList, BORDER_WIDTH)
 
 
 def paused():
@@ -703,15 +721,27 @@ def runGame():
         # drawing top cover
         GAMEDISPLAY.fill(BLACK, [0, 0, WIDTH, TOP_BOUNDARY])
 
-        # draw level
-        level_text = BASICFONT.render("level: " + str(level), True, WHITE)
-        GAMEDISPLAY.blit(level_text, (RIGHT_BOUNDARY +
-                                      LEFT_BOUNDARY / 10, HEIGHT / 20 - 20))
+        # draw score, level, multiplier
+        drawVarsBorder()
+        
+        level_text = BASICFONT.render("Level: " + str(level), True, WHITE)
+        GAMEDISPLAY.blit(level_text, (RIGHT_BOUNDARY+BLOCK_SIZE+10, TOP_BOUNDARY+BLOCK_SIZE))
+        
+        screen_text = BASICFONT.render("Score: " + str(score), True, WHITE)
+        GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY+BLOCK_SIZE+10, TOP_BOUNDARY+2*BLOCK_SIZE))
 
-        # score
-        screen_text = BASICFONT.render("score: " + str(score), True, WHITE)
-        GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY +
-                                       LEFT_BOUNDARY / 10, HEIGHT / 20 + 20))
+        val_text = BASICFONT.render("Question worth: "+ str(10 + num_q*5), True, WHITE)
+        GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY+BLOCK_SIZE+10, TOP_BOUNDARY+3*BLOCK_SIZE))
+
+        # draw next blocks border
+ #       drawNextBlocksBorder()
+        
+        # drawing hold
+        if (holdBlock != None):
+            holdBlock.display(GAMEDISPLAY)
+        
+        # draw hold border
+        #drawHoldBorder()
 
         questionSurf = BASICFONT.render('Question :', True, TEXTCOLOR)
         questionRect = questionSurf.get_rect()
@@ -742,13 +772,13 @@ def runGame():
         drawCompliment(comp_input)
 
         # drawing next blocks
-
-        for i in range(0, len(nextBlocks)):
-            nextBlocks[i].display(GAMEDISPLAY)
-
-            # drawing hold
-            if (holdBlock != None):
-                holdBlock.display(GAMEDISPLAY)
+##
+##        for i in range(0, len(nextBlocks)):
+##            nextBlocks[i].display(GAMEDISPLAY)
+##
+##            # drawing hold
+##            if (holdBlock != None):
+##                holdBlock.display(GAMEDISPLAY)
 
         # collision checking
         if not hasMove:
@@ -897,12 +927,12 @@ def drawCompliment(rand):
         compliment = " "
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
-    complimentRect.midtop = (WIDTH / 2, 20)
+    complimentRect.center = (WIDTH/2, TOP_BOUNDARY/2)
     GAMEDISPLAY.blit(complimentSurf, complimentRect)
     if rand == 4 or rand == 5 or rand == 6 or rand == 7:
         controlSurf = BASICFONT.render("Lost controls.", True, TEXTCOLOR)
         controlRect = controlSurf.get_rect()
-        controlRect.topleft = (RIGHT_BOUNDARY + LEFT_BOUNDARY / 3 - 20, HEIGHT - 200)
+        controlRect.center = (WIDTH/2, BOTTOM_BOUNDARY + (HEIGHT - BOTTOM_BOUNDARY)/2)
         GAMEDISPLAY.blit(controlSurf, controlRect)
 
 
