@@ -7,14 +7,6 @@ from pygameMenu import fonts
 
 fontdir = pygameMenu.fonts.FONT_8BIT
 
-<<<<<<< HEAD
-# ABOUT = ['Metris {0}'.format(Metris.__version__),
-#          'Author: {0}'.format(Metris.__author__),
-#          PYGAMEMENU_TEXT_NEWLINE,
-#          'Email: {0}'.format(Metris.__email__)]
-
-=======
->>>>>>> bccc2818c99b7bc368b4a350254a4b451be70cc3
 COLOR_BACKGROUND = (128, 0, 128)
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
