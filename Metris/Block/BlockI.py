@@ -22,7 +22,7 @@ class BlockI(object):
         return self.blockList
 
     def rotateL(self):
-        # rotate about the block blockList[0]
+        # rotate RED the block blockList[0]
         # [1][0][2][3]
         if self.orientation % 4 == 0:
             self.blockList[1].setRelativeX(self.size)
@@ -80,7 +80,7 @@ class BlockI(object):
         self.orientation += 1;
 
     def rotateR(self):
-        # rotate about the block blockList[0]
+        # rotate RED the block blockList[0]
         # [1][0][2][3]
         if self.orientation % 4 == 0:
             self.blockList[1].setRelativeX(self.size)
