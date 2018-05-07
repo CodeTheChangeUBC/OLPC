@@ -30,6 +30,11 @@ INIT_X = WIDTH / 2
 INIT_Y = BLOCK_SIZE
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
+
+MID_FILES = ['mids/ff7.mid','mids/tetrisb.mid','mids/tetrisc.mid','mids/hip.mid',
+             'mids/marioParty.mid','mids/rock.mid','mids/tech.MID','mids/hip.MID',
+             'mids/ki.mid','mids/lg.MID','mids/eye.mid']
+
 global score
 score = 0
 
@@ -67,6 +72,17 @@ global landed
 landed = []
 speed = 10
 
+global isSoundOn
+isSoundOn = True
+global soundOn
+soundOn = pygame.image.load('soundon.png')
+soundOn.convert()
+global soundOff
+soundOff = pygame.image.load('soundoff.png')
+soundOff.convert()
+global soundPosition
+soundPosition = (LEFT_BOUNDARY - 2*soundOn.get_rect().width, HEIGHT/2)
+
 landed = [[None for i in range(24)] for j in range(10)]
 
 TICK = pygame.USEREVENT + 1
@@ -91,6 +107,7 @@ def tick(pos_y):
                 landed[x2Index(block.getPerimeter()[i].getX())][y2Index(block.getPerimeter()[i].getY())] = \
                     block.getPerimeter()[i]
             checkLandedAndDelete()
+            playSound('landSound.wav')
             checkGameOver()
         else:
             pos_y += BLOCK_SIZE
@@ -128,6 +145,7 @@ def deleteRows(rows):
                     if landed[x][y - 1] != None:
                         landed[x][y - 1].setRelativeY(BLOCK_SIZE)
                     landed[x][y] = landed[x][y - 1]
+        playSound('coin.wav')
 
     # update score
     if len(rows) == 1:
@@ -314,8 +332,6 @@ def hold(blockSet, nextBlocks):
     holdBlock.setX(offset_x)
     holdBlock.setY(offset_y)
 
-
-
     # first time if hold is empty
     if (tmp == None):
         blockType = blockSet.pop(0)
@@ -398,6 +414,39 @@ def drawNextBlocksBorder():
     borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE), (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE),
                   (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 11 * BLOCK_SIZE), (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 11 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, BORDER_COLOR, True, borderList, BORDER_WIDTH)
+    offset_y = BLOCK_SIZE * 5
+
+    for i in range (0, 3):
+        if blockSet[i] == 0:
+            nextBlocks.insert(i, BlockT(RIGHT_BOUNDARY + 3.5 * BLOCK_SIZE, (i+1) * offset_y + BLOCK_SIZE, BLOCK_SIZE))
+        elif blockSet[i] == 1:
+            nextBlocks.insert(i, BlockS(RIGHT_BOUNDARY + 3.5 * BLOCK_SIZE, (i+1) * offset_y + BLOCK_SIZE, BLOCK_SIZE))
+        elif blockSet[i] == 2:
+            nextBlocks.insert(i, BlockJ(RIGHT_BOUNDARY + 4 * BLOCK_SIZE, (i+1) * offset_y + BLOCK_SIZE, BLOCK_SIZE))
+        elif blockSet[i] == 3:
+            nextBlocks.insert(i, BlockI(RIGHT_BOUNDARY + 3 * BLOCK_SIZE, (i+1) * offset_y + BLOCK_SIZE, BLOCK_SIZE))
+        elif blockSet[i] == 4:
+            nextBlocks.insert(i, BlockL(RIGHT_BOUNDARY + 3 * BLOCK_SIZE, (i+1)* offset_y + BLOCK_SIZE, BLOCK_SIZE))
+        elif blockSet[i] == 5:
+            nextBlocks.insert(i, BlockZ(RIGHT_BOUNDARY + 3.5 * BLOCK_SIZE, (i+1)* offset_y + BLOCK_SIZE, BLOCK_SIZE))
+        elif blockSet[i] == 6:
+            nextBlocks.insert(i, BlockO(RIGHT_BOUNDARY + 3 * BLOCK_SIZE, (i+1)* offset_y + BLOCK_SIZE, BLOCK_SIZE))
+
+def drawHoldBorder():
+    BORDER_WIDTH = 2
+    borderList = [(LEFT_BOUNDARY, BOTTOM_BOUNDARY + 3 * BLOCK_SIZE), (RIGHT_BOUNDARY - BORDER_WIDTH, BOTTOM_BOUNDARY + 3 * BLOCK_SIZE), (RIGHT_BOUNDARY - BORDER_WIDTH, BOTTOM_BOUNDARY + 8 * BLOCK_SIZE) , (LEFT_BOUNDARY, BOTTOM_BOUNDARY + 8 * BLOCK_SIZE)]
+    pygame.draw.lines(GAMEDISPLAY, white, True, borderList, BORDER_WIDTH)
+
+def drawNextBlocksBorder():
+    BORDER_WIDTH = 2
+    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + 7 * BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + 7 * BLOCK_SIZE, BOTTOM_BOUNDARY + BLOCK_SIZE - BORDER_WIDTH), (RIGHT_BOUNDARY + BLOCK_SIZE, BOTTOM_BOUNDARY + BLOCK_SIZE - BORDER_WIDTH)]
+    pygame.draw.lines(GAMEDISPLAY, white, True, borderList, BORDER_WIDTH)
+
+def drawVarsBorder():
+    BORDER_WIDTH = 2
+    borderList = [(RIGHT_BOUNDARY+BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY+9*BLOCK_SIZE, TOP_BOUNDARY),
+                  (RIGHT_BOUNDARY+9*BLOCK_SIZE, TOP_BOUNDARY+5*BLOCK_SIZE), (RIGHT_BOUNDARY+BLOCK_SIZE, TOP_BOUNDARY+5*BLOCK_SIZE)]
+    pygame.draw.lines(GAMEDISPLAY, WHITE, True, borderList, BORDER_WIDTH)
 
 def drawNextBlocksLabel():
     screen_text = BASICFONT.render("Next: ", True, WHITE)
@@ -426,10 +475,16 @@ def paused():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = event.pos
+                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT/2 + soundOn.get_rect().height/2 and y >= HEIGHT/2 - soundOn.get_rect().height/2:
+                    flipSoundIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     pygame.mixer.music.unpause()
                     pause = False
+                elif event.key == pygame.K_m:
+                    flipSoundIcon()
 
         GAMEDISPLAY.fill(WHITE, [LEFT_BOUNDARY, TOP_BOUNDARY, 11 * BLOCK_SIZE, 21 * BLOCK_SIZE])
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
@@ -471,6 +526,10 @@ def gameOver():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = event.pos
+                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT/2 + soundOn.get_rect().height/2 and y >= HEIGHT/2 - soundOn.get_rect().height/2:
+                    flipSoundIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_s:
                     currentBlock = False
@@ -481,6 +540,8 @@ def gameOver():
                             landed[i][j] = None
                     holdBlock = None
                     runGame()
+                elif event.key == pygame.K_m:
+                    flipSoundIcon()                   
 
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
         gameOverText = myfont.render("Game Over", True, black)
@@ -515,6 +576,7 @@ def runGame():
     global pos_y
     global pos_x
     global score
+    global soundOn
     blockSet = getRandomBlockSet(None)
     blockT = BlockT(0, 0, BLOCK_SIZE)
     blockS = BlockS(0, 0, BLOCK_SIZE)
@@ -525,10 +587,7 @@ def runGame():
     blockO = BlockO(0, 0, BLOCK_SIZE)
     nextBlocks = []     #going to keep nextBlocks as an array even though we're just displaying 1 next block
 
-
-    MUSICS = ['marioUnderground.mp3', 'one_piece_party.mp3', 'UchihaItachi.mp3']
-    musicIndex = randint(0, len(MUSICS) - 1)
-    pygame.mixer.music.load(MUSICS[musicIndex])
+    pygame.mixer.music.load(MID_FILES[0])
     pygame.mixer.music.play(-1, 0.0)
 
     hasSwap = True
@@ -550,6 +609,10 @@ def runGame():
             if event.type == pygame.QUIT:
                 gameExit = True
 
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                x, y = event.pos
+                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT/2 + soundOn.get_rect().height/2 and y >= HEIGHT/2 - soundOn.get_rect().height/2:
+                    flipSoundIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     if pos_x:
@@ -568,10 +631,8 @@ def runGame():
                 elif event.key == pygame.K_DOWN:
                     dy = BLOCK_SIZE
                     # dx = 0
-                    effect = pygame.mixer.Sound('coin.wav')
-                    effect.play()
+                    playSound('beep.wav')
                     speed = 20
-
 
                 elif event.key == pygame.K_UP and controlsOn == True:
                     if currentBlock:
@@ -602,6 +663,8 @@ def runGame():
                     if (hasSwap == True):
                         hold(blockSet, nextBlocks)
                         hasSwap = False
+                elif event.key == pygame.K_m:
+                    flipSoundIcon()
                 # check for correct answer
                 elif event.key == out_list[9]:
                     if numTries < 1:
@@ -836,7 +899,11 @@ def runGame():
                 pos_y += dy
 
             hasMove = True
-
+        
+        drawSoundIcon()
+        if level_prev != level and level <= 11:
+            pygame.mixer.music.load(MID_FILES[level-1])
+            level_prev = level
         pygame.display.update()
 
         clock.tick(speed)
@@ -977,6 +1044,36 @@ def drawCompliment(rand):
         controlRect = controlSurf.get_rect()
         controlRect.center = (WIDTH/2, BOTTOM_BOUNDARY + (HEIGHT - BOTTOM_BOUNDARY)/2)
         GAMEDISPLAY.blit(controlSurf, controlRect)
+
+def playSound(soundSource):
+    global isSoundOn
+    if isSoundOn:
+        sound = pygame.mixer.Sound(soundSource)
+        sound.play()
+
+def flipSoundIcon():
+    global isSoundOn
+    global soundOn
+    global soundOff
+    global soundPosition
+    if isSoundOn:
+        pygame.mixer.music.set_volume(0)
+        isSoundOn = False
+    else:
+        pygame.mixer.music.set_volume(0.9)
+        isSoundOn = True
+    drawSoundIcon()
+    pygame.display.update()
+
+def drawSoundIcon():
+    global isSoundOn
+    global soundOn
+    global soundOff
+    global soundPosition
+    if isSoundOn:
+        GAMEDISPLAY.blit(soundOn, soundPosition)
+    else:
+        GAMEDISPLAY.blit(soundOff, soundPosition)
 
 
 # =================================================================
