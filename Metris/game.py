@@ -39,7 +39,7 @@ pygame.display.set_caption('Metris')
 white = (255, 255, 255)
 red = (255, 0, 0)
 black = (0, 0, 0)
-borderColor = white
+BORDER_COLOR = white
 
 pygame.display.update()
 
@@ -386,7 +386,7 @@ def drawHoldBorder():
     BORDER_WIDTH = 2
     borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 12 * BLOCK_SIZE), (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 12 * BLOCK_SIZE),
                   (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 17 * BLOCK_SIZE), (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 17 * BLOCK_SIZE)]
-    pygame.draw.lines(GAMEDISPLAY, borderColor, True, borderList, BORDER_WIDTH)
+    pygame.draw.lines(GAMEDISPLAY, BORDER_COLOR, True, borderList, BORDER_WIDTH)
 
 def drawHoldLabel():
     screen_text = BASICFONT.render("Hold: ", True, WHITE)
@@ -397,11 +397,17 @@ def drawNextBlocksBorder():
     BORDER_WIDTH = 2
     borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE), (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE),
                   (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 11 * BLOCK_SIZE), (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 11 * BLOCK_SIZE)]
-    pygame.draw.lines(GAMEDISPLAY, borderColor, True, borderList, BORDER_WIDTH)
+    pygame.draw.lines(GAMEDISPLAY, BORDER_COLOR, True, borderList, BORDER_WIDTH)
 
 def drawNextBlocksLabel():
     screen_text = BASICFONT.render("Next: ", True, WHITE)
     GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + 1.2 * BLOCK_SIZE, TOP_BOUNDARY + 6.2 * BLOCK_SIZE))
+
+def drawGameAreaBorder():
+    BORDER_WIDTH = 2    
+    borderList = [(LEFT_BOUNDARY, TOP_BOUNDARY), (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY), 
+                  (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY + 21 * BLOCK_SIZE), (LEFT_BOUNDARY, TOP_BOUNDARY + 21 * BLOCK_SIZE)]
+    pygame.draw.lines(GAMEDISPLAY, BORDER_COLOR, True, borderList, BORDER_WIDTH)
 
 def paused():
     pause = True
@@ -768,6 +774,9 @@ def runGame():
 
         # draw hold label
         drawHoldLabel()
+
+        # draw game area border
+        drawGameAreaBorder()
 
         questionSurf = BASICFONT.render('Question :', True, TEXTCOLOR)
         questionRect = questionSurf.get_rect()
