@@ -16,9 +16,9 @@ GNU General Public License for more details.
 """
 
 # Library import
-from pygameMenu.menu import Menu
-import pygameMenu.config_textmenu as _cfg
-import pygameMenu.config_menu as _cfg_menu
+from menu import Menu
+import config_textmenu as _cfg
+import config_menu as _cfg_menu
 import pygameMenu.locals as _locals
 import pygame as _pygame
 import pygame.gfxdraw as _gfxdraw
