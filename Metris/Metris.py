@@ -546,11 +546,15 @@ def paused():
         additionalText = myfont.render("Press \"p\" to resume!", True, BLACK)
         additionalTextWidth = additionalText.get_rect().width
         additionalTextHeight = additionalText.get_rect().height
+        myfont = pygame.font.SysFont('Comic Sans MS', 15)
+        additionalText2 = myfont.render("Press \"Esc\" to quit!", True, black)
 
         GAMEDISPLAY.blit(additionalText,
                          (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth / 2,
                           TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + textHeight))
-
+        GAMEDISPLAY.blit(additionalText2, (
+            LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth / 2,
+            TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + 2 * textHeight))        
         pygame.display.update()
         clock.tick(15)
 
@@ -602,18 +606,22 @@ def gameOver():
         additionalText = myfont.render("Press \"r\" to restart!", True, black)
         additionalTextWidth = additionalText.get_rect().width
         additionalTextHeight = additionalText.get_rect().height
+        additionalText2 = myfont.render("Press \"Esc\" to quit!", True, black)
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
         gameOverText2 = myfont.render("Game Over", True, red)
         textWidth2 = gameOverText2.get_rect().width
         textHeight2 = gameOverText2.get_rect().height
         GAMEDISPLAY.fill(white, [LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth,
                                  TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight, 2 * textWidth,
-                                 2 * (textHeight + additionalTextHeight)])
+                                 2 * (textHeight + 2 * additionalTextHeight)])
         GAMEDISPLAY.blit(gameOverText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth / 2,
                                         TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight / 2))
         GAMEDISPLAY.blit(additionalText, (
             LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth / 2,
             TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + textHeight))
+        GAMEDISPLAY.blit(additionalText2, (
+            LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth / 2,
+            TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + 2 * textHeight))
         GAMEDISPLAY.blit(gameOverText2, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth / 2 + 2,
                                          TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight / 2))
         pygame.display.update()
