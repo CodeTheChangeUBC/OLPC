@@ -21,7 +21,9 @@ from menu import *
 pygame.init()
 
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
 BLACK = (0, 0, 0)
+BORDER_COLOR = WHITE
 
 INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                'Rotate-left with UP key*',
@@ -66,11 +68,6 @@ score = 0
 
 GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN, pygame.RESIZABLE)
 pygame.display.set_caption('Metris')
-
-white = (255, 255, 255)
-red = (255, 0, 0)
-black = (0, 0, 0)
-BORDER_COLOR = white
 
 pygame.display.update()
 
@@ -584,7 +581,7 @@ def paused():
         additionalTextWidth = additionalText.get_rect().width
         additionalTextHeight = additionalText.get_rect().height
         myfont = pygame.font.SysFont('Comic Sans MS', 15)
-        additionalText2 = myfont.render("Press \"Esc\" to quit!", True, black)
+        additionalText2 = myfont.render("Press \"Esc\" to quit!", True, BLACK)
 
         GAMEDISPLAY.blit(additionalText,
                          (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth / 2,
@@ -636,19 +633,19 @@ def gameOver():
                     flipSoundIcon()          
 
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
-        gameOverText = myfont.render("Game Over", True, black)
+        gameOverText = myfont.render("Game Over", True, BLACK)
         textWidth = gameOverText.get_rect().width
         textHeight = gameOverText.get_rect().height
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize - 15)
-        additionalText = myfont.render("Press \"r\" to restart!", True, black)
+        additionalText = myfont.render("Press \"r\" to restart!", True, BLACK)
         additionalTextWidth = additionalText.get_rect().width
         additionalTextHeight = additionalText.get_rect().height
-        additionalText2 = myfont.render("Press \"Esc\" to quit!", True, black)
+        additionalText2 = myfont.render("Press \"Esc\" to quit!", True, BLACK)
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
-        gameOverText2 = myfont.render("Game Over", True, red)
+        gameOverText2 = myfont.render("Game Over", True, RED)
         textWidth2 = gameOverText2.get_rect().width
         textHeight2 = gameOverText2.get_rect().height
-        GAMEDISPLAY.fill(white, [LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth,
+        GAMEDISPLAY.fill(WHITE, [LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth,
                                  TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight, 2 * textWidth,
                                  2 * (textHeight + 2 * additionalTextHeight)])
         GAMEDISPLAY.blit(gameOverText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth / 2,
