@@ -186,18 +186,6 @@ def deleteRows(rows):
             multiplier += 1
         score += ret
 
-
-##    # move everything down 1
-##    for y in range(rows[0], len(landed[0]) - 1):
-##        for x in range(0, len(landed) - 1):
-##            # if not the top row
-##            if (y + len(rows) < len(landed[0])):
-##                landed[x][y] = landed[x][y - rows.len()]
-##            # else we are at the top row
-##            else :
-##                landed[x][y] = None
-##            landed[x][y].setY(y + BLOCK_SIZE)
-
 def checkGameOver():
     global gameExit
     for y in range(0, len(landed[0]) - 20):
@@ -299,7 +287,6 @@ def x2Index(x):
 def y2Index(y):
     return y / BLOCK_SIZE
 
-
 ## function to get the minimum vertical difference between current block and
 #  the bottom landed Blocks
 def getShadowDifference(blockList):
@@ -324,7 +311,6 @@ def drawShadow(blockList, dy):
         pygame.draw.rect(GAMEDISPLAY, (100, 100, 100),
                          [blockList[i].getX() + 1, blockList[i].getY() + dy + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2])
 
-
 def getRandomBlockSet(lastBlock):
     set = [0, 1, 2, 3, 4, 5, 6]
     shuffle(set)
@@ -334,6 +320,53 @@ def getRandomBlockSet(lastBlock):
         set[1] = tmp
     return set
 
+def getOffsetX(blockType):
+    if blockType == 0:
+        return int(0.5 * BLOCK_SIZE)
+    elif blockType == 1:
+        return int(0.5 * BLOCK_SIZE)
+    elif blockType == 2:
+        return BLOCK_SIZE
+    elif blockType == 3:
+        return 0
+    elif blockType == 4:
+        return 0
+    elif blockType == 5:
+        return int(0.5 * BLOCK_SIZE)
+    elif blockType == 6:
+        return 0
+
+def getOffsetY(blockType):
+    if blockType == 0:
+        return int(0.5 * BLOCK_SIZE)
+    elif blockType == 1:
+        return int(0.5 * BLOCK_SIZE)
+    elif blockType == 2:
+        return 0
+    elif blockType == 3:
+        return 0
+    elif blockType == 4:
+        return 0
+    elif blockType == 5:
+        return int(0.5 * BLOCK_SIZE)
+    elif blockType == 6:
+        return int(0.5 * BLOCK_SIZE)
+
+def getBlockType(block):
+    if type(block) == BlockT:
+        return 0
+    elif type(block) == BlockS:
+        return 1
+    elif type(block) == BlockJ:
+        return 2
+    elif type(block) == BlockI:
+        return 3
+    elif type(block) == BlockL:
+        return 4
+    elif type(block) == BlockZ:
+        return 5
+    elif type(block) == BlockO:
+        return 6
 
 def hold(blockSet, nextBlocks):
     global block
@@ -345,19 +378,18 @@ def hold(blockSet, nextBlocks):
 
     holdBlock = block
 
-    while (holdBlock.orientation % 4 != 0):
-        holdBlock.rotateR
-
-    offset_y = TOP_BOUNDARY + BLOCK_SIZE * 14
     offset_x = RIGHT_BOUNDARY + BLOCK_SIZE * 4
+    offset_y = TOP_BOUNDARY + BLOCK_SIZE * 14
 
-    # TODO THIS IS INFURIATING
-    # solution: Use an int to store hold instead
-    # if type(holdBlock) == BlockT:
-    #     offset_x += 0.5 * BLOCK_SIZE
+    offset_x += getOffsetX(getBlockType(holdBlock))
+    offset_y += getOffsetY(getBlockType(holdBlock))
 
     holdBlock.setX(offset_x)
     holdBlock.setY(offset_y)
+
+    while (holdBlock.orientation % 4 != 0):
+        print(holdBlock.orientation)
+        holdBlock.rotateR()
 
     # first time if hold is empty
     if (tmp == None):
@@ -398,30 +430,29 @@ def appendBlockList(blockSet):
     for i in range(0, len(nextBlockSet)):
         blockSet.insert(len(blockSet), nextBlockSet[i])
 
-
 def setNextBlocks(blockSet, nextBlocks):
     while (len(nextBlocks) != 0):
         nextBlocks.pop()
     
     y_spacing = BLOCK_SIZE * 5
-    offset_y = TOP_BOUNDARY + BLOCK_SIZE * 7
+    offset_y = TOP_BOUNDARY + BLOCK_SIZE * 8
     offset_x = RIGHT_BOUNDARY + BLOCK_SIZE * 4
 
     for i in range (0, 1):
         if blockSet[i] == 0:
-            nextBlocks.insert(i, BlockT(offset_x + 0.5 * BLOCK_SIZE, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockT(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
         elif blockSet[i] == 1:
-            nextBlocks.insert(i, BlockS(offset_x + 0.5 * BLOCK_SIZE, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockS(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
         elif blockSet[i] == 2:
-            nextBlocks.insert(i, BlockJ(offset_x + BLOCK_SIZE, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockJ(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
         elif blockSet[i] == 3:
-            nextBlocks.insert(i, BlockI(offset_x , i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockI(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
         elif blockSet[i] == 4:
-            nextBlocks.insert(i, BlockL(offset_x, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockL(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
         elif blockSet[i] == 5:
-            nextBlocks.insert(i, BlockZ(offset_x + 0.5 * BLOCK_SIZE, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockZ(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
         elif blockSet[i] == 6:
-            nextBlocks.insert(i, BlockO(offset_x, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockO(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
 
 def drawHoldBorder():
     BORDER_WIDTH = 2
@@ -432,7 +463,6 @@ def drawHoldBorder():
 def drawHoldLabel():
     screen_text = BASICFONT.render("Hold: ", True, WHITE)
     GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + 1.2 * BLOCK_SIZE, TOP_BOUNDARY + 12.2 * BLOCK_SIZE))
-
 
 def drawNextBlocksBorder():
     BORDER_WIDTH = 2
@@ -498,7 +528,6 @@ def paused():
         pygame.display.update()
         clock.tick(15)
 
-
 def gameOver():
     pause = True
     global currentBlock
@@ -555,7 +584,6 @@ def gameOver():
         if initialSize < 30:
             initialSize += 1
         clock.tick(15)   
-
 
 def runGame():
     GAMEDISPLAY.fill(BLACK)
