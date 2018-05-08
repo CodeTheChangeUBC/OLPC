@@ -107,7 +107,7 @@ global soundOff
 soundOff = pygame.image.load('soundoff.png') # @copyright from Robin Kylander in FLATICON
 soundOff.convert()
 global soundPosition
-soundPosition = (LEFT_BOUNDARY - 2*soundOn.get_rect().width, HEIGHT/2)
+soundPosition = (LEFT_BOUNDARY  / 2, HEIGHT*3/4)
 global isMusicOn
 isMusicOn = True
 global musicOn 
@@ -117,7 +117,7 @@ global musicOff
 musicOff = pygame.image.load('musicoff.png')
 musicOff.convert()
 global musicPosition
-musicPosition = (LEFT_BOUNDARY - 2*musicOn.get_rect().width, HEIGHT/2 + soundOn.get_rect().height + 5)
+musicPosition = (LEFT_BOUNDARY / 2 + soundOn.get_rect().width + 5, HEIGHT*3/4)
 
 
 landed = [[None for i in range(24)] for j in range(10)]
