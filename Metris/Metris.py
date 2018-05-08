@@ -524,10 +524,9 @@ def gameOver():
     initialSize = 16
 
     while pause:
+
+        checkForQuit()
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
                 if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT / 2 + soundOn.get_rect().height / 2 and y >= HEIGHT / 2 - soundOn.get_rect().height / 2:
