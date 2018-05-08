@@ -402,34 +402,34 @@ def hold(blockSet, nextBlocks):
 
     # first time if hold is empty
     if (tmp == None):
-        blockType = blockSet.pop(0)
-        if blockListTooShort(len(blockSet)):
-            appendBlockList(blockSet)
+        newBlock(blockSet, nextBlocks)
+        # blockType = blockSet.pop(0)
+        # if blockListTooShort(len(blockSet)):
+        #     appendBlockList(blockSet)
 
-        # TODO make function            
-        if blockType == 0:
-            block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif blockType == 1:
-            block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif blockType == 2:
-            block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif blockType == 3:
-            block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif blockType == 4:
-            block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif blockType == 5:
-            block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif blockType == 6:
-            block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
+        # # TODO make function            
+        # if blockType == 0:
+        #     block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 1:
+        #     block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 2:
+        #     block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 3:
+        #     block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 4:
+        #     block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 5:
+        #     block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 6:
+        #     block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
     else:
         tmp.setX(int(INIT_X))
         tmp.setY(int(INIT_Y))
         block = tmp
+        pos_x = INIT_X
+        pos_y = INIT_Y
 
-    pos_x = INIT_X
-    pos_y = INIT_Y
     setNextBlocks(blockSet, nextBlocks)
-
 
 def blockListTooShort(len):
     if len <= 5:
@@ -508,6 +508,34 @@ def drawGameAreaBorder():
                   (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY + 21 * BLOCK_SIZE),
                   (LEFT_BOUNDARY, TOP_BOUNDARY + 21 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, BORDER_COLOR, True, borderList, BORDER_WIDTH)
+
+def newBlock(blockSet, nextBlocks):
+    global block
+    global pos_x
+    global pos_y
+
+    rand = blockSet.pop(0)
+    if blockListTooShort(len(blockSet)):
+        appendBlockList(blockSet)
+
+    setNextBlocks(blockSet, nextBlocks)
+
+    if rand == 0:
+        block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+    elif rand == 1:
+        block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+    elif rand == 2:
+        block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
+    elif rand == 3:
+        block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
+    elif rand == 4:
+        block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+    elif rand == 5:
+        block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
+    elif rand == 6:
+        block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
+    pos_x = INIT_X
+    pos_y = INIT_Y
 
 
 def paused():
@@ -799,30 +827,11 @@ def runGame():
             comp_input = -1
             num_q = 0
 
-            rand = blockSet.pop(0)
-            if blockListTooShort(len(blockSet)):
-                appendBlockList(blockSet)
-
-            setNextBlocks(blockSet, nextBlocks)
-
-            if rand == 0:
-                block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 1:
-                block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 2:
-                block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 3:
-                block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 4:
-                block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 5:
-                block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 6:
-                block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
-            pos_x = INIT_X
-            pos_y = INIT_Y
+            # draw new block
+            newBlock(blockSet, nextBlocks)
             currentBlock = True
             hasSwap = True
+
         difference = getShadowDifference(block.getPerimeter())
         drawShadow(block.getPerimeter(), difference)
 
