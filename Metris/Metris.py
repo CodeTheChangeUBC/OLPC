@@ -475,10 +475,8 @@ def paused():
     startTime = pygame.mixer.music.get_pos()
 
     while pause:
+        checkForQuit()
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
                 if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT / 2 + soundOn.get_rect().height / 2 and y >= HEIGHT / 2 - soundOn.get_rect().height / 2:
@@ -616,6 +614,8 @@ def runGame():
     drawCompliment(comp_input)
 
     while not gameExit:
+
+        #checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 gameExit = True
@@ -1030,6 +1030,10 @@ def calculateLevelAndFallFreq(score):
     fallFreq = 0.8 - (level * 0.02)
     return level, fallFreq
 
+def terminate():
+    pygame.quit()
+    sys.exit()
+
 
 def drawCompliment(rand):
     if rand == 10:
@@ -1094,6 +1098,15 @@ def drawSoundIcon():
         GAMEDISPLAY.blit(soundOn, soundPosition)
     else:
         GAMEDISPLAY.blit(soundOff, soundPosition)
+
+
+def checkForQuit():
+    for event in pygame.event.get(QUIT):  # get all the QUIT events
+        terminate()  # terminate if any QUIT events are present
+    for event in pygame.event.get(KEYUP):  # get all the KEYUP events
+        if event.key == K_ESCAPE:
+            terminate()  # terminate if the KEYUP event was for the Esc key
+        pygame.event.post(event)  # put the other KEYUP event objects back
 
 
 # =================================================================
@@ -1284,8 +1297,8 @@ main_menu = pygameMenu.Menu(GAMEDISPLAY,
                             font_size=30,
                             menu_alpha=100,
                             menu_color=MENU_BACKGROUND_COLOR,
-                            menu_height=int(WINDOW_SIZE[1] * 0.6),
-                            menu_width=int(WINDOW_SIZE[0] * 0.6),
+                            menu_height=int(WINDOW_SIZE[1] * 0.5),
+                            menu_width=int(WINDOW_SIZE[0] * 0.5),
                             onclose=PYGAME_MENU_DISABLE_CLOSE,
                             option_shadow=False,
                             title='Main menu',
