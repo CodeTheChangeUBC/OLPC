@@ -101,13 +101,24 @@ speed = 10
 global isSoundOn
 isSoundOn = True
 global soundOn
-soundOn = pygame.image.load('soundon.png')
+soundOn = pygame.image.load('soundon.png') # @copyright from Robin Kylander in FLATICON
 soundOn.convert()
 global soundOff
-soundOff = pygame.image.load('soundoff.png')
+soundOff = pygame.image.load('soundoff.png') # @copyright from Robin Kylander in FLATICON
 soundOff.convert()
 global soundPosition
-soundPosition = (LEFT_BOUNDARY - 2 * soundOn.get_rect().width, HEIGHT / 2)
+soundPosition = (LEFT_BOUNDARY - 2*soundOn.get_rect().width, HEIGHT/2)
+global isMusicOn
+isMusicOn = True
+global musicOn 
+musicOn = pygame.image.load('musicon.png') # @copyright from Freepik in FLATICON
+musicOn.convert()
+global musicOff
+musicOff = pygame.image.load('musicoff.png')
+musicOff.convert()
+global musicPosition
+musicPosition = (LEFT_BOUNDARY - 2*musicOn.get_rect().width, HEIGHT/2 + soundOn.get_rect().height + 5)
+
 
 landed = [[None for i in range(24)] for j in range(10)]
 
@@ -500,6 +511,7 @@ def drawGameAreaBorder():
 
 def paused():
     pause = True
+    global soundPosition
 
     pygame.mixer.music.pause()
     startTime = pygame.mixer.music.get_pos()
@@ -509,13 +521,17 @@ def paused():
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT / 2 + soundOn.get_rect().height / 2 and y >= HEIGHT / 2 - soundOn.get_rect().height / 2:
+                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[1] + soundOn.get_rect().height and y >= soundPosition[1]:
                     flipSoundIcon()
+                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                    flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     pygame.mixer.music.unpause()
                     pause = False
                 elif event.key == pygame.K_m:
+                    flipMusicIcon()
+                elif event.key == pygame.K_s:
                     flipSoundIcon()
 
         GAMEDISPLAY.fill(WHITE, [LEFT_BOUNDARY, TOP_BOUNDARY, 11 * BLOCK_SIZE, 21 * BLOCK_SIZE])
@@ -561,7 +577,7 @@ def gameOver():
                 if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT / 2 + soundOn.get_rect().height / 2 and y >= HEIGHT / 2 - soundOn.get_rect().height / 2:
                     flipSoundIcon()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_r:
                     currentBlock = False
                     block = None
                     score = 0
@@ -571,14 +587,16 @@ def gameOver():
                     holdBlock = None
                     runGame()
                 elif event.key == pygame.K_m:
-                    flipSoundIcon()
+                    flipMusicIcon()         
+                elif event.key == pygame.K_s:
+                    flipSoundIcon()          
 
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
         gameOverText = myfont.render("Game Over", True, black)
         textWidth = gameOverText.get_rect().width
         textHeight = gameOverText.get_rect().height
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize - 15)
-        additionalText = myfont.render("Press \"s\" to restart!", True, black)
+        additionalText = myfont.render("Press \"r\" to restart!", True, black)
         additionalTextWidth = additionalText.get_rect().width
         additionalTextHeight = additionalText.get_rect().height
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
@@ -702,6 +720,8 @@ def runGame():
                         hold(blockSet, nextBlocks)
                         hasSwap = False
                 elif event.key == pygame.K_m:
+                    flipMusicIcon()
+                elif event.key == pygame.K_s:
                     flipSoundIcon()
                 # check for correct answer
                 elif event.key == out_list[9]:
@@ -944,6 +964,7 @@ def runGame():
             hasMove = True
 
         drawSoundIcon()
+        drawMusicIcon()
         if level_prev != level and level <= 11:
             pygame.mixer.music.load(MID_FILES[level - 1])
             level_prev = level
@@ -1105,16 +1126,25 @@ def flipSoundIcon():
     global isSoundOn
     global soundOn
     global soundOff
-    global soundPosition
     if isSoundOn:
-        pygame.mixer.music.set_volume(0)
         isSoundOn = False
     else:
-        pygame.mixer.music.set_volume(0.9)
         isSoundOn = True
     drawSoundIcon()
     pygame.display.update()
 
+def flipMusicIcon():
+    global isMusicOn
+    global musicOn
+    global musicOff
+    if isMusicOn:
+        pygame.mixer.music.pause()
+        isMusicOn = False
+    else:
+        pygame.mixer.music.unpause()
+        isMusicOn = True
+    drawMusicIcon()
+    pygame.display.update()
 
 def drawSoundIcon():
     global isSoundOn
@@ -1126,6 +1156,15 @@ def drawSoundIcon():
     else:
         GAMEDISPLAY.blit(soundOff, soundPosition)
 
+def drawMusicIcon():
+    global isMusicOn
+    global musicOn
+    global musicOff
+    global musicPosition
+    if isMusicOn:
+        GAMEDISPLAY.blit(musicOn, musicPosition)
+    else:
+        GAMEDISPLAY.blit(musicOff, musicPosition)
 
 def checkForQuit():
     for event in pygame.event.get(QUIT):  # get all the QUIT events
