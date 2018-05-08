@@ -64,7 +64,7 @@ MID_FILES = ['mids/ff7.mid', 'mids/tetrisb.mid', 'mids/tetrisc.mid', 'mids/hip.m
 global score
 score = 0
 
-GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT))
+GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN, pygame.RESIZABLE)
 pygame.display.set_caption('Metris')
 
 white = (255, 255, 255)
