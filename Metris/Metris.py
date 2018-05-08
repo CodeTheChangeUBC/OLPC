@@ -64,7 +64,7 @@ MID_FILES = ['mids/ff7.mid', 'mids/tetrisb.mid', 'mids/tetrisc.mid', 'mids/hip.m
 global score
 score = 0
 
-GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN, pygame.RESIZABLE)
+GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT))#, pygame.FULLSCREEN, pygame.RESIZABLE)
 pygame.display.set_caption('Metris')
 
 white = (255, 255, 255)
@@ -568,6 +568,8 @@ def gameOver():
 
     initialSize = 16
 
+    updateHiscore(checkForNewHiscore())
+
     while pause:
 
         checkForQuit()
@@ -586,10 +588,12 @@ def gameOver():
                             landed[i][j] = None
                     holdBlock = None
                     runGame()
+##                if event.key == pygame.K_x:
+##                    main_menu.mainloop(pygame.event.get())
                 elif event.key == pygame.K_m:
                     flipMusicIcon()         
                 elif event.key == pygame.K_s:
-                    flipSoundIcon()          
+                    flipSoundIcon()
 
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
         gameOverText = myfont.render("Game Over", True, black)
@@ -1174,6 +1178,34 @@ def checkForQuit():
             terminate()  # terminate if the KEYUP event was for the Esc key
         pygame.event.post(event)  # put the other KEYUP event objects back
 
+# checks if there is a new hiscore. If there is, returns the index of the new hiscore is to be placed, otherwise returns -1.
+def checkForNewHiscore():
+    with open("leaderboard.json") as data_file:
+        data = json.load(data_file)
+    global score
+    if score <= int(data[len(data)-1]["score"]):
+        return -1
+    for i in range (len(data)-2, 0, -1):
+        if score > int(data[i]["score"]) and score <= int(data[i-1]["score"]):
+            return i
+    if score > int(data[0]["score"]):
+        return 0
+
+def updateHiscore(index):
+    print(index)
+    if index == -1:
+        return
+    with open("leaderboard.json") as data_file:
+        data = json.load(data_file)
+
+    global score
+    for i in range (len(data)-1, index, -1):
+        data[i]["date"] = data[i-1]["date"]
+        data[i]["score"] = data[i-1]["score"]
+        data[i]["name"] = data[i-1]["name"]
+    data[index]["score"] = score
+    json.dump(data, "leaderboard.json")
+    
 
 # =================================================================
 # MENU FUNCTIONS
@@ -1312,8 +1344,8 @@ instruction_menu = pygameMenu.TextMenu(GAMEDISPLAY,
                                        font_title=pygameMenu.fonts.FONT_8BIT,
                                        menu_color=MENU_BACKGROUND_COLOR,
                                        menu_color_title=COLOR_WHITE,
-                                       menu_height=int(WINDOW_SIZE[1] * 0.6),
-                                       menu_width=int(WINDOW_SIZE[0] * 0.6),
+                                       menu_height=int(WINDOW_SIZE[1] * 1),
+                                       menu_width=int(WINDOW_SIZE[0] * 1),
                                        onclose=PYGAME_MENU_DISABLE_CLOSE,
                                        option_shadow=False,
                                        text_color=COLOR_BLACK,
@@ -1339,8 +1371,8 @@ leaderboard_menu = pygameMenu.TextMenu(GAMEDISPLAY,
                                        font_title=pygameMenu.fonts.FONT_8BIT,
                                        menu_color=MENU_BACKGROUND_COLOR,
                                        menu_color_title=COLOR_WHITE,
-                                       menu_height=int(WINDOW_SIZE[1] * 0.6),
-                                       menu_width=int(WINDOW_SIZE[0] * 0.6),
+                                       menu_height=int(WINDOW_SIZE[1] * 1),
+                                       menu_width=int(WINDOW_SIZE[0] * 1),
                                        onclose=PYGAME_MENU_DISABLE_CLOSE,
                                        option_shadow=False,
                                        text_color=COLOR_BLACK,
@@ -1349,6 +1381,8 @@ leaderboard_menu = pygameMenu.TextMenu(GAMEDISPLAY,
                                        window_height=WINDOW_SIZE[1],
                                        window_width=WINDOW_SIZE[0]
                                        )
+for m in LEADERBOARD:
+    leaderboard_menu.add_line(m)
 
 # leaderboard_menu.add_option('View top 10 scores!', leaderboard_function)
 instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
@@ -1363,8 +1397,8 @@ main_menu = pygameMenu.Menu(GAMEDISPLAY,
                             font_size=30,
                             menu_alpha=100,
                             menu_color=MENU_BACKGROUND_COLOR,
-                            menu_height=int(WINDOW_SIZE[1] * 0.5),
-                            menu_width=int(WINDOW_SIZE[0] * 0.5),
+                            menu_height=int(WINDOW_SIZE[1] * 1),
+                            menu_width=int(WINDOW_SIZE[0] * 1),
                             onclose=PYGAME_MENU_DISABLE_CLOSE,
                             option_shadow=False,
                             title='Main menu',
