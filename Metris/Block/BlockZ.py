@@ -24,10 +24,7 @@ class BlockZ(object):
 
     def display(self, gameDisplay):
         for i in range(0, len(self.blockList)):
-            pygame.draw.rect(gameDisplay, black,
-                             [self.blockList[i].getX(), self.blockList[i].getY(), self.size, self.size])
-            pygame.draw.rect(gameDisplay, self.color,
-                             [self.blockList[i].getX(), self.blockList[i].getY(), self.size - 1, self.size - 1])
+            self.blockList[i].display(gameDisplay)
 
     def getLeftBoundary(self):
         left = self.blockList[0].getX()
