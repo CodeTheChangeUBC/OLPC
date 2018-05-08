@@ -574,8 +574,11 @@ def gameOver():
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT / 2 + soundOn.get_rect().height / 2 and y >= HEIGHT / 2 - soundOn.get_rect().height / 2:
+                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[1] + soundOn.get_rect().height and y >= soundPosition[1]:
                     flipSoundIcon()
+                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                    flipMusicIcon()
+                
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     currentBlock = False
@@ -667,8 +670,10 @@ def runGame():
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT / 2 + soundOn.get_rect().height / 2 and y >= HEIGHT / 2 - soundOn.get_rect().height / 2:
+                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[1] + soundOn.get_rect().height and y >= soundPosition[1]:
                     flipSoundIcon()
+                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                    flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     if pos_x:
