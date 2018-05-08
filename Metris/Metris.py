@@ -64,7 +64,8 @@ MID_FILES = ['mids/ff7.mid', 'mids/tetrisb.mid', 'mids/tetrisc.mid', 'mids/hip.m
 global score
 score = 0
 
-GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN, pygame.RESIZABLE)
+##GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN, pygame.RESIZABLE)
+GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Metris')
 
 white = (255, 255, 255)
@@ -501,10 +502,18 @@ def drawVarsBorder():
                   (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 5 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, WHITE, True, borderList, BORDER_WIDTH)
 
+def drawQuesAnsBorder():
+    BORDER_WIDTH = 2
+    borderList= [(BLOCK_SIZE, TOP_BOUNDARY),
+                 (LEFT_BOUNDARY - BLOCK_SIZE, TOP_BOUNDARY),
+                 (LEFT_BOUNDARY - BLOCK_SIZE, TOP_BOUNDARY + 10*BLOCK_SIZE),
+                 (BLOCK_SIZE, TOP_BOUNDARY + 10*BLOCK_SIZE)]
+    pygame.draw.lines(GAMEDISPLAY, WHITE, True, borderList, BORDER_WIDTH)
 
 def drawGameAreaBorder():
     BORDER_WIDTH = 2
-    borderList = [(LEFT_BOUNDARY, TOP_BOUNDARY), (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY),
+    borderList = [(LEFT_BOUNDARY, TOP_BOUNDARY),
+                  (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY),
                   (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY + 21 * BLOCK_SIZE),
                   (LEFT_BOUNDARY, TOP_BOUNDARY + 21 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, BORDER_COLOR, True, borderList, BORDER_WIDTH)
@@ -741,7 +750,7 @@ def runGame():
                 elif event.key == out_list[9]:
                     if numTries < 1:
                         hard_q = False
-                        if diff1 >= 9:
+                        if diff1 > 4:
                             hard_q = True
                         comp_input = randint(0, 3)
                         controlsOn = True
@@ -754,7 +763,7 @@ def runGame():
                         out_list = generateQues(level)
                         diff1 = out_list[4]
                 elif event.key != out_list[9] and (
-                        event.key == pygame.K_q or event.key == pygame.K_w or event.key == pygame.K_e or event.key == pygame.K_r):
+                        event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
                     comp_input = randint(4, 7)
                     controlsOn = False
@@ -843,7 +852,7 @@ def runGame():
         elif out_list[2] == 4:
             o = '^'
 
-        if (diff1 < 9):
+        if (diff1 < 5):
             if o == '^':
                 actual_ans = math.pow(out_list[0], out_list[1])
             else:
@@ -852,6 +861,10 @@ def runGame():
             fakeans_list = [actual_ans + diff1, actual_ans - diff2, actual_ans + diff3]
             list_count = 0
         else:
+            if out_list[8] == 0:
+                t = '+'
+            else:
+                t = '-'
             if o == '^':
                 inter_ans = math.pow(out_list[0], out_list[1])
                 actual_ans = eval(str(inter_ans) + t + str(out_list[7]))
@@ -868,16 +881,16 @@ def runGame():
                 sol_print = fakeans_list[list_count]
                 list_count += 1
             if x == 0:
-                char = 'Q)'
+                char = '1)'
             elif x == 1:
-                char = 'W)'
+                char = '2)'
             elif x == 2:
-                char = 'E)'
+                char = '3)'
             elif x == 3:
-                char = 'R)'
+                char = '4)'
             aSurf = BASICFONT.render(char + '   %s' % (sol_print), True, TEXTCOLOR)
             aRect = aSurf.get_rect()
-            aRect.topleft = (20, 110 + x * 30)
+            aRect.topleft = (BLOCK_SIZE*2, TOP_BOUNDARY + (x+5) * BLOCK_SIZE)
             GAMEDISPLAY.blit(aSurf, aRect)
             if x == 3:
                 list_count = 0
@@ -897,12 +910,12 @@ def runGame():
 
         level_text = BASICFONT.render("Level: " + str(level), True, WHITE)
         GAMEDISPLAY.blit(level_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + BLOCK_SIZE))
-
+        
         screen_text = BASICFONT.render("Score: " + str(score), True, WHITE)
         GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 2 * BLOCK_SIZE))
 
         prt_scr = 10 + num_q * 5
-        if diff1 >= 9:
+        if diff1 >= 5:
             prt_scr += 20
         val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
         GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 3 * BLOCK_SIZE))
@@ -926,20 +939,23 @@ def runGame():
         # draw game area border
         drawGameAreaBorder()
 
+        # draw question & answer border
+        drawQuesAnsBorder()
+
         questionSurf = BASICFONT.render('Question :', True, TEXTCOLOR)
         questionRect = questionSurf.get_rect()
-        questionRect.topleft = (20, 20)
+        questionRect.topleft = (2*BLOCK_SIZE, TOP_BOUNDARY + BLOCK_SIZE)
         GAMEDISPLAY.blit(questionSurf, questionRect)
 
         answerSurf = BASICFONT.render('Answer :', True, TEXTCOLOR)
         answerRect = answerSurf.get_rect()
-        answerRect.topleft = (20, 80)
+        answerRect.topleft = (2*BLOCK_SIZE, TOP_BOUNDARY + 4*BLOCK_SIZE)
         GAMEDISPLAY.blit(answerSurf, answerRect)
 
-        if (diff1 < 9):
+        if (diff1 < 5):
             qSurf = BASICFONT.render('%s %s %s' % (out_list[0], o, out_list[1]), True, TEXTCOLOR)
             qRect = qSurf.get_rect()
-            qRect.topleft = (20, 50)
+            qRect.topleft = (2*BLOCK_SIZE, TOP_BOUNDARY+2*BLOCK_SIZE)
             GAMEDISPLAY.blit(qSurf, qRect)
         else:
             if out_list[8] == 0:
@@ -948,7 +964,7 @@ def runGame():
                 t = '-'
             qSurf = BASICFONT.render('%s %s %s %s %s' % (out_list[0], o, out_list[1], t, out_list[7]), True, TEXTCOLOR)
             qRect = qSurf.get_rect()
-            qRect.topleft = (20, 50)
+            qRect.topleft = (2*BLOCK_SIZE, TOP_BOUNDARY + 2*BLOCK_SIZE)
             GAMEDISPLAY.blit(qSurf, qRect)
 
         # draw compliment
@@ -1012,13 +1028,13 @@ def generateQues(level):
         q1 = randint(0, q1_upbound)
     sol_key = randint(0, 3)
     if sol_key == 0:
-        char = pygame.K_q
+        char = pygame.K_1
     if sol_key == 1:
-        char = pygame.K_w
+        char = pygame.K_2
     if sol_key == 2:
-        char = pygame.K_e
+        char = pygame.K_3
     if sol_key == 3:
-        char = pygame.K_r
+        char = pygame.K_4
     diff1 = randint(1, 5)
     diff2 = randint(1, 10)
     diff3 = randint(6, 20)
