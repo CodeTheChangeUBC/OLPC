@@ -126,6 +126,9 @@ TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
 clock = pygame.time.Clock()
 
+global fallFreq
+fallFreq = 1
+
 holdBlock = None
 
 
@@ -763,11 +766,14 @@ def runGame():
                     pos_y = tick(pos_y)
 
                 elif event.key == pygame.K_p:
+                    num_q = 0
                     paused()
 
                 elif event.key == pygame.K_LSHIFT:
                     if (hasSwap == True):
                         hold(blockSet, nextBlocks)
+                        out_list = generateQues(level)
+                        num_q = 0
                         hasSwap = False
                 elif event.key == pygame.K_m:
                     flipMusicIcon()
@@ -1113,7 +1119,7 @@ def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
     level = int(score / 80) + 1
-    fallFreq = 0.8 - (level * 0.02)
+    fallFreq = 1000 - 500*(level-1)
     return level, fallFreq
 
 def terminate():
