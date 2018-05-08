@@ -84,6 +84,17 @@ soundOff = pygame.image.load('soundoff.png')
 soundOff.convert()
 global soundPosition
 soundPosition = (LEFT_BOUNDARY - 2*soundOn.get_rect().width, HEIGHT/2)
+global isMusicOn
+isMusicOn = True
+global musicOn 
+musicOn = pygame.image.load('musicon.png')
+musicOn.convert()
+global musicOff
+musicOff = pygame.image.load('musicoff.png')
+musicOff.convert()
+global musicPosition
+musicPosition = (LEFT_BOUNDARY - 2*musicOn.get_rect().width, HEIGHT/2 + soundOn.get_rect().height + 5)
+
 
 landed = [[None for i in range(24)] for j in range(10)]
 
@@ -444,7 +455,7 @@ def paused():
                 quit()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT/2 + soundOn.get_rect().height/2 and y >= HEIGHT/2 - soundOn.get_rect().height/2:
+                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT/2 + soundOn.get_rect().height and y >= HEIGHT/2:
                     flipSoundIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -1039,6 +1050,12 @@ def flipSoundIcon():
         isSoundOn = True
     drawSoundIcon()
     pygame.display.update()
+
+def flipMusicIcon():
+    global isMusicOn
+    global musicOn
+    global musicOff
+    global musicPosition
 
 def drawSoundIcon():
     global isSoundOn
