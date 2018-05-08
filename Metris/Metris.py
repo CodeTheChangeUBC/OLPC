@@ -830,6 +830,9 @@ def runGame():
 
         # draw next blocks border
         drawNextBlocksBorder()
+
+        # draw next blocks label
+        drawNextBlocksLabel()
         
         # drawing hold
         if (holdBlock != None):
@@ -837,6 +840,12 @@ def runGame():
         
         # draw hold border
         drawHoldBorder()
+
+        # draw hold label
+        drawHoldLabel()
+        
+        # draw game area border
+        drawGameAreaBorder()
 
         questionSurf = BASICFONT.render('Question :', True, TEXTCOLOR)
         questionRect = questionSurf.get_rect()
