@@ -596,7 +596,7 @@ def gameOver():
     global holdBlock
 
     pygame.mixer.music.stop()
-    pygame.mixer.music.load('marioDeath.mid')
+    pygame.mixer.music.load('marioDeath.mp3')
     pygame.mixer.music.play(0, 0.0)
 
     initialSize = 16
