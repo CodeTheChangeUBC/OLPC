@@ -620,7 +620,7 @@ def runGame():
                         out_list = generateQues(level)
                         diff1 = out_list[4]
                 elif event.key != out_list[9] and (
-                        event.key == pygame.K_q or event.key == pygame.K_w or event.key == pygame.K_e or event.key == pygame.K_r):
+                        event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
                     comp_input = randint(4, 7)
                     controlsOn = False
