@@ -3,20 +3,24 @@
 import pygame
 from Block import Block
 
+
 class BlockI(object):
-    
+
     def __init__(self, x, y, size):
         self.x = x
         self.y = y
         self.size = size
-        self.color = (135,206,250)
-        self.blockList = [Block(x, y, size, self.color), Block(x - size, y, size, self.color), Block(x + size, y, size, self.color), Block(x + 2*size, y, size, self.color)]
+        self.color = (135, 206, 250)
+        self.blockList = [Block(x, y, size, self.color), Block(x - size, y, size, self.color),
+                          Block(x + size, y, size, self.color), Block(x + 2 * size, y, size, self.color)]
         self.orientation = 0
 
     def display(self, gameDisplay):
-        for i in range (0, len(self.blockList)):
-            pygame.draw.rect(gameDisplay, Block.black, [self.blockList[i].getX(), self.blockList[i].getY(), self.size, self.size])
-            pygame.draw.rect(gameDisplay, self.color, [self.blockList[i].getX(), self.blockList[i].getY(), self.size - 1, self.size - 1])
+        for i in range(0, len(self.blockList)):
+            pygame.draw.rect(gameDisplay, Block.black,
+                             [self.blockList[i].getX(), self.blockList[i].getY(), self.size, self.size])
+            pygame.draw.rect(gameDisplay, self.color,
+                             [self.blockList[i].getX(), self.blockList[i].getY(), self.size - 1, self.size - 1])
 
     def getPerimeter(self):
         return self.blockList
@@ -134,7 +138,7 @@ class BlockI(object):
 
             self.blockList[3].setX(self.blockList[0].getX() - 2 * self.size)
             self.blockList[3].setY(self.blockList[0].getY())
-            
+
         self.orientation -= 1
 
     def getX(self):
@@ -142,17 +146,17 @@ class BlockI(object):
 
     def getY(self):
         return self.y
-        
+
     def setY(self, y):
         dy = y - self.y
         self.y = y
-        for i in range (0, len(self.blockList)):
+        for i in range(0, len(self.blockList)):
             self.blockList[i].setRelativeY(dy)
 
     def setX(self, x):
         dx = x - self.x
         self.x = x
-        for i in range (0, len(self.blockList)):
+        for i in range(0, len(self.blockList)):
             self.blockList[i].setRelativeX(dx)
 
     def getColor(self):
