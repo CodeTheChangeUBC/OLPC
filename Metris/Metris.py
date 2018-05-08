@@ -23,7 +23,6 @@ pygame.init()
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-
 INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                'Rotate-left with UP key*',
                'Rotate-right with Z key*',
@@ -33,7 +32,8 @@ INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                'Exit the game pressing ESCAPE key',
                'Press any key to play.',
                'Press B to go back',
-               '*Only after answering correctly'
+               'Press M to mute/unmute',
+               '*Only after answering correctly',
                ]
 
 
@@ -41,7 +41,6 @@ LEADERBOARD = ['Lol      100',
                'LOL      200',
                'lol      300'
                ]
-
 
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
@@ -58,9 +57,9 @@ INIT_Y = BLOCK_SIZE
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
 
-MID_FILES = ['mids/ff7.mid','mids/tetrisb.mid','mids/tetrisc.mid','mids/hip.mid',
-             'mids/marioParty.mid','mids/rock.mid','mids/tech.MID','mids/hip.MID',
-             'mids/ki.mid','mids/lg.MID','mids/eye.mid']
+MID_FILES = ['mids/ff7.mid', 'mids/tetrisb.mid', 'mids/tetrisc.mid', 'mids/hip.mid',
+             'mids/marioParty.mid', 'mids/rock.mid', 'mids/tech.MID', 'mids/hip.MID',
+             'mids/ki.mid', 'mids/lg.MID', 'mids/eye.mid']
 
 global score
 score = 0
@@ -108,7 +107,7 @@ global soundOff
 soundOff = pygame.image.load('soundoff.png')
 soundOff.convert()
 global soundPosition
-soundPosition = (LEFT_BOUNDARY - 2*soundOn.get_rect().width, HEIGHT/2)
+soundPosition = (LEFT_BOUNDARY - 2 * soundOn.get_rect().width, HEIGHT / 2)
 
 landed = [[None for i in range(24)] for j in range(10)]
 
@@ -236,9 +235,8 @@ def checkCollisionRotation():
     for i in range(0, len(blockPerimeter)):
         for j in range(0, len(landed)):
             for k in range(0, len(landed[j])):
-                if landed[j][k] != None:
-                    if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][
-                        k].getY():
+                if landed[j][k] is not None:
+                    if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
                         block.setY(block.getY() - BLOCK_SIZE)
                         pos_y -= BLOCK_SIZE
                         if checkCollision():
@@ -381,17 +379,19 @@ def hold(blockSet, nextBlocks):
         elif blockType == 6:
             block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
     else:
-        tmp.setX(int (INIT_X))
-        tmp.setY(int (INIT_Y))
+        tmp.setX(int(INIT_X))
+        tmp.setY(int(INIT_Y))
         block = tmp
         pos_x = INIT_X
         pos_y = INIT_Y
     setNextBlocks(blockSet, nextBlocks)
 
+
 def blockListTooShort(len):
     if len <= 5:
         return True
     return False
+
 
 def appendBlockList(blockSet):
     nextBlockSet = getRandomBlockSet(blockSet[len(blockSet) - 1])
@@ -402,12 +402,12 @@ def appendBlockList(blockSet):
 def setNextBlocks(blockSet, nextBlocks):
     while (len(nextBlocks) != 0):
         nextBlocks.pop()
-    
+
     y_spacing = BLOCK_SIZE * 5
     offset_y = TOP_BOUNDARY + BLOCK_SIZE * 7
     offset_x = RIGHT_BOUNDARY + BLOCK_SIZE * 4
 
-    for i in range (0, 1):
+    for i in range(0, 1):
         if blockSet[i] == 0:
             nextBlocks.insert(i, BlockT(offset_x + 0.5 * BLOCK_SIZE, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 1:
@@ -415,7 +415,7 @@ def setNextBlocks(blockSet, nextBlocks):
         elif blockSet[i] == 2:
             nextBlocks.insert(i, BlockJ(offset_x + BLOCK_SIZE, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 3:
-            nextBlocks.insert(i, BlockI(offset_x , i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
+            nextBlocks.insert(i, BlockI(offset_x, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 4:
             nextBlocks.insert(i, BlockL(offset_x, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
         elif blockSet[i] == 5:
@@ -423,11 +423,15 @@ def setNextBlocks(blockSet, nextBlocks):
         elif blockSet[i] == 6:
             nextBlocks.insert(i, BlockO(offset_x, i * y_spacing + offset_y + BLOCK_SIZE, BLOCK_SIZE))
 
+
 def drawHoldBorder():
     BORDER_WIDTH = 2
-    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 12 * BLOCK_SIZE), (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 12 * BLOCK_SIZE),
-                  (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 17 * BLOCK_SIZE), (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 17 * BLOCK_SIZE)]
+    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 12 * BLOCK_SIZE),
+                  (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 12 * BLOCK_SIZE),
+                  (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 17 * BLOCK_SIZE),
+                  (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 17 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, BORDER_COLOR, True, borderList, BORDER_WIDTH)
+
 
 def drawHoldLabel():
     screen_text = BASICFONT.render("Hold: ", True, WHITE)
@@ -436,25 +440,33 @@ def drawHoldLabel():
 
 def drawNextBlocksBorder():
     BORDER_WIDTH = 2
-    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE), (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE),
-                  (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 11 * BLOCK_SIZE), (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 11 * BLOCK_SIZE)]
+    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE),
+                  (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE),
+                  (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 11 * BLOCK_SIZE),
+                  (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 11 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, BORDER_COLOR, True, borderList, BORDER_WIDTH)
+
 
 def drawNextBlocksLabel():
     screen_text = BASICFONT.render("Next: ", True, WHITE)
     GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + 1.2 * BLOCK_SIZE, TOP_BOUNDARY + 6.2 * BLOCK_SIZE))
 
+
 def drawVarsBorder():
     BORDER_WIDTH = 2
-    borderList = [(RIGHT_BOUNDARY+BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY+9*BLOCK_SIZE, TOP_BOUNDARY),
-                  (RIGHT_BOUNDARY+9*BLOCK_SIZE, TOP_BOUNDARY+5*BLOCK_SIZE), (RIGHT_BOUNDARY+BLOCK_SIZE, TOP_BOUNDARY+5*BLOCK_SIZE)]
+    borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY), (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY),
+                  (RIGHT_BOUNDARY + 9 * BLOCK_SIZE, TOP_BOUNDARY + 5 * BLOCK_SIZE),
+                  (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 5 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, WHITE, True, borderList, BORDER_WIDTH)
 
+
 def drawGameAreaBorder():
-    BORDER_WIDTH = 2    
-    borderList = [(LEFT_BOUNDARY, TOP_BOUNDARY), (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY), 
-                  (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY + 21 * BLOCK_SIZE), (LEFT_BOUNDARY, TOP_BOUNDARY + 21 * BLOCK_SIZE)]
+    BORDER_WIDTH = 2
+    borderList = [(LEFT_BOUNDARY, TOP_BOUNDARY), (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY),
+                  (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY + 21 * BLOCK_SIZE),
+                  (LEFT_BOUNDARY, TOP_BOUNDARY + 21 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, BORDER_COLOR, True, borderList, BORDER_WIDTH)
+
 
 def paused():
     pause = True
@@ -463,13 +475,11 @@ def paused():
     startTime = pygame.mixer.music.get_pos()
 
     while pause:
+        checkForQuit()
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT/2 + soundOn.get_rect().height/2 and y >= HEIGHT/2 - soundOn.get_rect().height/2:
+                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT / 2 + soundOn.get_rect().height / 2 and y >= HEIGHT / 2 - soundOn.get_rect().height / 2:
                     flipSoundIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -514,13 +524,12 @@ def gameOver():
     initialSize = 16
 
     while pause:
+
+        checkForQuit()
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT/2 + soundOn.get_rect().height/2 and y >= HEIGHT/2 - soundOn.get_rect().height/2:
+                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT / 2 + soundOn.get_rect().height / 2 and y >= HEIGHT / 2 - soundOn.get_rect().height / 2:
                     flipSoundIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_s:
@@ -533,7 +542,7 @@ def gameOver():
                     holdBlock = None
                     runGame()
                 elif event.key == pygame.K_m:
-                    flipSoundIcon()                   
+                    flipSoundIcon()
 
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
         gameOverText = myfont.render("Game Over", True, black)
@@ -547,14 +556,20 @@ def gameOver():
         gameOverText2 = myfont.render("Game Over", True, red)
         textWidth2 = gameOverText2.get_rect().width
         textHeight2 = gameOverText2.get_rect().height
-        GAMEDISPLAY.fill(white, [LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight, 2*textWidth, 2*(textHeight + additionalTextHeight)])
-        GAMEDISPLAY.blit(gameOverText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth/2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight/2))
-        GAMEDISPLAY.blit(additionalText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth/2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + textHeight))
-        GAMEDISPLAY.blit(gameOverText2, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth/2 + 2, TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight/2))
+        GAMEDISPLAY.fill(white, [LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth,
+                                 TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight, 2 * textWidth,
+                                 2 * (textHeight + additionalTextHeight)])
+        GAMEDISPLAY.blit(gameOverText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth / 2,
+                                        TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight / 2))
+        GAMEDISPLAY.blit(additionalText, (
+            LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth / 2,
+            TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + textHeight))
+        GAMEDISPLAY.blit(gameOverText2, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth / 2 + 2,
+                                         TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight / 2))
         pygame.display.update()
         if initialSize < 30:
             initialSize += 1
-        clock.tick(15)   
+        clock.tick(15)
 
 
 def runGame():
@@ -598,13 +613,15 @@ def runGame():
     drawCompliment(comp_input)
 
     while not gameExit:
+
+        #checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 gameExit = True
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT/2 + soundOn.get_rect().height/2 and y >= HEIGHT/2 - soundOn.get_rect().height/2:
+                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT / 2 + soundOn.get_rect().height / 2 and y >= HEIGHT / 2 - soundOn.get_rect().height / 2:
                     flipSoundIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -695,7 +712,7 @@ def runGame():
             if event.type == TICK:
                 pos_y = tick(pos_y)
 
-        #main_menu.mainloop(pygame.event.get())
+        # main_menu.mainloop(pygame.event.get())
 
         # drawing bg
         ##        gameDisplay.fill((100, 100, 100))
@@ -815,35 +832,35 @@ def runGame():
 
         # draw score, level, multiplier
         drawVarsBorder()
-        
-        level_text = BASICFONT.render("Level: " + str(level), True, WHITE)
-        GAMEDISPLAY.blit(level_text, (RIGHT_BOUNDARY+BLOCK_SIZE+10, TOP_BOUNDARY+BLOCK_SIZE))
-        
-        screen_text = BASICFONT.render("Score: " + str(score), True, WHITE)
-        GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY+BLOCK_SIZE+10, TOP_BOUNDARY+2*BLOCK_SIZE))
 
-        prt_scr = 10 + num_q*5
+        level_text = BASICFONT.render("Level: " + str(level), True, WHITE)
+        GAMEDISPLAY.blit(level_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + BLOCK_SIZE))
+
+        screen_text = BASICFONT.render("Score: " + str(score), True, WHITE)
+        GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 2 * BLOCK_SIZE))
+
+        prt_scr = 10 + num_q * 5
         if diff1 >= 9:
             prt_scr += 20
-        val_text = BASICFONT.render("Question worth: "+ str(prt_scr), True, WHITE)
-        GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY+BLOCK_SIZE+10, TOP_BOUNDARY+3*BLOCK_SIZE))
+        val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
+        GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 3 * BLOCK_SIZE))
 
         # draw next blocks border
         drawNextBlocksBorder()
 
         # draw next blocks label
         drawNextBlocksLabel()
-        
+
         # drawing hold
         if (holdBlock != None):
             holdBlock.display(GAMEDISPLAY)
-        
+
         # draw hold border
         drawHoldBorder()
 
         # draw hold label
         drawHoldLabel()
-        
+
         # draw game area border
         drawGameAreaBorder()
 
@@ -897,10 +914,10 @@ def runGame():
                 pos_y += dy
 
             hasMove = True
-        
+
         drawSoundIcon()
         if level_prev != level and level <= 11:
-            pygame.mixer.music.load(MID_FILES[level-1])
+            pygame.mixer.music.load(MID_FILES[level - 1])
             level_prev = level
             pygame.mixer.music.play(-1, 0.0)
         pygame.display.update()
@@ -1012,6 +1029,10 @@ def calculateLevelAndFallFreq(score):
     fallFreq = 0.8 - (level * 0.02)
     return level, fallFreq
 
+def terminate():
+    pygame.quit()
+    sys.exit()
+
 
 def drawCompliment(rand):
     if rand == 10:
@@ -1036,19 +1057,21 @@ def drawCompliment(rand):
         compliment = " "
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
-    complimentRect.center = (WIDTH/2, TOP_BOUNDARY/2)
+    complimentRect.center = (WIDTH / 2, TOP_BOUNDARY / 2)
     GAMEDISPLAY.blit(complimentSurf, complimentRect)
     if rand == 4 or rand == 5 or rand == 6 or rand == 7:
         controlSurf = BASICFONT.render("Lost controls.", True, TEXTCOLOR)
         controlRect = controlSurf.get_rect()
-        controlRect.center = (WIDTH/2, BOTTOM_BOUNDARY + (HEIGHT - BOTTOM_BOUNDARY)/2)
+        controlRect.center = (WIDTH / 2, BOTTOM_BOUNDARY + (HEIGHT - BOTTOM_BOUNDARY) / 2)
         GAMEDISPLAY.blit(controlSurf, controlRect)
+
 
 def playSound(soundSource):
     global isSoundOn
     if isSoundOn:
         sound = pygame.mixer.Sound(soundSource)
         sound.play()
+
 
 def flipSoundIcon():
     global isSoundOn
@@ -1064,6 +1087,7 @@ def flipSoundIcon():
     drawSoundIcon()
     pygame.display.update()
 
+
 def drawSoundIcon():
     global isSoundOn
     global soundOn
@@ -1073,6 +1097,15 @@ def drawSoundIcon():
         GAMEDISPLAY.blit(soundOn, soundPosition)
     else:
         GAMEDISPLAY.blit(soundOff, soundPosition)
+
+
+def checkForQuit():
+    for event in pygame.event.get(QUIT):  # get all the QUIT events
+        terminate()  # terminate if any QUIT events are present
+    for event in pygame.event.get(KEYUP):  # get all the KEYUP events
+        if event.key == K_ESCAPE:
+            terminate()  # terminate if the KEYUP event was for the Esc key
+        pygame.event.post(event)  # put the other KEYUP event objects back
 
 
 # =================================================================
@@ -1114,9 +1147,9 @@ def leaderboard_function():
         # GAMEDISPLAY.blit(f, (int(WINDOW_SIZE[0] - f_rect.width()) / 2,
         #                      int(WINDOW_SIZE[1] / 2)))
 
-
-        #ADD FUNCTION HERE
+        # ADD FUNCTION HERE
         pygame.display.flip()
+
 
 def makeTextObjs(text, font, color):
     surf = font.render(text, True, color)
@@ -1250,8 +1283,6 @@ leaderboard_menu = pygameMenu.TextMenu(GAMEDISPLAY,
                                        window_width=WINDOW_SIZE[0]
                                        )
 
-
-
 # leaderboard_menu.add_option('View top 10 scores!', leaderboard_function)
 instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
 leaderboard_menu.add_option('Return to menu', PYGAME_MENU_BACK)
@@ -1265,8 +1296,8 @@ main_menu = pygameMenu.Menu(GAMEDISPLAY,
                             font_size=30,
                             menu_alpha=100,
                             menu_color=MENU_BACKGROUND_COLOR,
-                            menu_height=int(WINDOW_SIZE[1] * 0.6),
-                            menu_width=int(WINDOW_SIZE[0] * 0.6),
+                            menu_height=int(WINDOW_SIZE[1] * 0.5),
+                            menu_width=int(WINDOW_SIZE[0] * 0.5),
                             onclose=PYGAME_MENU_DISABLE_CLOSE,
                             option_shadow=False,
                             title='Main menu',
@@ -1279,11 +1310,9 @@ main_menu.add_option('Leaderboard', leaderboard_menu)
 main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 
 
-
-
 def main():
     # Main menu
-    #runGame()
+    # runGame()
     main_menu.mainloop(pygame.event.get())
 
 
