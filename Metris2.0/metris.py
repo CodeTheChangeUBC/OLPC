@@ -463,7 +463,7 @@ def checkForKeyPressPause():
     for event in pygame.event.get([KEYDOWN, KEYUP]):
         if event.type == KEYDOWN:
             if event.key == K_SPACE:
-                drawInstructions('Instructions')
+                drawREDs('REDs')
             elif event.key == K_l:
                 drawLeaderboard('Leaderboard')
             elif event.key == K_b:
@@ -482,7 +482,7 @@ def checkForKeyPress():
     for event in pygame.event.get([KEYDOWN, KEYUP]):
         if event.type == KEYDOWN:
             if event.key == K_SPACE:
-                drawInstructions('Instructions')
+                drawREDs('REDs')
             elif event.key == K_l:
                 drawLeaderboard('Leaderboard')
             elif event.key == K_b:
