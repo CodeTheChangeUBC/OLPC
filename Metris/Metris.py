@@ -763,7 +763,10 @@ def runGame():
         screen_text = BASICFONT.render("Score: " + str(score), True, WHITE)
         GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY+BLOCK_SIZE+10, TOP_BOUNDARY+2*BLOCK_SIZE))
 
-        val_text = BASICFONT.render("Question worth: "+ str(10 + num_q*5), True, WHITE)
+        prt_scr = 10 + num_q*5
+        if diff1 >= 9:
+            prt_scr += 20
+        val_text = BASICFONT.render("Question worth: "+ str(prt_scr), True, WHITE)
         GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY+BLOCK_SIZE+10, TOP_BOUNDARY+3*BLOCK_SIZE))
 
         # draw next blocks border
@@ -831,6 +834,7 @@ def runGame():
         if level_prev != level and level <= 11:
             pygame.mixer.music.load(MID_FILES[level-1])
             level_prev = level
+            pygame.mixer.music.play(-1, 0.0)
         pygame.display.update()
 
         clock.tick(speed)
