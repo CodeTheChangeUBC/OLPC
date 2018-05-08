@@ -1,2 +1,4 @@
 .idea/
 Metris/*.pyc
+Metris/Block/*.pyc
+Metris/pygameMenu/*.pyc
