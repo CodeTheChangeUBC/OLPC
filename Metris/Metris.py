@@ -335,11 +335,11 @@ def getOffsetX(blockType):
     elif blockType == 1:
         return int(0.5 * BLOCK_SIZE)
     elif blockType == 2:
-        return BLOCK_SIZE
+        return int(0.5 * BLOCK_SIZE)
     elif blockType == 3:
         return 0
     elif blockType == 4:
-        return 0
+        return int(0.5 * BLOCK_SIZE)
     elif blockType == 5:
         return int(0.5 * BLOCK_SIZE)
     elif blockType == 6:
@@ -351,11 +351,11 @@ def getOffsetY(blockType):
     elif blockType == 1:
         return int(0.5 * BLOCK_SIZE)
     elif blockType == 2:
-        return 0
+        return int(0.5 * BLOCK_SIZE)
     elif blockType == 3:
         return 0
     elif blockType == 4:
-        return 0
+        return int(0.5 * BLOCK_SIZE)
     elif blockType == 5:
         return int(0.5 * BLOCK_SIZE)
     elif blockType == 6:
@@ -425,8 +425,9 @@ def hold(blockSet, nextBlocks):
         tmp.setX(int(INIT_X))
         tmp.setY(int(INIT_Y))
         block = tmp
-        pos_x = INIT_X
-        pos_y = INIT_Y
+
+    pos_x = INIT_X
+    pos_y = INIT_Y
     setNextBlocks(blockSet, nextBlocks)
 
 
