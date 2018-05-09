@@ -21,7 +21,9 @@ from menu import *
 pygame.init()
 
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
 BLACK = (0, 0, 0)
+BORDER_COLOR = WHITE
 
 INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                'Rotate-left with UP key*',
@@ -57,20 +59,15 @@ INIT_Y = BLOCK_SIZE
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
 
-MID_FILES = ['mids/ff7.mid', 'mids/tetrisb.mid', 'mids/tetrisc.mid', 'mids/hip.mid',
-             'mids/marioParty.mid', 'mids/rock.mid', 'mids/tech.MID', 'mids/hip.MID',
-             'mids/ki.mid', 'mids/lg.MID', 'mids/eye.mid']
+MID_FILES = ['mp3s/ff7.mp3', 'mp3s/tetrisb.mp3', 'mp3s/tetrisc.mp3', 'mp3s/hip.mp3',
+             'mp3s/marioParty.mp3', 'mp3s/rock.mp3', 'mp3s/tech.mp3', 'mp3s/hip.mp3',
+             'mp3s/ki.mp3', 'mp3s/lg.mp3', 'mp3s/eye.mp3']
 
 global score
 score = 0
 
 GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption('Metris')
-
-white = (255, 255, 255)
-red = (255, 0, 0)
-black = (0, 0, 0)
-BORDER_COLOR = white
 
 pygame.display.update()
 
@@ -107,7 +104,7 @@ global soundOff
 soundOff = pygame.image.load('soundoff.png') # @copyright from Robin Kylander in FLATICON
 soundOff.convert()
 global soundPosition
-soundPosition = (LEFT_BOUNDARY - 2*soundOn.get_rect().width, HEIGHT/2)
+soundPosition = (LEFT_BOUNDARY  / 2, HEIGHT*3/4)
 global isMusicOn
 isMusicOn = True
 global musicOn 
@@ -117,7 +114,7 @@ global musicOff
 musicOff = pygame.image.load('musicoff.png')
 musicOff.convert()
 global musicPosition
-musicPosition = (LEFT_BOUNDARY - 2*musicOn.get_rect().width, HEIGHT/2 + soundOn.get_rect().height + 5)
+musicPosition = (LEFT_BOUNDARY / 2 + soundOn.get_rect().width + 5, HEIGHT*3/4)
 
 
 landed = [[None for i in range(24)] for j in range(10)]
@@ -125,6 +122,9 @@ landed = [[None for i in range(24)] for j in range(10)]
 TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
 clock = pygame.time.Clock()
+
+global fallFreq
+fallFreq = 1
 
 holdBlock = None
 
@@ -335,11 +335,11 @@ def getOffsetX(blockType):
     elif blockType == 1:
         return int(0.5 * BLOCK_SIZE)
     elif blockType == 2:
-        return BLOCK_SIZE
+        return int(0.5 * BLOCK_SIZE)
     elif blockType == 3:
         return 0
     elif blockType == 4:
-        return 0
+        return int(0.5 * BLOCK_SIZE)
     elif blockType == 5:
         return int(0.5 * BLOCK_SIZE)
     elif blockType == 6:
@@ -351,11 +351,11 @@ def getOffsetY(blockType):
     elif blockType == 1:
         return int(0.5 * BLOCK_SIZE)
     elif blockType == 2:
-        return 0
+        return int(0.5 * BLOCK_SIZE)
     elif blockType == 3:
         return 0
     elif blockType == 4:
-        return 0
+        return int(0.5 * BLOCK_SIZE)
     elif blockType == 5:
         return int(0.5 * BLOCK_SIZE)
     elif blockType == 6:
@@ -402,33 +402,34 @@ def hold(blockSet, nextBlocks):
 
     # first time if hold is empty
     if (tmp == None):
-        blockType = blockSet.pop(0)
-        if blockListTooShort(len(blockSet)):
-            appendBlockList(blockSet)
+        newBlock(blockSet, nextBlocks)
+        # blockType = blockSet.pop(0)
+        # if blockListTooShort(len(blockSet)):
+        #     appendBlockList(blockSet)
 
-        # TODO make function            
-        if blockType == 0:
-            block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif blockType == 1:
-            block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif blockType == 2:
-            block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif blockType == 3:
-            block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif blockType == 4:
-            block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif blockType == 5:
-            block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
-        elif blockType == 6:
-            block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
+        # # TODO make function            
+        # if blockType == 0:
+        #     block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 1:
+        #     block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 2:
+        #     block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 3:
+        #     block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 4:
+        #     block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 5:
+        #     block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 6:
+        #     block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
     else:
         tmp.setX(int(INIT_X))
         tmp.setY(int(INIT_Y))
         block = tmp
         pos_x = INIT_X
         pos_y = INIT_Y
-    setNextBlocks(blockSet, nextBlocks)
 
+    setNextBlocks(blockSet, nextBlocks)
 
 def blockListTooShort(len):
     if len <= 5:
@@ -500,13 +501,49 @@ def drawVarsBorder():
                   (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 5 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, WHITE, True, borderList, BORDER_WIDTH)
 
+def drawQuesAnsBorder():
+    BORDER_WIDTH = 2
+    borderList= [(BLOCK_SIZE, TOP_BOUNDARY),
+                 (LEFT_BOUNDARY - BLOCK_SIZE, TOP_BOUNDARY),
+                 (LEFT_BOUNDARY - BLOCK_SIZE, TOP_BOUNDARY + 10*BLOCK_SIZE),
+                 (BLOCK_SIZE, TOP_BOUNDARY + 10*BLOCK_SIZE)]
+    pygame.draw.lines(GAMEDISPLAY, WHITE, True, borderList, BORDER_WIDTH)
 
 def drawGameAreaBorder():
     BORDER_WIDTH = 2
-    borderList = [(LEFT_BOUNDARY, TOP_BOUNDARY), (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY),
+    borderList = [(LEFT_BOUNDARY, TOP_BOUNDARY),
+                  (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY),
                   (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY + 21 * BLOCK_SIZE),
                   (LEFT_BOUNDARY, TOP_BOUNDARY + 21 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, BORDER_COLOR, True, borderList, BORDER_WIDTH)
+
+def newBlock(blockSet, nextBlocks):
+    global block
+    global pos_x
+    global pos_y
+
+    rand = blockSet.pop(0)
+    if blockListTooShort(len(blockSet)):
+        appendBlockList(blockSet)
+
+    setNextBlocks(blockSet, nextBlocks)
+
+    if rand == 0:
+        block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+    elif rand == 1:
+        block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+    elif rand == 2:
+        block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
+    elif rand == 3:
+        block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
+    elif rand == 4:
+        block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+    elif rand == 5:
+        block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
+    elif rand == 6:
+        block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
+    pos_x = INIT_X
+    pos_y = INIT_Y
 
 
 def paused():
@@ -546,11 +583,15 @@ def paused():
         additionalText = myfont.render("Press \"p\" to resume!", True, BLACK)
         additionalTextWidth = additionalText.get_rect().width
         additionalTextHeight = additionalText.get_rect().height
+        myfont = pygame.font.SysFont('Comic Sans MS', 15)
+        additionalText2 = myfont.render("Press \"Esc\" to quit!", True, BLACK)
 
         GAMEDISPLAY.blit(additionalText,
                          (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth / 2,
                           TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + textHeight))
-
+        GAMEDISPLAY.blit(additionalText2, (
+            LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth / 2,
+            TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + 2 * textHeight))        
         pygame.display.update()
         clock.tick(15)
 
@@ -563,7 +604,7 @@ def gameOver():
     global holdBlock
 
     pygame.mixer.music.stop()
-    pygame.mixer.music.load('marioDeath.mid')
+    pygame.mixer.music.load('marioDeath.mp3')
     pygame.mixer.music.play(0, 0.0)
 
     initialSize = 16
@@ -576,8 +617,11 @@ def gameOver():
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT / 2 + soundOn.get_rect().height / 2 and y >= HEIGHT / 2 - soundOn.get_rect().height / 2:
+                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[1] + soundOn.get_rect().height and y >= soundPosition[1]:
                     flipSoundIcon()
+                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                    flipMusicIcon()
+                
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     currentBlock = False
@@ -596,25 +640,29 @@ def gameOver():
                     flipSoundIcon()
 
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
-        gameOverText = myfont.render("Game Over", True, black)
+        gameOverText = myfont.render("Game Over", True, BLACK)
         textWidth = gameOverText.get_rect().width
         textHeight = gameOverText.get_rect().height
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize - 15)
-        additionalText = myfont.render("Press \"r\" to restart!", True, black)
+        additionalText = myfont.render("Press \"r\" to restart!", True, BLACK)
         additionalTextWidth = additionalText.get_rect().width
         additionalTextHeight = additionalText.get_rect().height
+        additionalText2 = myfont.render("Press \"Esc\" to quit!", True, BLACK)
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
-        gameOverText2 = myfont.render("Game Over", True, red)
+        gameOverText2 = myfont.render("Game Over", True, RED)
         textWidth2 = gameOverText2.get_rect().width
         textHeight2 = gameOverText2.get_rect().height
-        GAMEDISPLAY.fill(white, [LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth,
+        GAMEDISPLAY.fill(WHITE, [LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth,
                                  TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight, 2 * textWidth,
-                                 2 * (textHeight + additionalTextHeight)])
+                                 2 * (textHeight + 2 * additionalTextHeight)])
         GAMEDISPLAY.blit(gameOverText, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth / 2,
                                         TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight / 2))
         GAMEDISPLAY.blit(additionalText, (
             LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth / 2,
             TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + textHeight))
+        GAMEDISPLAY.blit(additionalText2, (
+            LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth / 2,
+            TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + 2 * textHeight))
         GAMEDISPLAY.blit(gameOverText2, (LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - textWidth / 2 + 2,
                                          TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 - textHeight / 2))
         pygame.display.update()
@@ -671,8 +719,10 @@ def runGame():
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= LEFT_BOUNDARY - 2 * soundOn.get_rect().width and x <= LEFT_BOUNDARY - soundOn.get_rect().width and y <= HEIGHT / 2 + soundOn.get_rect().height / 2 and y >= HEIGHT / 2 - soundOn.get_rect().height / 2:
+                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[1] + soundOn.get_rect().height and y >= soundPosition[1]:
                     flipSoundIcon()
+                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                    flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     if pos_x:
@@ -717,11 +767,14 @@ def runGame():
                     pos_y = tick(pos_y)
 
                 elif event.key == pygame.K_p:
+                    num_q = 0
                     paused()
 
                 elif event.key == pygame.K_LSHIFT:
                     if (hasSwap == True):
                         hold(blockSet, nextBlocks)
+                        out_list = generateQues(level)
+                        num_q = 0
                         hasSwap = False
                 elif event.key == pygame.K_m:
                     flipMusicIcon()
@@ -731,7 +784,7 @@ def runGame():
                 elif event.key == out_list[9]:
                     if numTries < 1:
                         hard_q = False
-                        if diff1 >= 9:
+                        if diff1 > 4:
                             hard_q = True
                         comp_input = randint(0, 3)
                         controlsOn = True
@@ -744,7 +797,7 @@ def runGame():
                         out_list = generateQues(level)
                         diff1 = out_list[4]
                 elif event.key != out_list[9] and (
-                        event.key == pygame.K_q or event.key == pygame.K_w or event.key == pygame.K_e or event.key == pygame.K_r):
+                        event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
                     comp_input = randint(4, 7)
                     controlsOn = False
@@ -789,30 +842,11 @@ def runGame():
             comp_input = -1
             num_q = 0
 
-            rand = blockSet.pop(0)
-            if blockListTooShort(len(blockSet)):
-                appendBlockList(blockSet)
-
-            setNextBlocks(blockSet, nextBlocks)
-
-            if rand == 0:
-                block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 1:
-                block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 2:
-                block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 3:
-                block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 4:
-                block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 5:
-                block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
-            elif rand == 6:
-                block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
-            pos_x = INIT_X
-            pos_y = INIT_Y
+            # draw new block
+            newBlock(blockSet, nextBlocks)
             currentBlock = True
             hasSwap = True
+
         difference = getShadowDifference(block.getPerimeter())
         drawShadow(block.getPerimeter(), difference)
 
@@ -833,7 +867,7 @@ def runGame():
         elif out_list[2] == 4:
             o = '^'
 
-        if (diff1 < 9):
+        if (diff1 < 5):
             if o == '^':
                 actual_ans = math.pow(out_list[0], out_list[1])
             else:
@@ -842,6 +876,10 @@ def runGame():
             fakeans_list = [actual_ans + diff1, actual_ans - diff2, actual_ans + diff3]
             list_count = 0
         else:
+            if out_list[8] == 0:
+                t = '+'
+            else:
+                t = '-'
             if o == '^':
                 inter_ans = math.pow(out_list[0], out_list[1])
                 actual_ans = eval(str(inter_ans) + t + str(out_list[7]))
@@ -858,16 +896,16 @@ def runGame():
                 sol_print = fakeans_list[list_count]
                 list_count += 1
             if x == 0:
-                char = 'Q)'
+                char = '1)'
             elif x == 1:
-                char = 'W)'
+                char = '2)'
             elif x == 2:
-                char = 'E)'
+                char = '3)'
             elif x == 3:
-                char = 'R)'
+                char = '4)'
             aSurf = BASICFONT.render(char + '   %s' % (sol_print), True, TEXTCOLOR)
             aRect = aSurf.get_rect()
-            aRect.topleft = (20, 110 + x * 30)
+            aRect.topleft = (BLOCK_SIZE*2, TOP_BOUNDARY + (x+5) * BLOCK_SIZE)
             GAMEDISPLAY.blit(aSurf, aRect)
             if x == 3:
                 list_count = 0
@@ -887,12 +925,12 @@ def runGame():
 
         level_text = BASICFONT.render("Level: " + str(level), True, WHITE)
         GAMEDISPLAY.blit(level_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + BLOCK_SIZE))
-
+        
         screen_text = BASICFONT.render("Score: " + str(score), True, WHITE)
         GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 2 * BLOCK_SIZE))
 
         prt_scr = 10 + num_q * 5
-        if diff1 >= 9:
+        if diff1 >= 5:
             prt_scr += 20
         val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
         GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 3 * BLOCK_SIZE))
@@ -916,20 +954,23 @@ def runGame():
         # draw game area border
         drawGameAreaBorder()
 
+        # draw question & answer border
+        drawQuesAnsBorder()
+
         questionSurf = BASICFONT.render('Question :', True, TEXTCOLOR)
         questionRect = questionSurf.get_rect()
-        questionRect.topleft = (20, 20)
+        questionRect.topleft = (2*BLOCK_SIZE, TOP_BOUNDARY + BLOCK_SIZE)
         GAMEDISPLAY.blit(questionSurf, questionRect)
 
         answerSurf = BASICFONT.render('Answer :', True, TEXTCOLOR)
         answerRect = answerSurf.get_rect()
-        answerRect.topleft = (20, 80)
+        answerRect.topleft = (2*BLOCK_SIZE, TOP_BOUNDARY + 4*BLOCK_SIZE)
         GAMEDISPLAY.blit(answerSurf, answerRect)
 
-        if (diff1 < 9):
+        if (diff1 < 5):
             qSurf = BASICFONT.render('%s %s %s' % (out_list[0], o, out_list[1]), True, TEXTCOLOR)
             qRect = qSurf.get_rect()
-            qRect.topleft = (20, 50)
+            qRect.topleft = (2*BLOCK_SIZE, TOP_BOUNDARY+2*BLOCK_SIZE)
             GAMEDISPLAY.blit(qSurf, qRect)
         else:
             if out_list[8] == 0:
@@ -938,7 +979,7 @@ def runGame():
                 t = '-'
             qSurf = BASICFONT.render('%s %s %s %s %s' % (out_list[0], o, out_list[1], t, out_list[7]), True, TEXTCOLOR)
             qRect = qSurf.get_rect()
-            qRect.topleft = (20, 50)
+            qRect.topleft = (2*BLOCK_SIZE, TOP_BOUNDARY + 2*BLOCK_SIZE)
             GAMEDISPLAY.blit(qSurf, qRect)
 
         # draw compliment
@@ -1002,13 +1043,13 @@ def generateQues(level):
         q1 = randint(0, q1_upbound)
     sol_key = randint(0, 3)
     if sol_key == 0:
-        char = pygame.K_q
+        char = pygame.K_1
     if sol_key == 1:
-        char = pygame.K_w
+        char = pygame.K_2
     if sol_key == 2:
-        char = pygame.K_e
+        char = pygame.K_3
     if sol_key == 3:
-        char = pygame.K_r
+        char = pygame.K_4
     diff1 = randint(1, 5)
     diff2 = randint(1, 10)
     diff3 = randint(6, 20)
@@ -1079,7 +1120,7 @@ def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
     level = int(score / 80) + 1
-    fallFreq = 0.8 - (level * 0.02)
+    fallFreq = 1000 - 500*(level-1)
     return level, fallFreq
 
 def terminate():
