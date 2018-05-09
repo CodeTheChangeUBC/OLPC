@@ -490,6 +490,17 @@ class Menu(object):
             text_dx_tl = -text_width
         else:
             text_dx_tl = text_dx
+        # Draw fonts
+        if self._actual._option_shadow:
+            ycoords = self._actual._opt_posy + dy * (
+                self._actual._fsize + self._actual._opt_dy) + t_dy - 3
+            self._surface.blit(text_bg,
+                                   (self._actual._opt_posx + text_dx - 3,
+                                    ycoords))
+            ycoords = self._actual._opt_posy + dy * (
+                self._actual._fsize + self._actual._opt_dy) + t_dy
+            self._surface.blit(text, (self._actual._opt_posx + text_dx,
+                                      ycoords))
         ycoords = self._actual._opt_posy + dy * (
             self._actual._fsize + self._actual._opt_dy) + t_dy - 2
         _pygame.draw.line(self._surface, self._actual._sel_color, (
