@@ -1380,16 +1380,7 @@ def checkForNewHiscore():
             return i
     if score > int(data[0]["score"]):
         return 0
-
-
-def saveScore(newScore):
-    global name
-    global leaderboard
-    name = inputbox.ask(GAMEDISPLAY, "Enter Name")
-    leaderboard = Leaderboard(name, newScore)
-    leaderboard.load_previous_scores()
-    leaderboard.save_score()
-
+    
 
 def updateHiscore(index):
     if index == -1:
