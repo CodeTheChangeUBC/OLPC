@@ -587,7 +587,6 @@ def paused():
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
-                    pygame.mixer.music.unpause()
                     if isMusicOn == True:
                         pygame.mixer.music.unpause()
                     pause = False
