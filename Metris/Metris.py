@@ -159,7 +159,6 @@ def tick(pos_y):
             pos_y += BLOCK_SIZE
     return pos_y
 
-
 def checkLandedAndDelete():
     y = 0
     rowsToDelete = []
@@ -169,13 +168,11 @@ def checkLandedAndDelete():
         y = y + 1
     deleteRows(rowsToDelete)
 
-
 def rowFilled(y):
     for x in range(0, len(landed)):
         if (landed[x][y] == None):
             return False
     return True
-
 
 def deleteRows(rows):
     global bankedpoints
@@ -213,7 +210,6 @@ def checkGameOver():
             if landed[x][y] != None:
                 gameOver()
 
-
 def checkCollision():
     global currentBlock
     if not currentBlock:
@@ -231,7 +227,6 @@ def checkCollision():
         if blockPerimeter[i].getX() < LEFT_BOUNDARY or blockPerimeter[i].getX() > RIGHT_BOUNDARY - BLOCK_SIZE or \
                 blockPerimeter[i].getY() > BOTTOM_BOUNDARY - BLOCK_SIZE:
             return True
-
 
 def checkCollisionRotation():
     global pos_x
@@ -299,14 +294,12 @@ def checkCollisionRotation():
             break
     return False
 
-
 def x2Index(x):
     return (x - LEFT_BOUNDARY) / BLOCK_SIZE
 
 
 def y2Index(y):
     return y / BLOCK_SIZE
-
 
 ## function to get the minimum vertical difference between current block and
 #  the bottom landed Blocks
@@ -324,14 +317,12 @@ def getShadowDifference(blockList):
                 difference = y * BLOCK_SIZE - blockList[i].getY() - BLOCK_SIZE  # - 14
     return difference
 
-
 def drawShadow(blockList, dy):
     for i in range(0, len(blockList)):
         pygame.draw.rect(GAMEDISPLAY, blockList[i].getColor(),
                          [blockList[i].getX(), blockList[i].getY() + dy, BLOCK_SIZE, BLOCK_SIZE])
         pygame.draw.rect(GAMEDISPLAY, (100, 100, 100),
                          [blockList[i].getX() + 1, blockList[i].getY() + dy + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2])
-
 
 def getRandomBlockSet(lastBlock):
     set = [0, 1, 2, 3, 4, 5, 6]
@@ -341,7 +332,6 @@ def getRandomBlockSet(lastBlock):
         set[0] = set[1]
         set[1] = tmp
     return set
-
 
 def getOffsetX(blockType):
     if blockType == 0:
@@ -358,7 +348,6 @@ def getOffsetX(blockType):
         return int(0.5 * BLOCK_SIZE)
     elif blockType == 6:
         return 0
-
 
 def getOffsetY(blockType):
     if blockType == 0:
