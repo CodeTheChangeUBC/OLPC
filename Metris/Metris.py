@@ -581,12 +581,14 @@ def paused():
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -644,12 +646,14 @@ def gameOver():
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
 
             if event.type == pygame.KEYDOWN:
@@ -755,12 +759,14 @@ def runGame():
                 gameExit = True
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
