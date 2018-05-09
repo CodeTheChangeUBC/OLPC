@@ -83,8 +83,6 @@ pos_y = 10
 dx = 0
 dy = 0
 hasMove = False
-# global score
-# score = 0
 font = pygame.font.SysFont(None, 25)
 gone_down = False
 global currentBlock
@@ -784,21 +782,27 @@ def runGame():
                     flipSoundIcon()
                 # check for correct answer
                 elif event.key == out_list[9]:
-                    playSound('beep.wav')
-                    if numTries < 1:
-                        hard_q = False
-                        if diff1 > 4:
-                            hard_q = True
-                        comp_input = randint(0, 3)
-                        controlsOn = True
-                        score += 10 + 5 * num_q
-                        if hard_q == True:
-                            score += 20
-                        hard_q = False
-                        level, fallFreq = calculateLevelAndFallFreq(score)
-                        num_q += 1
-                        out_list = generateQues(level)
-                        diff1 = out_list[4]
+                    if num_q > 5:
+                        comp_input = 8
+                    else:
+                        playSound('beep.wav')
+                        if numTries < 1:
+                            hard_q = False
+                            if diff1 > 4:
+                                hard_q = True
+                            comp_input = randint(0, 3)
+                            controlsOn = True
+                            score += 10 + 5 * num_q
+                            if hard_q == True:
+                                score += 20
+                            hard_q = False
+                            level, fallFreq = calculateLevelAndFallFreq(score)
+                            num_q += 1
+                            if num_q <= 5:
+                                out_list = generateQues(level)
+                                diff1 = out_list[4]
+                            else:
+                                comp_input = 8
                 elif event.key != out_list[9] and (
                         event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
@@ -1156,6 +1160,8 @@ def drawCompliment(rand):
         compliment = "Better luck next time!"
     elif rand == -1:
         compliment = " "
+    elif rand == 8:
+        compliment = "Good job! Next question upon block landing."
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
     complimentRect.center = (WIDTH / 2, TOP_BOUNDARY / 2)
