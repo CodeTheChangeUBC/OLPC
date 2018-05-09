@@ -420,8 +420,6 @@ class Menu(object):
                                                         _cfg.SHADOW_COLOR)
             # Text anchor
             text_width, text_height = text.get_size()
-            text_rect_info = (text_width, text_height)
-            option.append(text_rect_info)
             t_dy = -int(text_height / 2.0)
             if self._actual._centered_option:
                 text_dx = -int(text_width / 2.0)
@@ -480,9 +478,19 @@ class Menu(object):
 
     def draw_rect(self, dy):
         option = self._actual._option[dy]
-        rect_info = option[3]
-        text_width = rect_info[0]
-        text_height = rect_info[1]
+        # If selected index draw a rectangle
+        if dy == self._actual._index:
+            text = self._actual._font.render(option[0], 1,
+                                        self._actual._sel_color)
+            text_bg = self._actual._font.render(option[0], 1,
+                                        _cfg.SHADOW_COLOR)
+        else:
+            text = self._actual._font.render(option[0], 1,
+                                        self._actual._font_color)
+            text_bg = self._actual._font.render(option[0], 1,
+                                        _cfg.SHADOW_COLOR)
+        # Text anchor
+        text_width, text_height = text.get_size()
         t_dy = -int(text_height / 2.0)
         if self._actual._centered_option:
             text_dx = -int(text_width / 2.0)
@@ -542,10 +550,23 @@ class Menu(object):
               ycoords)), self._actual._rect_width)
 
     def get_rect_info(self, dy):
-        option = self._actual._option[dy]
-        rect_info = option[3]
-        text_width = rect_info[0]
-        text_height = rect_info[1]
+        for i in range(0, len(self._actual._option)):
+            option = self._actual._option[i]
+            if i == dy:
+                break
+        # If selected index draw a rectangle
+        if dy == self._actual._index:
+            text = self._actual._font.render(option[0], 1,
+                                        self._actual._sel_color)
+            text_bg = self._actual._font.render(option[0], 1,
+                                        _cfg.SHADOW_COLOR)
+        else:
+            text = self._actual._font.render(option[0], 1,
+                                        self._actual._font_color)
+            text_bg = self._actual._font.render(option[0], 1,
+                                        _cfg.SHADOW_COLOR)
+        # Text anchor
+        text_width, text_height = text.get_size()
         t_dy = -int(text_height / 2.0)
         if self._actual._centered_option:
             text_dx = -int(text_width / 2.0)
@@ -678,15 +699,20 @@ class Menu(object):
                 elif event.button == _locals.JOY_BUTTON_BACK:
                     self.reset(1)
             # TODO: figure out how to implement click interface
-            # elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            #     for i in range(0, len(self._actual._option)):
-            #         rect = self.get_rect_info(i)
-            #         pos = (rect[2], rect[3])
-            #         x = rect[0]
-            #         y = rect[1]
-            #         mousePos = _pygame.mouse.get_pos()
-            #         if (mousePos[0] >= x and mousePos[0] <= x + pos[0] and
-            #             mousePos[1] >= y and mousePos[1] <= y + pos[1]):
+            elif event.type == _pygame.MOUSEBUTTONDOWN and event.button == 1:
+                for i in range(0, len(self._actual._option)):
+                    rect = self.get_rect_info(i)
+                    pos = (rect[2], rect[3])
+                    x = rect[0]
+                    y = rect[1]
+                    mousePos = _pygame.mouse.get_pos()
+                    if (mousePos[0] >= x and mousePos[0] <= x + pos[0] and
+                        mousePos[1] >= y and mousePos[1] <= y + pos[1]):
+                        self._actual.index = i
+                        self._select()
+                        if not self._actual._dopause:
+                            return True
+
         for i in range(0, len(self._actual._option)):
             rect = self.get_rect_info(i)
             pos = (rect[2], rect[3])
