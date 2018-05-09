@@ -1279,27 +1279,27 @@ def checkForNewHiscore():
     global score
     if score <= int(data[len(data) - 1]["score"]):
         return -1
-    for i in range(len(data) - 2, 0, -1):
-        if score > int(data[i]["score"]) and score <= int(data[i - 1]["score"]):
+
+    for i in range (len(data)-1, 0, -1):
+        if score > data[i]["score"] and score <= data[i-1]["score"]:
             return i
     if score > int(data[0]["score"]):
         return 0
 
 
 def updateHiscore(index):
-    print(index)
     if index == -1:
         return
     with open("leaderboard.json") as data_file:
         data = json.load(data_file)
-
     global score
     for i in range(len(data) - 1, index, -1):
         data[i]["date"] = data[i - 1]["date"]
         data[i]["score"] = data[i - 1]["score"]
         data[i]["name"] = data[i - 1]["name"]
     data[index]["score"] = score
-    json.dump(data, "leaderboard.json")
+    with open("leaderboard.json", 'w') as data_file:
+        json.dump(data, data_file)
 
 
 # =================================================================
@@ -1483,6 +1483,13 @@ leaderboard_menu = pygameMenu.TextMenu(GAMEDISPLAY,
                                        menu_alpha=100,
                                        menu_color=COLOR_BLACK
                                        )
+
+with open("leaderboard.json") as data_file:
+    data = json.load(data_file)
+LEADERBOARD = []
+for i in range(0, len(data)):
+    LEADERBOARD.insert(len(LEADERBOARD), str(i+1) + ".   " + str(data[i]["name"]) + "                        " + str(data[i]["score"])) 
+    
 for m in LEADERBOARD:
     leaderboard_menu.add_line(m)
 
