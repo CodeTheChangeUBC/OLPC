@@ -1,0 +1,10 @@
+[Activity]
+name = Metris
+bundle_id = net.flossmanuals.ReadEtextsActivity [???]
+icon = metris
+exec = sugar-activity ReadEtextsActivity.ReadEtextsActivity [???]
+show_launcher = yes
+activity_version = 1
+mime_types = text/plain;application/zip [???]
+license = GPLv2+ [???]
+summary = A game that combines mathematical elements with the popular arcade game Tetris

@@ -14,6 +14,8 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 """
+# To sleep the thread in main loop
+import time
 
 # Import constants
 import config_controls as _ctrl
@@ -711,6 +713,7 @@ class Menu(object):
             return
         if self._actual._dopause:
             while True:
+                time.sleep(0.016666)
                 if self._main():
                     return
         else:
