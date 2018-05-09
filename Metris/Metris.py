@@ -629,7 +629,7 @@ def gameOver():
     global holdBlock
 
     pygame.mixer.music.stop()
-    pygame.mixer.music.load('coin.wav')
+    pygame.mixer.music.load('end.wav')
     pygame.mixer.music.play(0, 0.0)
 
     initialSize = 16
@@ -817,7 +817,7 @@ def runGame():
                     if num_q > 5:
                         comp_input = 8
                     else:
-                        playSound('beep.wav')
+                        playSound('cor.wav')
                         if numTries < 1:
                             hard_q = False
                             if diff1 > 4:
@@ -840,7 +840,8 @@ def runGame():
                     numTries += 1
                     comp_input = randint(4, 7)
                     controlsOn = False
-                    playSound('landSound.wav')
+                    if num_q < 5:
+                        playSound('incor.wav')
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
