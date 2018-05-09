@@ -134,6 +134,9 @@ holdBlock = None
 global mus_var
 mus_var = randint(0,12)
 
+global mult
+mult = 0
+
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -660,7 +663,7 @@ def gameOver():
 #==================================================================================
 
     pygame.mixer.music.stop()
-    pygame.mixer.music.load('coin.wav')
+    pygame.mixer.music.load('end.wav')
     pygame.mixer.music.play(0, 0.0)
 
     initialSize = 16
@@ -774,6 +777,9 @@ def runGame():
     global soundOn
     global mus_var
     global bankedpoints
+    global mult
+    global isMusicOn
+
     blockSet = getRandomBlockSet(None)
     blockT = BlockT(0, 0, BLOCK_SIZE)
     blockS = BlockS(0, 0, BLOCK_SIZE)
@@ -784,8 +790,11 @@ def runGame():
     blockO = BlockO(0, 0, BLOCK_SIZE)
     nextBlocks = []
 
+    mus_var = randint(0,12)
     pygame.mixer.music.load(MID_FILES[mus_var])
     pygame.mixer.music.play(-1, 0.0)
+    if isMusicOn == False:
+        pygame.mixer.music.pause()
 
     hasSwap = True
 
@@ -864,7 +873,7 @@ def runGame():
                     pos_y = tick(pos_y)
 
                 elif event.key == pygame.K_p:
-                    num_q = 0
+                    mult = 0
                     paused()
                     out_list = generateQues(level)
 
@@ -872,7 +881,7 @@ def runGame():
                     if (hasSwap == True):
                         hold(blockSet, nextBlocks)
                         out_list = generateQues(level)
-                        num_q = 0
+                        mult = 0
                         hasSwap = False
                 elif event.key == pygame.K_m:
                     flipMusicIcon()
@@ -883,19 +892,21 @@ def runGame():
                     if num_q > 5:
                         comp_input = 8
                     else:
-                        playSound('beep.wav')
+                        playSound('cor.wav')
                         if numTries < 1:
                             hard_q = False
                             if diff1 > 4:
                                 hard_q = True
                             comp_input = randint(0, 3)
                             controlsOn = True
-                            bankedpoints += 10 + 5 * num_q
+                            bankedpoints += 10 + 5 * mult
+
                             if hard_q == True:
                                 bankedpoints += 20
                             hard_q = False
                             level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
                             num_q += 1
+                            mult += 1
                             if num_q <= 5:
                                 out_list = generateQues(level)
                                 diff1 = out_list[4]
@@ -904,9 +915,11 @@ def runGame():
                 elif event.key != out_list[9] and (
                         event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
+                    mult = 0
                     comp_input = randint(4, 7)
                     controlsOn = False
-                    playSound('landSound.wav')
+                    if num_q < 5:
+                        playSound('incor.wav')
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -1045,7 +1058,7 @@ def runGame():
         screen_text = BASICFONT.render("Score: " + str(score), True, WHITE)
         GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 2 * BLOCK_SIZE))
 
-        prt_scr = 10 + num_q * 5
+        prt_scr = 10 + mult * 5
         if diff1 >= 5:
             prt_scr += 20
         val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
@@ -1134,8 +1147,6 @@ def runGame():
             level_prev = level
             if isMusicOn == True:
                 pygame.mixer.music.play(-1, 0.0)
-##        if isMusicOn == False:
-##            pygame.mixer.music.pause()
         pygame.display.update()
 
         clock.tick(speed)
