@@ -6,6 +6,20 @@ class Block(object):
         self.y = y
         self.size = size
         self.color = color
+        if color[0] >= 25:
+            r = color[0] - 25
+        else:
+            r = color[0]
+        if color[1] >= 25:
+            g = color[1] - 25
+        else:
+            g = color[1]
+        if color[2] >= 25:
+            b = color[2] - 25
+        else:
+            b = color[2]
+        self.color2 = (r,g,b)
+            
     def getX(self):
         return self.x
 
@@ -28,8 +42,8 @@ class Block(object):
         self.x += dx
 
     def display(self, gameDisplay):
-        pygame.draw.rect(gameDisplay, (0, 0, 0), [self.x, self.y, self.size, self.size])
-        pygame.draw.rect(gameDisplay, self.color, [self.x, self.y, self.size - 1, self.size - 1])
+        pygame.draw.rect(gameDisplay, self.color2, [self.x, self.y, self.size, self.size])
+        pygame.draw.rect(gameDisplay, self.color, [self.x, self.y, self.size - self.size / 10, self.size - self.size / 10])
         pygame.draw.rect(gameDisplay, (255,255,255), [self.x, self.y, self.size / 10, self.size / 10])
 
     black = (0, 0, 0)
