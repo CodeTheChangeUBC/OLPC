@@ -59,9 +59,9 @@ INIT_Y = BLOCK_SIZE
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
 
-MID_FILES = ['mids/ff7.mid', 'mids/tetrisb.mid', 'mids/tetrisc.mid', 'mids/hip.mid',
-             'mids/marioParty.mid', 'mids/rock.mid', 'mids/tech.MID', 'mids/hip.MID',
-             'mids/ki.mid', 'mids/lg.MID', 'mids/eye.mid']
+MID_FILES = ['mp3s/ff7.mp3', 'mp3s/tetrisb.mp3', 'mp3s/tetrisc.mp3', 'mp3s/hip.mp3',
+             'mp3s/marioParty.mp3', 'mp3s/rock.mp3', 'mp3s/tech.mp3', 'mp3s/hip.mp3',
+             'mp3s/ki.mp3', 'mp3s/lg.mp3', 'mp3s/eye.mp3']
 
 global score
 score = 0
@@ -604,7 +604,7 @@ def gameOver():
     global holdBlock
 
     pygame.mixer.music.stop()
-    pygame.mixer.music.load('marioDeath.mid')
+    pygame.mixer.music.load('marioDeath.mp3')
     pygame.mixer.music.play(0, 0.0)
 
     initialSize = 16
