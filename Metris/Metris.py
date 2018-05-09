@@ -38,7 +38,6 @@ INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                '*Only after answering correctly',
                ]
 
-
 LEADERBOARD = ['Lol      100',
                'LOL      200',
                'lol      300'
@@ -66,8 +65,8 @@ MID_FILES = ['mp3s/m0', 'mp3s/m1', 'mp3s/m2', 'mp3s/m3',
 global score
 score = 0
 
-##GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN, pygame.RESIZABLE)
-GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT))
+GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+
 pygame.display.set_caption('Metris')
 
 pygame.display.update()
@@ -97,24 +96,23 @@ speed = 10
 global isSoundOn
 isSoundOn = True
 global soundOn
-soundOn = pygame.image.load('soundon.png') # @copyright from Robin Kylander in FLATICON
+soundOn = pygame.image.load('images/soundon.png')  # @copyright from Robin Kylander in FLATICON
 soundOn.convert()
 global soundOff
-soundOff = pygame.image.load('soundoff.png') # @copyright from Robin Kylander in FLATICON
+soundOff = pygame.image.load('images/soundoff.png')  # @copyright from Robin Kylander in FLATICON
 soundOff.convert()
 global soundPosition
-soundPosition = (LEFT_BOUNDARY  / 2, HEIGHT*3/4)
+soundPosition = (LEFT_BOUNDARY / 2, HEIGHT * 3 / 4)
 global isMusicOn
 isMusicOn = True
-global musicOn 
-musicOn = pygame.image.load('musicon.png') # @copyright from Freepik in FLATICON
+global musicOn
+musicOn = pygame.image.load('images/musicon.png')  # @copyright from Freepik in FLATICON
 musicOn.convert()
 global musicOff
-musicOff = pygame.image.load('musicoff.png')
+musicOff = pygame.image.load('images/musicoff.png')
 musicOff.convert()
 global musicPosition
-musicPosition = (LEFT_BOUNDARY / 2 + soundOn.get_rect().width + 5, HEIGHT*3/4)
-
+musicPosition = (LEFT_BOUNDARY / 2 + soundOn.get_rect().width + 5, HEIGHT * 3 / 4)
 
 landed = [[None for i in range(24)] for j in range(10)]
 
@@ -198,6 +196,7 @@ def deleteRows(rows):
             multiplier += 1
         score += ret
 
+
 def checkGameOver():
     global gameExit
     for y in range(0, len(landed[0]) - 20):
@@ -237,7 +236,8 @@ def checkCollisionRotation():
         for j in range(0, len(landed)):
             for k in range(0, len(landed[j])):
                 if landed[j][k] is not None:
-                    if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
+                    if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][
+                        k].getY():
                         block.setY(block.getY() - BLOCK_SIZE)
                         pos_y -= BLOCK_SIZE
                         if checkCollision():
@@ -298,6 +298,7 @@ def x2Index(x):
 def y2Index(y):
     return y / BLOCK_SIZE
 
+
 ## function to get the minimum vertical difference between current block and
 #  the bottom landed Blocks
 def getShadowDifference(blockList):
@@ -322,6 +323,7 @@ def drawShadow(blockList, dy):
         pygame.draw.rect(GAMEDISPLAY, (100, 100, 100),
                          [blockList[i].getX() + 1, blockList[i].getY() + dy + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2])
 
+
 def getRandomBlockSet(lastBlock):
     set = [0, 1, 2, 3, 4, 5, 6]
     shuffle(set)
@@ -330,6 +332,7 @@ def getRandomBlockSet(lastBlock):
         set[0] = set[1]
         set[1] = tmp
     return set
+
 
 def getOffsetX(blockType):
     if blockType == 0:
@@ -347,6 +350,7 @@ def getOffsetX(blockType):
     elif blockType == 6:
         return 0
 
+
 def getOffsetY(blockType):
     if blockType == 0:
         return int(0.5 * BLOCK_SIZE)
@@ -363,6 +367,7 @@ def getOffsetY(blockType):
     elif blockType == 6:
         return int(0.5 * BLOCK_SIZE)
 
+
 def getBlockType(block):
     if type(block) == BlockT:
         return 0
@@ -378,6 +383,7 @@ def getBlockType(block):
         return 5
     elif type(block) == BlockO:
         return 6
+
 
 def hold(blockSet, nextBlocks):
     global block
@@ -433,6 +439,7 @@ def hold(blockSet, nextBlocks):
 
     setNextBlocks(blockSet, nextBlocks)
 
+
 def blockListTooShort(len):
     if len <= 5:
         return True
@@ -444,6 +451,7 @@ def appendBlockList(blockSet):
     for i in range(0, len(nextBlockSet)):
         blockSet.insert(len(blockSet), nextBlockSet[i])
 
+
 def setNextBlocks(blockSet, nextBlocks):
     while (len(nextBlocks) != 0):
         nextBlocks.pop()
@@ -454,19 +462,26 @@ def setNextBlocks(blockSet, nextBlocks):
 
     for i in range(0, 1):
         if blockSet[i] == 0:
-            nextBlocks.insert(i, BlockT(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+            nextBlocks.insert(i, BlockT(offset_x + getOffsetX(blockSet[i]),
+                                        i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
         elif blockSet[i] == 1:
-            nextBlocks.insert(i, BlockS(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+            nextBlocks.insert(i, BlockS(offset_x + getOffsetX(blockSet[i]),
+                                        i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
         elif blockSet[i] == 2:
-            nextBlocks.insert(i, BlockJ(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+            nextBlocks.insert(i, BlockJ(offset_x + getOffsetX(blockSet[i]),
+                                        i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
         elif blockSet[i] == 3:
-            nextBlocks.insert(i, BlockI(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+            nextBlocks.insert(i, BlockI(offset_x + getOffsetX(blockSet[i]),
+                                        i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
         elif blockSet[i] == 4:
-            nextBlocks.insert(i, BlockL(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+            nextBlocks.insert(i, BlockL(offset_x + getOffsetX(blockSet[i]),
+                                        i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
         elif blockSet[i] == 5:
-            nextBlocks.insert(i, BlockZ(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+            nextBlocks.insert(i, BlockZ(offset_x + getOffsetX(blockSet[i]),
+                                        i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
         elif blockSet[i] == 6:
-            nextBlocks.insert(i, BlockO(offset_x + getOffsetX(blockSet[i]), i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+            nextBlocks.insert(i, BlockO(offset_x + getOffsetX(blockSet[i]),
+                                        i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
 
 
 def drawHoldBorder():
@@ -481,6 +496,7 @@ def drawHoldBorder():
 def drawHoldLabel():
     screen_text = BASICFONT.render("Hold: ", True, WHITE)
     GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + 1.2 * BLOCK_SIZE, TOP_BOUNDARY + 12.2 * BLOCK_SIZE))
+
 
 def drawNextBlocksBorder():
     BORDER_WIDTH = 2
@@ -503,13 +519,15 @@ def drawVarsBorder():
                   (RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 5 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, WHITE, True, borderList, BORDER_WIDTH)
 
+
 def drawQuesAnsBorder():
     BORDER_WIDTH = 2
-    borderList= [(BLOCK_SIZE, TOP_BOUNDARY),
-                 (LEFT_BOUNDARY - BLOCK_SIZE, TOP_BOUNDARY),
-                 (LEFT_BOUNDARY - BLOCK_SIZE, TOP_BOUNDARY + 10*BLOCK_SIZE),
-                 (BLOCK_SIZE, TOP_BOUNDARY + 10*BLOCK_SIZE)]
+    borderList = [(BLOCK_SIZE, TOP_BOUNDARY),
+                  (LEFT_BOUNDARY - BLOCK_SIZE, TOP_BOUNDARY),
+                  (LEFT_BOUNDARY - BLOCK_SIZE, TOP_BOUNDARY + 10 * BLOCK_SIZE),
+                  (BLOCK_SIZE, TOP_BOUNDARY + 10 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, WHITE, True, borderList, BORDER_WIDTH)
+
 
 def drawGameAreaBorder():
     BORDER_WIDTH = 2
@@ -518,6 +536,7 @@ def drawGameAreaBorder():
                   (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY + 21 * BLOCK_SIZE),
                   (LEFT_BOUNDARY, TOP_BOUNDARY + 21 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, BORDER_COLOR, True, borderList, BORDER_WIDTH)
+
 
 def newBlock(blockSet, nextBlocks):
     global block
@@ -560,9 +579,11 @@ def paused():
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
+                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
+                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -593,9 +614,10 @@ def paused():
                           TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + textHeight))
         GAMEDISPLAY.blit(additionalText2, (
             LEFT_BOUNDARY + (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 2 - additionalTextWidth / 2,
-            TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + 2 * textHeight))        
+            TOP_BOUNDARY + (BOTTOM_BOUNDARY - TOP_BOUNDARY) / 2 + 2 * textHeight))
         pygame.display.update()
         clock.tick(15)
+
 
 def gameOver():
     pause = True
@@ -611,17 +633,21 @@ def gameOver():
 
     initialSize = 16
 
+    updateHiscore(checkForNewHiscore())
+
     while pause:
 
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
+                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
+                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
                     flipMusicIcon()
-                
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     currentBlock = False
@@ -632,10 +658,12 @@ def gameOver():
                             landed[i][j] = None
                     holdBlock = None
                     runGame()
+                ##                if event.key == pygame.K_x:
+                ##                    main_menu.mainloop(pygame.event.get())
                 elif event.key == pygame.K_m:
-                    flipMusicIcon()         
+                    flipMusicIcon()
                 elif event.key == pygame.K_s:
-                    flipSoundIcon()          
+                    flipSoundIcon()
 
         myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
         gameOverText = myfont.render("Game Over", True, BLACK)
@@ -667,6 +695,7 @@ def gameOver():
         if initialSize < 30:
             initialSize += 1
         clock.tick(15)
+
 
 def runGame():
     GAMEDISPLAY.fill(BLACK)
@@ -711,16 +740,18 @@ def runGame():
 
     while not gameExit:
 
-        #checkForQuit()
+        # checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 gameExit = True
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
+                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
+                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -913,7 +944,7 @@ def runGame():
                 char = '4)'
             aSurf = BASICFONT.render(char + '   %s' % (sol_print), True, TEXTCOLOR)
             aRect = aSurf.get_rect()
-            aRect.topleft = (BLOCK_SIZE*2, TOP_BOUNDARY + (x+5) * BLOCK_SIZE)
+            aRect.topleft = (BLOCK_SIZE * 2, TOP_BOUNDARY + (x + 5) * BLOCK_SIZE)
             GAMEDISPLAY.blit(aSurf, aRect)
             if x == 3:
                 list_count = 0
@@ -933,7 +964,7 @@ def runGame():
 
         level_text = BASICFONT.render("Level: " + str(level), True, WHITE)
         GAMEDISPLAY.blit(level_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + BLOCK_SIZE))
-        
+
         screen_text = BASICFONT.render("Score: " + str(score), True, WHITE)
         GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 2 * BLOCK_SIZE))
 
@@ -967,18 +998,18 @@ def runGame():
 
         questionSurf = BASICFONT.render('Question :', True, TEXTCOLOR)
         questionRect = questionSurf.get_rect()
-        questionRect.topleft = (2*BLOCK_SIZE, TOP_BOUNDARY + BLOCK_SIZE)
+        questionRect.topleft = (2 * BLOCK_SIZE, TOP_BOUNDARY + BLOCK_SIZE)
         GAMEDISPLAY.blit(questionSurf, questionRect)
 
         answerSurf = BASICFONT.render('Answer :', True, TEXTCOLOR)
         answerRect = answerSurf.get_rect()
-        answerRect.topleft = (2*BLOCK_SIZE, TOP_BOUNDARY + 4*BLOCK_SIZE)
+        answerRect.topleft = (2 * BLOCK_SIZE, TOP_BOUNDARY + 4 * BLOCK_SIZE)
         GAMEDISPLAY.blit(answerSurf, answerRect)
 
         if (diff1 < 5):
             qSurf = BASICFONT.render('%s %s %s' % (out_list[0], o, out_list[1]), True, TEXTCOLOR)
             qRect = qSurf.get_rect()
-            qRect.topleft = (2*BLOCK_SIZE, TOP_BOUNDARY+2*BLOCK_SIZE)
+            qRect.topleft = (2 * BLOCK_SIZE, TOP_BOUNDARY + 2 * BLOCK_SIZE)
             GAMEDISPLAY.blit(qSurf, qRect)
         else:
             if out_list[8] == 0:
@@ -987,7 +1018,7 @@ def runGame():
                 t = '-'
             qSurf = BASICFONT.render('%s %s %s %s %s' % (out_list[0], o, out_list[1], t, out_list[7]), True, TEXTCOLOR)
             qRect = qSurf.get_rect()
-            qRect.topleft = (2*BLOCK_SIZE, TOP_BOUNDARY + 2*BLOCK_SIZE)
+            qRect.topleft = (2 * BLOCK_SIZE, TOP_BOUNDARY + 2 * BLOCK_SIZE)
             GAMEDISPLAY.blit(qSurf, qRect)
 
         # draw compliment
@@ -1131,8 +1162,9 @@ def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
     level = int(score / 80) + 1
-    fallFreq = 1000 - 500*(level-1)
+    fallFreq = 1000 - 500 * (level - 1)
     return level, fallFreq
+
 
 def terminate():
     pygame.quit()
@@ -1191,6 +1223,7 @@ def flipSoundIcon():
     drawSoundIcon()
     pygame.display.update()
 
+
 def flipMusicIcon():
     global isMusicOn
     global musicOn
@@ -1204,6 +1237,7 @@ def flipMusicIcon():
     drawMusicIcon()
     pygame.display.update()
 
+
 def drawSoundIcon():
     global isSoundOn
     global soundOn
@@ -1213,6 +1247,7 @@ def drawSoundIcon():
         GAMEDISPLAY.blit(soundOn, soundPosition)
     else:
         GAMEDISPLAY.blit(soundOff, soundPosition)
+
 
 def drawMusicIcon():
     global isMusicOn
@@ -1224,6 +1259,7 @@ def drawMusicIcon():
     else:
         GAMEDISPLAY.blit(musicOff, musicPosition)
 
+
 def checkForQuit():
     for event in pygame.event.get(QUIT):  # get all the QUIT events
         terminate()  # terminate if any QUIT events are present
@@ -1231,6 +1267,37 @@ def checkForQuit():
         if event.key == K_ESCAPE:
             terminate()  # terminate if the KEYUP event was for the Esc key
         pygame.event.post(event)  # put the other KEYUP event objects back
+
+
+# checks if there is a new hiscore. If there is, returns the index of the new hiscore
+#  is to be placed, otherwise returns -1.
+def checkForNewHiscore():
+    with open("leaderboard.json") as data_file:
+        data = json.load(data_file)
+    global score
+    if score <= int(data[len(data) - 1]["score"]):
+        return -1
+    for i in range(len(data) - 2, 0, -1):
+        if score > int(data[i]["score"]) and score <= int(data[i - 1]["score"]):
+            return i
+    if score > int(data[0]["score"]):
+        return 0
+
+
+def updateHiscore(index):
+    print(index)
+    if index == -1:
+        return
+    with open("leaderboard.json") as data_file:
+        data = json.load(data_file)
+
+    global score
+    for i in range(len(data) - 1, index, -1):
+        data[i]["date"] = data[i - 1]["date"]
+        data[i]["score"] = data[i - 1]["score"]
+        data[i]["name"] = data[i - 1]["name"]
+    data[index]["score"] = score
+    json.dump(data, "leaderboard.json")
 
 
 # =================================================================
@@ -1313,7 +1380,6 @@ def play_function():
                     if main_menu.is_disabled():
                         main_menu.enable()
 
-                        # Quit this function, then skip to loop of main-menu on line 197
                         return
 
         # Pass events to main_menu
@@ -1333,7 +1399,7 @@ def main_background():
 
     :return: None
     """
-    GAMEDISPLAY.fill(COLOR_BACKGROUND)
+    GAMEDISPLAY.fill(RED)
 
 
 # -----------------------------------------------------------------------------
@@ -1341,14 +1407,16 @@ def main_background():
 
 play_menu = pygameMenu.Menu(GAMEDISPLAY,
                             bgfun=main_background,
-                            color_selected=COLOR_WHITE,
-                            font=pygameMenu.fonts.FONT_BEBAS,
-                            font_color=COLOR_BLACK,
+                            color_selected=COLOR_RED,
+                            font=fontdir,
+                            font_color=COLOR_WHITE,
+                            font_title=font_tit,
                             font_size=30,
                             menu_alpha=100,
                             menu_color=MENU_BACKGROUND_COLOR,
-                            menu_height=int(WINDOW_SIZE[1] * 0.6),
-                            menu_width=int(WINDOW_SIZE[0] * 0.6),
+                            menu_color_title=COLOR_RED,
+                            menu_height=int(WINDOW_SIZE[1] * 1),
+                            menu_width=int(WINDOW_SIZE[0] * 1),
                             onclose=PYGAME_MENU_DISABLE_CLOSE,
                             option_shadow=False,
                             title='Play menu',
@@ -1363,22 +1431,25 @@ play_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
 # instruction MENU
 instruction_menu = pygameMenu.TextMenu(GAMEDISPLAY,
                                        bgfun=main_background,
-                                       color_selected=COLOR_WHITE,
-                                       font=pygameMenu.fonts.FONT_BEBAS,
-                                       font_color=COLOR_BLACK,
+                                       color_selected=COLOR_GREEN,
+                                       font=fontdir,
+                                       font_color=COLOR_WHITE,
                                        font_size_title=30,
-                                       font_title=pygameMenu.fonts.FONT_8BIT,
-                                       menu_color=MENU_BACKGROUND_COLOR,
-                                       menu_color_title=COLOR_WHITE,
-                                       menu_height=int(WINDOW_SIZE[1] * 0.6),
-                                       menu_width=int(WINDOW_SIZE[0] * 0.6),
+                                       font_title=font_tit,
+                                       menu_color_title=COLOR_GREEN,
+                                       menu_height=int(WINDOW_SIZE[1] * 1),
+                                       menu_width=int(WINDOW_SIZE[0] * 1),
                                        onclose=PYGAME_MENU_DISABLE_CLOSE,
-                                       option_shadow=False,
-                                       text_color=COLOR_BLACK,
+                                       option_shadow=True,
+                                       text_color=COLOR_WHITE,
                                        text_fontsize=20,
                                        title='Instruction',
                                        window_height=WINDOW_SIZE[1],
-                                       window_width=WINDOW_SIZE[0]
+                                       window_width=WINDOW_SIZE[0],
+                                       # menu_color=MENU_BACKGROUND_COLOR,
+                                       font_size=30,
+                                       menu_alpha=100,
+                                       menu_color=COLOR_BLACK
                                        )
 for m in INSTRUCTION:
     instruction_menu.add_line(m)
@@ -1390,42 +1461,49 @@ instruction_menu.add_option('Return to menu', PYGAME_MENU_BACK)
 # Leaderboard MENU
 leaderboard_menu = pygameMenu.TextMenu(GAMEDISPLAY,
                                        bgfun=main_background,
-                                       color_selected=COLOR_WHITE,
-                                       font=pygameMenu.fonts.FONT_BEBAS,
-                                       font_color=COLOR_BLACK,
+                                       color_selected=COLOR_BLUE,
+                                       font=fontdir,
+                                       font_color=COLOR_WHITE,
                                        font_size_title=30,
-                                       font_title=pygameMenu.fonts.FONT_8BIT,
-                                       menu_color=MENU_BACKGROUND_COLOR,
-                                       menu_color_title=COLOR_WHITE,
-                                       menu_height=int(WINDOW_SIZE[1] * 0.6),
-                                       menu_width=int(WINDOW_SIZE[0] * 0.6),
+                                       font_title=font_tit,
+                                       # menu_color=MENU_BACKGROUND_COLOR,
+                                       menu_color_title=COLOR_BLUE,
+                                       menu_height=int(WINDOW_SIZE[1] * 1),
+                                       menu_width=int(WINDOW_SIZE[0] * 1),
                                        onclose=PYGAME_MENU_DISABLE_CLOSE,
-                                       option_shadow=False,
-                                       text_color=COLOR_BLACK,
+                                       option_shadow=True,
+                                       text_color=COLOR_WHITE,
                                        text_fontsize=20,
                                        title='Leaderboard',
                                        window_height=WINDOW_SIZE[1],
-                                       window_width=WINDOW_SIZE[0]
+                                       window_width=WINDOW_SIZE[0],
+                                       font_size=30,
+                                       menu_alpha=100,
+                                       menu_color=COLOR_BLACK
                                        )
+for m in LEADERBOARD:
+    leaderboard_menu.add_line(m)
 
 # leaderboard_menu.add_option('View top 10 scores!', leaderboard_function)
-instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
+leaderboard_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
 leaderboard_menu.add_option('Return to menu', PYGAME_MENU_BACK)
 
 # MAIN MENU
 main_menu = pygameMenu.Menu(GAMEDISPLAY,
                             bgfun=main_background,
-                            color_selected=COLOR_WHITE,
-                            font=pygameMenu.fonts.FONT_BEBAS,
-                            font_color=COLOR_BLACK,
+                            color_selected=RED,
+                            font=fontdir,
+                            font_color=COLOR_WHITE,
                             font_size=30,
                             menu_alpha=100,
-                            menu_color=MENU_BACKGROUND_COLOR,
-                            menu_height=int(WINDOW_SIZE[1] * 0.5),
-                            menu_width=int(WINDOW_SIZE[0] * 0.5),
+                            menu_color=COLOR_BLACK,
+                            menu_height=int(WINDOW_SIZE[1] * 1),
+                            menu_width=int(WINDOW_SIZE[0] * 1),
+                            menu_color_title=COLOR_RED,
                             onclose=PYGAME_MENU_DISABLE_CLOSE,
-                            option_shadow=False,
-                            title='Main menu',
+                            font_title=font_tit,
+                            option_shadow=True,
+                            title='Metris',
                             window_height=WINDOW_SIZE[1],
                             window_width=WINDOW_SIZE[0]
                             )
