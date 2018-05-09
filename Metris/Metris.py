@@ -716,6 +716,7 @@ def runGame():
     global soundOn
     global mus_var
     global mult
+    global isMusicOn
     blockSet = getRandomBlockSet(None)
     blockT = BlockT(0, 0, BLOCK_SIZE)
     blockS = BlockS(0, 0, BLOCK_SIZE)
@@ -726,8 +727,11 @@ def runGame():
     blockO = BlockO(0, 0, BLOCK_SIZE)
     nextBlocks = []
 
+    mus_var = randint(0,12)
     pygame.mixer.music.load(MID_FILES[mus_var])
     pygame.mixer.music.play(-1, 0.0)
+    if isMusicOn == False:
+        pygame.mixer.music.pause()
 
     hasSwap = True
 
