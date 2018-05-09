@@ -31,8 +31,6 @@ import types
 
 # noinspection PyBroadException
 class Menu(object):
-    FPS_CAP = 1/60 # used in main loop for sleep function
-
     """
     Menu object.
     """
@@ -609,7 +607,7 @@ class Menu(object):
             return
         if self._actual._dopause:
             while True:
-                time.sleep(FPS_CAP)
+                time.sleep(0.016666)
                 if self._main():
                     return
         else:
