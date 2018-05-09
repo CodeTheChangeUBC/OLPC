@@ -19,7 +19,7 @@ This project is multi-part and includes:
 >Following is the information regarding the first part of the project.
 
 ### Project Toolkit
-1. Python `2.7.15`
+1. Python `2.7.x`
 2. HTML5
 3. JavaScript
 
@@ -35,9 +35,8 @@ This project is multi-part and includes:
 #### **Metris**
 1. Install Python 2.7.x
     - Make sure Python is added to path
-1. Install PyGame
-2. open terminal inside Metris and run `python Metris.py`
-
+2. Install PyGame
+3. 
 .
 .
 .
