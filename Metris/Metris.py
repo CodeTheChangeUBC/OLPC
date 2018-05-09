@@ -128,6 +128,9 @@ holdBlock = None
 global mus_var
 mus_var = randint(0,12)
 
+global mult
+mult = 0
+
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -712,6 +715,7 @@ def runGame():
     global score
     global soundOn
     global mus_var
+    global mult
     blockSet = getRandomBlockSet(None)
     blockT = BlockT(0, 0, BLOCK_SIZE)
     blockS = BlockS(0, 0, BLOCK_SIZE)
@@ -798,7 +802,7 @@ def runGame():
                     pos_y = tick(pos_y)
 
                 elif event.key == pygame.K_p:
-                    num_q = 0
+                    mult = 0
                     paused()
                     out_list = generateQues(level)
 
@@ -806,7 +810,7 @@ def runGame():
                     if (hasSwap == True):
                         hold(blockSet, nextBlocks)
                         out_list = generateQues(level)
-                        num_q = 0
+                        mult = 0
                         hasSwap = False
                 elif event.key == pygame.K_m:
                     flipMusicIcon()
@@ -824,12 +828,13 @@ def runGame():
                                 hard_q = True
                             comp_input = randint(0, 3)
                             controlsOn = True
-                            score += 10 + 5 * num_q
+                            score += 10 + 5 * mult
                             if hard_q == True:
                                 score += 20
                             hard_q = False
                             level, fallFreq = calculateLevelAndFallFreq(score)
                             num_q += 1
+                            mult += 1
                             if num_q <= 5:
                                 out_list = generateQues(level)
                                 diff1 = out_list[4]
@@ -838,6 +843,7 @@ def runGame():
                 elif event.key != out_list[9] and (
                         event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
+                    mult = 0
                     comp_input = randint(4, 7)
                     controlsOn = False
                     if num_q < 5:
@@ -970,7 +976,7 @@ def runGame():
         screen_text = BASICFONT.render("Score: " + str(score), True, WHITE)
         GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 2 * BLOCK_SIZE))
 
-        prt_scr = 10 + num_q * 5
+        prt_scr = 10 + mult * 5
         if diff1 >= 5:
             prt_scr += 20
         val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
