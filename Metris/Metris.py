@@ -642,11 +642,11 @@ def gameOver():
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                if soundPosition[0] <= x <= soundPosition[0] + soundOn.get_rect().width and soundPosition[
+                    1] + soundOn.get_rect().height >= y >= soundPosition[1]:
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                if musicPosition[0] <= x <= musicPosition[0] + musicOn.get_rect().width and musicPosition[
+                    1] + musicOn.get_rect().height >= y >= musicPosition[1]:
                     flipMusicIcon()
 
             if event.type == pygame.KEYDOWN:
@@ -659,8 +659,7 @@ def gameOver():
                             landed[i][j] = None
                     holdBlock = None
                     runGame()
-                ##                if event.key == pygame.K_x:
-                ##                    main_menu.mainloop(pygame.event.get())
+
                 elif event.key == pygame.K_m:
                     flipMusicIcon()
                 elif event.key == pygame.K_s:
@@ -856,6 +855,9 @@ def runGame():
                     speed = 10
             if event.type == TICK:
                 pos_y = tick(pos_y)
+
+            if event.type == [pygame.KEYUP, pygame.KEYDOWN]:
+                main_menu.mainloop(pygame.event.get())
 
         # main_menu.mainloop(pygame.event.get())
 
@@ -1063,6 +1065,7 @@ def runGame():
         clock.tick(speed)
         hasMove = False
 
+    checkGameOver()
     pygame.quit()
     quit()
 
@@ -1287,23 +1290,77 @@ def checkForNewHiscore():
         return 0
 
 
+def saveScore(newScore):
+    global name
+    global leaderboard
+    name = inputbox.ask(GAMEDISPLAY, "Enter Name")
+    leaderboard = Leaderboard(name, newScore)
+    leaderboard.load_previous_scores()
+    leaderboard.save_score()
+
+
 def updateHiscore(index):
     if index == -1:
         return
     with open("leaderboard.json") as data_file:
         data = json.load(data_file)
     global score
+    name = inputbox.ask(GAMEDISPLAY, "Enter Name")
     for i in range(len(data) - 1, index, -1):
         data[i]["date"] = data[i - 1]["date"]
         data[i]["score"] = data[i - 1]["score"]
         data[i]["name"] = data[i - 1]["name"]
     data[index]["score"] = score
+    data[index]["name"] = name
     with open("leaderboard.json", 'w') as data_file:
         json.dump(data, data_file)
 
 
+def drawNewHighScore(text, name, score):
+    # This function displays large text in the
+    # center of the screen until a key is pressed.
+    # Draw the text drop shadow
+    GAMEDISPLAY.fill(BLACK)
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, RED)
+    titleRect.center = (int(WIDTH / 2)-3, int(HEIGHT / 4) - 40)
+    GAMEDISPLAY.blit(titleSurf, titleRect)
+
+    # Draw the text
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
+    titleRect.center = (int(WIDTH / 2) - 3, int(HEIGHT / 4) - 50)
+    GAMEDISPLAY.blit(titleSurf, titleRect)
+
+    # Draw name and score
+    nameSurf, nameRect = makeTextObjs(name + score, BASICFONT, TEXTCOLOR)
+    nameRect.center = (int(WIDTH / 2)-3, int(HEIGHT / 4) - 40)
+    GAMEDISPLAY.blit(nameSurf, nameRect)
+
+
+    while checkForKeyPress() is None:
+        pygame.display.update()
+        clock.tick()
+
+
+def checkForKeyPress():
+    # Go through event queue looking for a KEYUP event.
+    # Grab KEYDOWN events to remove them from the event queue.
+
+    checkForQuit()
+
+    for event in pygame.event.get([KEYDOWN, KEYUP]):
+        if event.type == KEYDOWN:
+            if event.key == K_r:
+                runGame()
+            elif event.key == K_ESCAPE:
+                gameOver()
+            continue
+        return event.key
+    return None
+
 # =================================================================
 # MENU FUNCTIONS
+
+
 
 def leaderboard_function():
     # Draw random color and text
@@ -1391,6 +1448,7 @@ def play_function():
         GAMEDISPLAY.fill(bg_color)
         # GAMEDISPLAY.blit(f, (int(WINDOW_SIZE[0] - f_rect.width()) / 2,
         #                      int(WINDOW_SIZE[1] / 2)))
+
         runGame()
         pygame.display.flip()
 
@@ -1488,8 +1546,8 @@ with open("leaderboard.json") as data_file:
     data = json.load(data_file)
 LEADERBOARD = []
 for i in range(0, len(data)):
-    LEADERBOARD.insert(len(LEADERBOARD), str(i+1) + ".   " + str(data[i]["name"]) + "                        " + str(data[i]["score"])) 
-    
+    LEADERBOARD.insert(len(LEADERBOARD), str(i+1) + ".   " + str(data[i]["name"]) + "                        " + str(data[i]["score"]))
+
 for m in LEADERBOARD:
     leaderboard_menu.add_line(m)
 
