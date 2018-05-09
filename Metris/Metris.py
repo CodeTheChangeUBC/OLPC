@@ -840,7 +840,8 @@ def runGame():
                     numTries += 1
                     comp_input = randint(4, 7)
                     controlsOn = False
-                    playSound('incor.wav')
+                    if num_q < 5:
+                        playSound('incor.wav')
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
