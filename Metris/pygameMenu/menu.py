@@ -675,6 +675,16 @@ class Menu(object):
                     self._select()
                 elif event.button == _locals.JOY_BUTTON_BACK:
                     self.reset(1)
+            # TODO: figure out how to implement click interface
+            # elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            #     for i in range(0, len(self._actual._option)):
+            #         rect = self.get_rect_info(i)
+            #         pos = (rect[2], rect[3])
+            #         x = rect[0]
+            #         y = rect[1]
+            #         mousePos = _pygame.mouse.get_pos()
+            #         if (mousePos[0] >= x and mousePos[0] <= x + pos[0] and
+            #             mousePos[1] >= y and mousePos[1] <= y + pos[1]):
         for i in range(0, len(self._actual._option)):
             rect = self.get_rect_info(i)
             pos = (rect[2], rect[3])
