@@ -1024,7 +1024,8 @@ def runGame():
                 mus_var = randint(0,12)
             pygame.mixer.music.load(MID_FILES[mus_var])
             level_prev = level
-            pygame.mixer.music.play(-1, 0.0)
+            if isMusicOn == True:
+                pygame.mixer.music.play(-1, 0.0)
         pygame.display.update()
 
         clock.tick(speed)
