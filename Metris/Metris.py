@@ -1058,8 +1058,6 @@ def runGame():
             level_prev = level
             if isMusicOn == True:
                 pygame.mixer.music.play(-1, 0.0)
-##        if isMusicOn == False:
-##            pygame.mixer.music.pause()
         pygame.display.update()
 
         clock.tick(speed)
