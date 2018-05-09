@@ -587,7 +587,8 @@ def paused():
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
-                    pygame.mixer.music.unpause()
+                    if isMusicOn == True:
+                        pygame.mixer.music.unpause()
                     pause = False
                 elif event.key == pygame.K_m:
                     flipMusicIcon()
@@ -1055,7 +1056,10 @@ def runGame():
                 mus_var = randint(0,12)
             pygame.mixer.music.load(MID_FILES[mus_var])
             level_prev = level
-            pygame.mixer.music.play(-1, 0.0)
+            if isMusicOn == True:
+                pygame.mixer.music.play(-1, 0.0)
+##        if isMusicOn == False:
+##            pygame.mixer.music.pause()
         pygame.display.update()
 
         clock.tick(speed)
