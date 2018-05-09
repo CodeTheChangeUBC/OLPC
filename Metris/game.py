@@ -31,7 +31,7 @@ INIT_Y = BLOCK_SIZE
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
 
-MID_FILES = ['mids/ff7.mid','mids/tetrisb.mid','mids/tetrisc.mid','mids/hip.mid',
+MP3_FILES = ['mids/ff7.mid','mids/tetrisb.mid','mids/tetrisc.mid','mids/hip.mid',
              'mids/marioParty.mid','mids/rock.mid','mids/tech.MID','mids/hip.MID',
              'mids/ki.mid','mids/lg.MID','mids/eye.mid']
 
@@ -501,7 +501,7 @@ def runGame():
 ##    musicIndex = randint(0, len(MUSICS) - 1)
 ##    pygame.mixer.music.load(MUSICS[musicIndex])
 ##    pygame.mixer.music.play(-1, 0.0)
-    pygame.mixer.music.load(MID_FILES[0])
+    pygame.mixer.music.load(MP3_FILES[0])
     pygame.mixer.music.play(-1,0.0)
     
     hasSwap = True
@@ -802,7 +802,7 @@ def runGame():
             hasMove = True
 
         if level_prev != level and level <= 11:
-            pygame.mixer.music.load(MID_FILES[level])
+            pygame.mixer.music.load(MP3_FILES[level])
             level_prev = level
         pygame.display.update()
 
