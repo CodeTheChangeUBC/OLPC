@@ -58,14 +58,15 @@ INIT_Y = BLOCK_SIZE
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
 
-MID_FILES = ['mp3s/ff7.mp3', 'mp3s/tetrisb.mp3', 'mp3s/tetrisc.mp3', 'mp3s/hip.mp3',
-             'mp3s/marioParty.mp3', 'mp3s/rock.mp3', 'mp3s/tech.mp3', 'mp3s/hip.mp3',
-             'mp3s/ki.mp3', 'mp3s/lg.mp3', 'mp3s/eye.mp3']
+MID_FILES = ['mp3s/m0', 'mp3s/m1', 'mp3s/m2', 'mp3s/m3',
+             'mp3s/m4', 'mp3s/m5', 'mp3s/m6', 'mp3s/m7',
+             'mp3s/m8', 'mp3s/m9', 'mp3s/m10', 'mp3s/m11', 'mp3s/m12', 'mp3s/m13']
 
 global score
 score = 0
 
 GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+
 pygame.display.set_caption('Metris')
 
 pygame.display.update()
@@ -81,8 +82,6 @@ pos_y = 10
 dx = 0
 dy = 0
 hasMove = False
-# global score
-# score = 0
 font = pygame.font.SysFont(None, 25)
 gone_down = False
 global currentBlock
@@ -125,6 +124,9 @@ global fallFreq
 fallFreq = 1
 
 holdBlock = None
+
+global mus_var
+mus_var = randint(0,12)
 
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -626,7 +628,7 @@ def gameOver():
     global holdBlock
 
     pygame.mixer.music.stop()
-    pygame.mixer.music.load('marioDeath.mp3')
+    pygame.mixer.music.load('coin.wav')
     pygame.mixer.music.play(0, 0.0)
 
     initialSize = 16
@@ -708,6 +710,7 @@ def runGame():
     global pos_x
     global score
     global soundOn
+    global mus_var
     blockSet = getRandomBlockSet(None)
     blockT = BlockT(0, 0, BLOCK_SIZE)
     blockS = BlockS(0, 0, BLOCK_SIZE)
@@ -718,7 +721,7 @@ def runGame():
     blockO = BlockO(0, 0, BLOCK_SIZE)
     nextBlocks = []
 
-    pygame.mixer.music.load(MID_FILES[0])
+    pygame.mixer.music.load(MID_FILES[mus_var])
     pygame.mixer.music.play(-1, 0.0)
 
     hasSwap = True
@@ -796,6 +799,7 @@ def runGame():
                 elif event.key == pygame.K_p:
                     num_q = 0
                     paused()
+                    out_list = generateQues(level)
 
                 elif event.key == pygame.K_LSHIFT:
                     if (hasSwap == True):
@@ -809,25 +813,33 @@ def runGame():
                     flipSoundIcon()
                 # check for correct answer
                 elif event.key == out_list[9]:
-                    if numTries < 1:
-                        hard_q = False
-                        if diff1 > 4:
-                            hard_q = True
-                        comp_input = randint(0, 3)
-                        controlsOn = True
-                        score += 10 + 5 * num_q
-                        if hard_q == True:
-                            score += 20
-                        hard_q = False
-                        level, fallFreq = calculateLevelAndFallFreq(score)
-                        num_q += 1
-                        out_list = generateQues(level)
-                        diff1 = out_list[4]
+                    if num_q > 5:
+                        comp_input = 8
+                    else:
+                        playSound('beep.wav')
+                        if numTries < 1:
+                            hard_q = False
+                            if diff1 > 4:
+                                hard_q = True
+                            comp_input = randint(0, 3)
+                            controlsOn = True
+                            score += 10 + 5 * num_q
+                            if hard_q == True:
+                                score += 20
+                            hard_q = False
+                            level, fallFreq = calculateLevelAndFallFreq(score)
+                            num_q += 1
+                            if num_q <= 5:
+                                out_list = generateQues(level)
+                                diff1 = out_list[4]
+                            else:
+                                comp_input = 8
                 elif event.key != out_list[9] and (
                         event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
                     comp_input = randint(4, 7)
                     controlsOn = False
+                    playSound('landSound.wav')
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -1037,8 +1049,11 @@ def runGame():
 
         drawSoundIcon()
         drawMusicIcon()
-        if level_prev != level and level <= 11:
-            pygame.mixer.music.load(MID_FILES[level - 1])
+        if level_prev != level:
+            old_var = mus_var
+            while mus_var == old_var:
+                mus_var = randint(0,12)
+            pygame.mixer.music.load(MID_FILES[mus_var])
             level_prev = level
             pygame.mixer.music.play(-1, 0.0)
         pygame.display.update()
@@ -1177,6 +1192,8 @@ def drawCompliment(rand):
         compliment = "Better luck next time!"
     elif rand == -1:
         compliment = " "
+    elif rand == 8:
+        compliment = "Good job! Next question upon block landing."
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
     complimentRect.center = (WIDTH / 2, TOP_BOUNDARY / 2)
