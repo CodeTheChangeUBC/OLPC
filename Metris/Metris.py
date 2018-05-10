@@ -634,6 +634,9 @@ def gameOver():
     global score
     global holdBlock
     global bankedpoints
+    global dx
+    global dy
+    global speed
 
     score += bankedpoints
     bankedpoints = 0
@@ -689,6 +692,9 @@ def gameOver():
                     currentBlock = False
                     block = None
                     score = 0
+                    dx = 0;
+                    dy = 0;
+                    speed = 10;
                     for i in range(0, len(landed)):
                         for j in range(0, len(landed[i])):
                             landed[i][j] = None
