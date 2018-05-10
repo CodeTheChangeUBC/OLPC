@@ -661,8 +661,9 @@ def gameOver():
 #==================================================================================
 
     pygame.mixer.music.stop()
-    pygame.mixer.music.load('end.wav')
-    pygame.mixer.music.play(0, 0.0)
+ #   pygame.mixer.music.load('end.wav')
+#    pygame.mixer.music.play(0, 0.0)
+    playSound('end.wav')
 
     initialSize = 16
 
@@ -814,8 +815,8 @@ def runGame():
     while not gameExit:
         
         if bankedpoints > 0:
-            score += 1
-            bankedpoints -= 1
+            score += 5
+            bankedpoints -= 5
             
         # checkForQuit()
         for event in pygame.event.get():
