@@ -1416,12 +1416,15 @@ def updateHiscore(index):
     with open("leaderboard.json") as data_file:
         data = json.load(data_file)
     global score
+    global name
+    name = inputbox.ask(GAMEDISPLAY, "Enter your name")
     for i in range(len(data) - 1, index, -1):
         data[i]["date"] = data[i - 1]["date"]
         data[i]["score"] = data[i - 1]["score"]
         data[i]["name"] = data[i - 1]["name"]
     data[index]["date"] = str(datetime.datetime.now().date())
     data[index]["score"] = score
+    data[index]["name"] = name
     #TODO add name to data
     with open("leaderboard.json", 'w') as data_file:
         json.dump(data, data_file)
