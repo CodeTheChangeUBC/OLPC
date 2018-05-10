@@ -226,6 +226,7 @@ def checkCollision():
         for j in range(0, len(landed)):
             for k in range(0, len(landed[j])):
                 if landed[j][k] != None:
+                    if (k < 5):
                     if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][
                         k].getY():
                         return True

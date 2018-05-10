@@ -643,10 +643,8 @@ class Menu(object):
                     x = rect[0]
                     y = rect[1]
                     mousePos = _pygame.mouse.get_pos()
-                    print "x: " + str(x) + " y: " + str(y) + "mousePos x: " + str(mousePos[0]) + " y: " + str(mousePos[1])
                     if (mousePos[0] >= x and mousePos[0] <= x + pos[0] and
                         mousePos[1] >= y and mousePos[1] <= y + pos[1]):
-                        print "Inside the button"
                         if self._actual._size == 0:
                             return
                         self._actual._index = i % self._actual._size
