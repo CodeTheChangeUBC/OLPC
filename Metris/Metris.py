@@ -137,6 +137,9 @@ mus_var = randint(0,12)
 global mult
 mult = 0
 
+global level
+level = 0
+
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1253,7 +1256,10 @@ def calculateUpbound(level):
 def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
-    level = int(score / 80) + 1
+    global level
+    level_prev = level
+    divisor = level_prev + 80
+    level = int(score / divisor) + 1
     fallFreq = 1000 - 500 * (level - 1)
     return level, fallFreq
 
