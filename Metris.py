@@ -922,8 +922,8 @@ def runGame():
                         event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
                     mult = 0
-                    controlsOn = False
                     if num_q <= 5 and numTries <= 1:
+                        controlsOn = False
                         playSound('incor.wav')
                         comp_input = randint(4, 7)
 
