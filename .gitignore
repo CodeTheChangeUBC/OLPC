@@ -3,4 +3,5 @@
 Metris/*.pyc
 Metris/Block/*.pyc
 Metris/pygameMenu/*.pyc
-Metris/leaderboard.json
+Metris/*.json
+
