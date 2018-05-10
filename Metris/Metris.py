@@ -4,6 +4,8 @@ import random, time, pygame, sys, math
 from pygame.locals import *
 from random import randint
 from leaderboard import *
+import json
+import datetime
 
 import os
 import leaderboard
@@ -22,8 +24,10 @@ pygame.init()
 
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
-BLACK = (0, 0, 0)
-BORDER_COLOR = WHITE
+BLACK = (20, 20, 20)
+BORDER_COLOR = (200, 200, 200)
+INNER_BG = (0, 75, 75)
+INNER_BG2 = (0, 50, 50)
 
 INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                'Rotate-left with UP key*',
@@ -50,10 +54,10 @@ HEIGHT = 800
 WIDTH = 800
 LEFT_BOUNDARY = WIDTH / 3
 RIGHT_BOUNDARY = WIDTH - WIDTH / 3
-BLOCK_SIZE = (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 11
+BLOCK_SIZE = (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 10
 TOP_BOUNDARY = 4 * BLOCK_SIZE
 BOTTOM_BOUNDARY = TOP_BOUNDARY + 20 * BLOCK_SIZE
-INIT_X = WIDTH / 2
+INIT_X = LEFT_BOUNDARY + 5 * BLOCK_SIZE
 INIT_Y = BLOCK_SIZE
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
@@ -92,6 +96,8 @@ blockPlaced = False
 global landed
 landed = []
 speed = 10
+global bankedpoints
+bankedpoints = 0
 
 global isSoundOn
 isSoundOn = True
@@ -172,7 +178,7 @@ def rowFilled(y):
 
 
 def deleteRows(rows):
-    global score
+    global bankedpoints
     # delete rows
     for i in range(0, len(rows)):
         for x in range(0, len(landed)):
@@ -189,7 +195,7 @@ def deleteRows(rows):
 
     # update score
     if len(rows) == 1:
-        score += 10
+        bankedpoints += 10
     else:
         ret = 0
         multiplier = 1
@@ -197,7 +203,7 @@ def deleteRows(rows):
         for x in range(0, len(rows)):
             ret += multiplier * pt_score
             multiplier += 1
-        score += ret
+        bankedpoints += ret
 
 
 def checkGameOver():
@@ -408,7 +414,6 @@ def hold(blockSet, nextBlocks):
     holdBlock.setY(offset_y)
 
     while (holdBlock.orientation % 4 != 0):
-        print(holdBlock.orientation)
         holdBlock.rotateR()
 
     # first time if hold is empty
@@ -535,9 +540,9 @@ def drawQuesAnsBorder():
 def drawGameAreaBorder():
     BORDER_WIDTH = 2
     borderList = [(LEFT_BOUNDARY, TOP_BOUNDARY),
-                  (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY),
-                  (LEFT_BOUNDARY + 11 * BLOCK_SIZE, TOP_BOUNDARY + 21 * BLOCK_SIZE),
-                  (LEFT_BOUNDARY, TOP_BOUNDARY + 21 * BLOCK_SIZE)]
+                  (LEFT_BOUNDARY + 10 * BLOCK_SIZE, TOP_BOUNDARY),
+                  (LEFT_BOUNDARY + 10 * BLOCK_SIZE, TOP_BOUNDARY + 20 * BLOCK_SIZE),
+                  (LEFT_BOUNDARY, TOP_BOUNDARY + 20 * BLOCK_SIZE)]
     pygame.draw.lines(GAMEDISPLAY, BORDER_COLOR, True, borderList, BORDER_WIDTH)
 
 
@@ -581,14 +586,12 @@ def paused():
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                pos = soundOn.get_rect()
-                pos.x = soundPosition[0]
-                pos.y = soundPosition[1]
-                if pos.collidepoint(pygame.mouse.get_pos()):
+                x, y = event.pos
+                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
+                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
                     flipSoundIcon()
-                pos.x = musicPosition[0]
-                pos.y = musicPosition[1]
-                if pos.collidepoint(pygame.mouse.get_pos()):
+                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
+                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -632,6 +635,32 @@ def gameOver():
     global landed
     global score
     global holdBlock
+    global bankedpoints
+
+    score += bankedpoints
+    bankedpoints = 0
+
+#=================================REDRAWS THE NEW SCORE & LAST BLOCK PLACED===============================================
+
+    # drawing landed blocks
+    for i in range(0, len(landed)):
+        for j in range(0, len(landed[i])):
+            if (landed[i][j] != None):
+                landed[i][j].display(GAMEDISPLAY)
+        block.display(GAMEDISPLAY)
+
+    # drawing top cover
+    GAMEDISPLAY.fill(BLACK, [0, 0, WIDTH, TOP_BOUNDARY])
+
+    # draw score, level, multiplier
+    drawVarsBorder()
+
+    GAMEDISPLAY.fill(BLACK, [RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 2 * BLOCK_SIZE, 7.5 * BLOCK_SIZE, BLOCK_SIZE])
+    screen_text = BASICFONT.render("Score: " + str(score), True, WHITE)
+    GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 2 * BLOCK_SIZE))
+
+
+#==================================================================================
 
     pygame.mixer.music.stop()
     pygame.mixer.music.load('end.wav')
@@ -646,14 +675,12 @@ def gameOver():
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                pos = soundOn.get_rect()
-                pos.x = soundPosition[0]
-                pos.y = soundPosition[1]
-                if pos.collidepoint(pygame.mouse.get_pos()):
+                x, y = event.pos
+                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
+                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
                     flipSoundIcon()
-                pos.x = musicPosition[0]
-                pos.y = musicPosition[1]
-                if pos.collidepoint(pygame.mouse.get_pos()):
+                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
+                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
                     flipMusicIcon()
 
             if event.type == pygame.KEYDOWN:
@@ -704,6 +731,36 @@ def gameOver():
             initialSize += 1
         clock.tick(15)
 
+def drawGridLines():
+##    SPACING = BLOCK_SIZE / 4
+##    for i in range (1, 10):
+##        for j in range (0, 85):
+##            if j % 2 == 0:
+##                pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
+##                                (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING),
+##                                (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING + SPACING),
+##                                1)
+##    for i in range (1, 20):
+##        for j in range (0, 43):
+##            if j % 2 == 0:
+##                pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
+##                                (LEFT_BOUNDARY + j * SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
+##                                (LEFT_BOUNDARY + j * SPACING + SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
+##                                1)
+    for i in range (1, 10):
+        pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
+                        (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY),
+                        (LEFT_BOUNDARY + i * BLOCK_SIZE, BOTTOM_BOUNDARY),
+                        1)
+    for i in range (1, 20):
+        pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
+                        (LEFT_BOUNDARY, TOP_BOUNDARY + i * BLOCK_SIZE),
+                        (LEFT_BOUNDARY + 10 * BLOCK_SIZE, TOP_BOUNDARY + i * BLOCK_SIZE),
+                        1)
+    
+
+#=================================================================================================
+
 
 def runGame():
     GAMEDISPLAY.fill(BLACK)
@@ -719,8 +776,10 @@ def runGame():
     global score
     global soundOn
     global mus_var
+    global bankedpoints
     global mult
     global isMusicOn
+
     blockSet = getRandomBlockSet(None)
     blockT = BlockT(0, 0, BLOCK_SIZE)
     blockS = BlockS(0, 0, BLOCK_SIZE)
@@ -752,21 +811,23 @@ def runGame():
     drawCompliment(comp_input)
 
     while not gameExit:
-
+        
+        if bankedpoints > 0:
+            score += 1
+            bankedpoints -= 1
+            
         # checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 gameExit = True
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                pos = soundOn.get_rect()
-                pos.x = soundPosition[0]
-                pos.y = soundPosition[1]
-                if pos.collidepoint(pygame.mouse.get_pos()):
+                x, y = event.pos
+                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
+                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
                     flipSoundIcon()
-                pos.x = musicPosition[0]
-                pos.y = musicPosition[1]
-                if pos.collidepoint(pygame.mouse.get_pos()):
+                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
+                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -838,11 +899,12 @@ def runGame():
                                 hard_q = True
                             comp_input = randint(0, 3)
                             controlsOn = True
-                            score += 10 + 5 * mult
+                            bankedpoints += 10 + 5 * mult
+
                             if hard_q == True:
-                                score += 20
+                                bankedpoints += 20
                             hard_q = False
-                            level, fallFreq = calculateLevelAndFallFreq(score)
+                            level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
                             num_q += 1
                             mult += 1
                             if num_q <= 5:
@@ -882,7 +944,17 @@ def runGame():
         ##        gameDisplay.fill(BLACK, [RIGHT_BOUNDARY, 0, WIDTH - RIGHT_BOUNDARY, HEIGHT])
         ##        gameDisplay.fill(BLACK, [0, 0, WIDTH, HEIGHT - 20*BLOCK_SIZE])
         GAMEDISPLAY.fill(BLACK, [0, 0, WIDTH, HEIGHT])
-        GAMEDISPLAY.fill((100, 100, 100), [LEFT_BOUNDARY, TOP_BOUNDARY, 11 * BLOCK_SIZE, 21 * BLOCK_SIZE])
+        
+        GAMEDISPLAY.fill(INNER_BG2, [LEFT_BOUNDARY, TOP_BOUNDARY, 10 * BLOCK_SIZE, 20 * BLOCK_SIZE])
+        GAMEDISPLAY.fill(INNER_BG, [LEFT_BOUNDARY + BLOCK_SIZE / 2, TOP_BOUNDARY + BLOCK_SIZE / 2, 9 * BLOCK_SIZE, 19 * BLOCK_SIZE])
+        
+        GAMEDISPLAY.fill(INNER_BG2, [RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 12 * BLOCK_SIZE, 8 * BLOCK_SIZE, 5 * BLOCK_SIZE])
+        GAMEDISPLAY.fill(INNER_BG, [RIGHT_BOUNDARY + 1.5 * BLOCK_SIZE, TOP_BOUNDARY + 12.5 * BLOCK_SIZE, 7 * BLOCK_SIZE, 4 * BLOCK_SIZE])
+        
+        GAMEDISPLAY.fill(INNER_BG2, [RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE, 8 * BLOCK_SIZE, 5 * BLOCK_SIZE])
+        GAMEDISPLAY.fill(INNER_BG, [RIGHT_BOUNDARY + 1.5 * BLOCK_SIZE, TOP_BOUNDARY + 6.5 * BLOCK_SIZE, 7 * BLOCK_SIZE, 4 * BLOCK_SIZE])
+                
+        drawGridLines()
 
         # drawing block objs
         if not currentBlock and not gameExit:
@@ -890,7 +962,7 @@ def runGame():
             #     nextBlocks.pop()
 
             # calculating new questions
-            level, fallFreq = calculateLevelAndFallFreq(score)
+            level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
             numTries = 0
             controlsOn = False
             out_list = generateQues(level)
@@ -1314,7 +1386,9 @@ def updateHiscore(index):
         data[i]["date"] = data[i - 1]["date"]
         data[i]["score"] = data[i - 1]["score"]
         data[i]["name"] = data[i - 1]["name"]
+    data[index]["date"] = str(datetime.datetime.now().date())
     data[index]["score"] = score
+    #TODO add name to data
     with open("leaderboard.json", 'w') as data_file:
         json.dump(data, data_file)
 
@@ -1505,7 +1579,7 @@ with open("leaderboard.json") as data_file:
     data = json.load(data_file)
 LEADERBOARD = []
 for i in range(0, len(data)):
-    LEADERBOARD.insert(len(LEADERBOARD), str(i+1) + ".   " + str(data[i]["name"]) + "                        " + str(data[i]["score"])) 
+    LEADERBOARD.insert(len(LEADERBOARD), str(i+1) + "]   " + str(data[i]["name"]) + "                        " + str(data[i]["score"]) + "          " + str(data[i]["date"])) 
     
 for m in LEADERBOARD:
     leaderboard_menu.add_line(m)

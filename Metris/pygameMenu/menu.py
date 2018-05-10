@@ -34,6 +34,8 @@ class Menu(object):
     """
     Menu object.
     """
+    global pre_index
+    pre_index = 0
 
     def __init__(self,
                  surface,
@@ -428,12 +430,12 @@ class Menu(object):
             # Draw fonts
             if self._actual._option_shadow:
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy - 3
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 3
                 self._surface.blit(text_bg,
                                    (self._actual._opt_posx + text_dx - 3,
                                     ycoords))
             ycoords = self._actual._opt_posy + dy * (
-                self._actual._fsize + self._actual._opt_dy) + t_dy
+                    self._actual._fsize + self._actual._opt_dy) + t_dy
             self._surface.blit(text, (self._actual._opt_posx + text_dx,
                                       ycoords))
             # If selected item then draw a rectangle
@@ -443,111 +445,38 @@ class Menu(object):
                 else:
                     text_dx_tl = text_dx
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy - 2
+                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                    ((self._actual._opt_posx - text_dx_tl + 10,
-                      ycoords)), self._actual._rect_width)
+                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                                  ((self._actual._opt_posx - text_dx_tl + 10,
+                                    ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
+                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
-                    ((self._actual._opt_posx - text_dx_tl + 10,
-                      ycoords)), self._actual._rect_width)
+                            self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
+                                  ((self._actual._opt_posx - text_dx_tl + 10,
+                                    ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._opt_dy) - t_dy + 2
+                        self._actual._fsize + self._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx + text_dx - 10,
                     self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                    ((self._actual._opt_posx + text_dx - 10,
-                      ycoords)), self._actual._rect_width)
+                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                                  ((self._actual._opt_posx + text_dx - 10,
+                                    ycoords)), self._actual._rect_width)
                 ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) - t_dy + 2
+                        self._actual._fsize + self._actual._opt_dy) - t_dy + 2
                 _pygame.draw.line(self._surface, self._actual._sel_color, (
                     self._actual._opt_posx - text_dx_tl + 10,
                     self._actual._opt_posy + dy * (
-                        self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-                    ((self._actual._opt_posx - text_dx_tl + 10,
-                      ycoords)), self._actual._rect_width)
+                            self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
+                                  ((self._actual._opt_posx - text_dx_tl + 10,
+                                    ycoords)), self._actual._rect_width)
             dy += 1
-
-    def draw_rect(self, dy):
-        option = self._actual._option[dy]
-        # If selected index draw a rectangle
-        if dy == self._actual._index:
-            text = self._actual._font.render(option[0], 1,
-                                        self._actual._sel_color)
-            text_bg = self._actual._font.render(option[0], 1,
-                                        _cfg.SHADOW_COLOR)
-        else:
-            text = self._actual._font.render(option[0], 1,
-                                        self._actual._font_color)
-            text_bg = self._actual._font.render(option[0], 1,
-                                        _cfg.SHADOW_COLOR)
-        # Text anchor
-        text_width, text_height = text.get_size()
-        t_dy = -int(text_height / 2.0)
-        if self._actual._centered_option:
-            text_dx = -int(text_width / 2.0)
-        else:
-            text_dx = 0
-        if not self._actual._centered_option:
-            text_dx_tl = -text_width
-        else:
-            text_dx_tl = text_dx
-        text = self._actual._font.render(option[0], 1,
-                                            self._actual._sel_color)
-        text_bg = self._actual._font.render(option[0], 1,
-                                            _cfg.SHADOW_COLOR)
-        # Draw fonts
-        if self._actual._option_shadow:
-            ycoords = self._actual._opt_posy + dy * (
-                    self._actual._fsize + self._actual._opt_dy) + t_dy - 3
-            self._surface.blit(text_bg,
-                            (self._actual._opt_posx + text_dx - 3,
-                                ycoords))
-        ycoords = self._actual._opt_posy + dy * (
-            self._actual._fsize + self._actual._opt_dy) + t_dy
-        self._surface.blit(text, (self._actual._opt_posx + text_dx,
-                                    ycoords))
-        # Draw rectangle
-        ycoords = self._actual._opt_posy + dy * (
-            self._actual._fsize + self._actual._opt_dy) + t_dy - 2
-        _pygame.draw.line(self._surface, self._actual._sel_color, (
-            self._actual._opt_posx + text_dx - 10,
-            self._actual._opt_posy + dy * (
-                self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-            ((self._actual._opt_posx - text_dx_tl + 10,
-              ycoords)), self._actual._rect_width)
-        ycoords = self._actual._opt_posy + dy * (
-            self._actual._fsize + self._actual._opt_dy) - t_dy + 2
-        _pygame.draw.line(self._surface, self._actual._sel_color, (
-            self._actual._opt_posx + text_dx - 10,
-            self._actual._opt_posy + dy * (
-                self._actual._fsize + self._actual._opt_dy) - t_dy + 2),
-            ((self._actual._opt_posx - text_dx_tl + 10,
-              ycoords)), self._actual._rect_width)
-        ycoords = self._actual._opt_posy + dy * (
-            self._actual._fsize + self._opt_dy) - t_dy + 2
-        _pygame.draw.line(self._surface, self._actual._sel_color, (
-            self._actual._opt_posx + text_dx - 10,
-            self._actual._opt_posy + dy * (
-                self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-            ((self._actual._opt_posx + text_dx - 10,
-              ycoords)), self._actual._rect_width)
-        ycoords = self._actual._opt_posy + dy * (
-            self._actual._fsize + self._actual._opt_dy) - t_dy + 2
-        _pygame.draw.line(self._surface, self._actual._sel_color, (
-            self._actual._opt_posx - text_dx_tl + 10,
-            self._actual._opt_posy + dy * (
-                self._actual._fsize + self._actual._opt_dy) + t_dy - 2),
-            ((self._actual._opt_posx - text_dx_tl + 10,
-              ycoords)), self._actual._rect_width)
 
     def get_rect_info(self, dy):
         for i in range(0, len(self._actual._option)):
@@ -627,7 +556,7 @@ class Menu(object):
         :param events: Pygame events
         :return: None
         """
-        wholeRect = self._actual._option
+        global pre_index
         if self._actual._dopause:  # If menu pauses game then apply function
             self._bgfun()
         self.draw()
@@ -639,9 +568,18 @@ class Menu(object):
                 exit()
             elif event.type == _pygame.locals.KEYDOWN:
                 if event.key == _ctrl.MENU_CTRL_DOWN:
+                    if self._actual._index == None:
+                        if self._actual._size == 0:
+                            return
+                        self._actual._index = pre_index % self._actual._size
                     self._down()
+                    pre_index = self._actual._index
                 elif event.key == _ctrl.MENU_CTRL_UP:
+                    if self._actual._size == 0:
+                        return
+                    self._actual._index = pre_index % self._actual._size
                     self._up()
+                    pre_index = self._actual._index
                 elif event.key == _ctrl.MENU_CTRL_ENTER:
                     self._select()
                     if not self._actual._dopause:
@@ -708,7 +646,9 @@ class Menu(object):
                     mousePos = _pygame.mouse.get_pos()
                     if (mousePos[0] >= x and mousePos[0] <= x + pos[0] and
                         mousePos[1] >= y and mousePos[1] <= y + pos[1]):
-                        self._actual.index = i
+                        if self._actual._size == 0:
+                            return
+                        self._actual._index = i % self._actual._size
                         self._select()
                         if not self._actual._dopause:
                             return True
@@ -721,7 +661,10 @@ class Menu(object):
             mousePos = _pygame.mouse.get_pos()
             if (mousePos[0] >= x and mousePos[0] <= x + pos[0] and
                     mousePos[1] >= y and mousePos[1] <= y + pos[1]):
-                self.draw_rect(i)
+                    if self._actual._size == 0:
+                        return
+                    self._actual._index = i % self._actual._size
+                    pre_index = self._actual._index
         _pygame.display.flip()
         self._closelocked = False
         return False
