@@ -430,7 +430,7 @@ def drawHoldBlock(blockType):
     elif blockType == 6:
         holdBlock = BlockO(offset_x, offset_y, BLOCK_SIZE)
     
-    block.display(GAMEDISPLAY)
+    holdBlock.display(GAMEDISPLAY)
     
 def blockListTooShort(len):
     if len <= 5:
@@ -1070,7 +1070,7 @@ def runGame():
 
         for i in range(0, len(nextBlocks)):
             nextBlocks[i].display(GAMEDISPLAY)
-            
+
         # draw next blocks border
         drawNextBlocksBorder()
 
