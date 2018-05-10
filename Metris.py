@@ -137,6 +137,8 @@ mus_var = randint(0,12)
 global mult
 mult = 0
 
+global level
+level = 0
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -579,12 +581,14 @@ def paused():
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -660,8 +664,7 @@ def gameOver():
 #==================================================================================
 
     pygame.mixer.music.stop()
-    pygame.mixer.music.load('end.wav')
-    pygame.mixer.music.play(0, 0.0)
+    playSound('end.wav')
 
     initialSize = 16
 
@@ -672,12 +675,14 @@ def gameOver():
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
 
             if event.type == pygame.KEYDOWN:
@@ -808,14 +813,15 @@ def runGame():
     numTries = 0
     diff1 = out_list[4]
     num_q = 0
+    mult = 0
     scr_mult = 5
     drawCompliment(comp_input)
 
     while not gameExit:
         
         if bankedpoints > 0:
-            score += 1
-            bankedpoints -= 1
+            score += 5
+            bankedpoints -= 5
             
         # checkForQuit()
         for event in pygame.event.get():
@@ -823,12 +829,14 @@ def runGame():
                 gameExit = True
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -890,36 +898,33 @@ def runGame():
                     flipSoundIcon()
                 # check for correct answer
                 elif event.key == out_list[9]:
-                    if num_q > 5:
-                        comp_input = 8
-                    else:
-                        playSound('cor.wav')
-                        if numTries < 1:
-                            hard_q = False
-                            if diff1 > 4:
-                                hard_q = True
-                            comp_input = randint(0, 3)
-                            controlsOn = True
-                            bankedpoints += 10 + 5 * mult
-
+                    playSound('cor.wav')
+                    if numTries < 1:
+                        hard_q = False
+                        if diff1 > 4:
+                            hard_q = True
+                        controlsOn = True
+                        if num_q <= 5:
+                            bankedpoints += 10
+                            mult += 1
                             if hard_q == True:
                                 bankedpoints += 20
-                            hard_q = False
-                            level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
-                            num_q += 1
-                            mult += 1
-                            if num_q <= 5:
-                                out_list = generateQues(level)
-                                diff1 = out_list[4]
-                            else:
-                                comp_input = 8
+                        hard_q = False
+                        level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
+                        num_q += 1
+                        out_list = generateQues(level)
+                        diff1 = out_list[4]
+                        if num_q > 5:
+                            comp_input = 8
+                        else:
+                            comp_input = randint(0,3)
                 elif event.key != out_list[9] and (
                         event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
                     mult = 0
                     comp_input = randint(4, 7)
                     controlsOn = False
-                    if num_q < 5:
+                    if num_q <= 5 and numTries <= 1:
                         playSound('incor.wav')
 
             if event.type == pygame.KEYUP:
@@ -969,6 +974,7 @@ def runGame():
             char = out_list[9]
             comp_input = -1
             num_q = 0
+            mult = 0
 
             # draw new block
             newBlock(blockSet, nextBlocks)
@@ -1060,6 +1066,8 @@ def runGame():
         prt_scr = 10 + mult * 5
         if diff1 >= 5:
             prt_scr += 20
+        if num_q > 5:
+            prt_scr = 0
         val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
         GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 3 * BLOCK_SIZE))
 
@@ -1139,8 +1147,9 @@ def runGame():
                 mus_var = randint(0,12)
             pygame.mixer.music.load(MID_FILES[mus_var])
             level_prev = level
-            if isMusicOn == True:
-                pygame.mixer.music.play(-1, 0.0)
+            pygame.mixer.music.play(-1,0.0)
+            if isMusicOn == False:
+                pygame.mixer.music.pause()
         pygame.display.update()
 
         clock.tick(speed)
@@ -1186,7 +1195,10 @@ def generateQues(level):
         char = pygame.K_3
     if sol_key == 3:
         char = pygame.K_4
-    diff1 = randint(1, 5)
+    if level < 4:
+        diff1 = randint(1,4)
+    else:
+        diff1 = randint(1,5)
     diff2 = randint(1, 10)
     diff3 = randint(6, 20)
     return [q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op, char]
@@ -1255,7 +1267,10 @@ def calculateUpbound(level):
 def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
-    level = int(score / 80) + 1
+    global level
+    level_prev = level
+    divisor = level_prev + 80
+    level = int(score/divisor) + 1
     fallFreq = 1000 - 500 * (level - 1)
     return level, fallFreq
 
