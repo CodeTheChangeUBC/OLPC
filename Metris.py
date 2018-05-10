@@ -922,10 +922,10 @@ def runGame():
                         event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
                     mult = 0
-                    comp_input = randint(4, 7)
                     controlsOn = False
                     if num_q <= 5 and numTries <= 1:
                         playSound('incor.wav')
+                        comp_input = randint(4, 7)
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -1302,7 +1302,7 @@ def drawCompliment(rand):
     elif rand == -1:
         compliment = " "
     elif rand == 8:
-        compliment = "Good job! Next question upon block landing."
+        compliment = "Good job! Next questions worth points upon block landing."
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
     complimentRect.center = (WIDTH / 2, TOP_BOUNDARY / 2)
