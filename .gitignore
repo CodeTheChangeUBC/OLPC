@@ -1,7 +1,7 @@
 .idea/
 .vscode/
-Metris/*.pyc
-Metris/Block/*.pyc
-Metris/pygameMenu/*.pyc
-Metris/*.json
+*.pyc
+Block/*.pyc
+pygameMenu/*.pyc
+*.json
 
