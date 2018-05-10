@@ -129,6 +129,9 @@ clock = pygame.time.Clock()
 global fallFreq
 fallFreq = 1
 
+global pause
+pause = False
+
 holdBlock = None
 
 global mus_var
@@ -568,6 +571,7 @@ def newBlock(blockSet, nextBlocks):
 
 
 def paused():
+    global pause
     pause = True
     global soundPosition
 
@@ -1323,10 +1327,16 @@ def flipSoundIcon():
 
 
 def flipMusicIcon():
+    global pause
     global isMusicOn
     global musicOn
     global musicOff
-    if isMusicOn:
+    if pause:
+        if isMusicOn:
+            isMusicOn = False
+        else:
+            isMusicOn = True
+    elif isMusicOn:
         pygame.mixer.music.pause()
         isMusicOn = False
     else:
