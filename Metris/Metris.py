@@ -398,10 +398,6 @@ def hold(blockSet, nextBlocks):
     tmp = holdBlock
     holdBlock = getBlockType(block)
 
-    # while (holdBlock.orientation % 4 != 0):
-    #     holdBlock.rotateR()
-
-    # first time if hold is empty
     if (tmp != None):
         blockSet.insert(0, tmp)
 
