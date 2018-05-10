@@ -128,10 +128,7 @@ clock = pygame.time.Clock()
 
 global fallFreq
 fallFreq = 1
-
-global pause
-pause = False
-
+global holdBlock
 holdBlock = None
 
 global mus_var
@@ -140,14 +137,13 @@ mus_var = randint(0,12)
 global mult
 mult = 0
 
-global level
-level = 0
-
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 def tick(pos_y):
+    if gameExit:
+        return pos_y
     if block != None:
         global currentBlock
         block.setY(pos_y + BLOCK_SIZE)
@@ -214,10 +210,16 @@ def deleteRows(rows):
 
 def checkGameOver():
     global gameExit
+    done = False
     for y in range(0, len(landed[0]) - 20):
+        if done:
+            break
         for x in range(0, len(landed)):
             if landed[x][y] != None:
                 gameOver()
+                done = True
+                break
+                
 
 
 def checkCollision():
@@ -407,42 +409,53 @@ def hold(blockSet, nextBlocks):
     global holdBlock
 
     tmp = holdBlock
-    holdBlock = getBlockType(block)
 
-    # while (holdBlock.orientation % 4 != 0):
-    #     holdBlock.rotateR()
+    holdBlock = block
 
-    # first time if hold is empty
-    if (tmp != None):
-        blockSet.insert(0, tmp)
-
-    newBlock(blockSet, nextBlocks)
-    setNextBlocks(blockSet, nextBlocks)
-
-def drawHoldBlock(blockType):
-    holdBlock = None
     offset_x = RIGHT_BOUNDARY + BLOCK_SIZE * 4
     offset_y = TOP_BOUNDARY + BLOCK_SIZE * 14
-    offset_x += getOffsetX(blockType)
-    offset_y += getOffsetY(blockType)
 
-    if blockType == 0:
-        holdBlock = BlockT(offset_x, offset_y, BLOCK_SIZE)
-    elif blockType == 1:
-        holdBlock = BlockS(offset_x, offset_y, BLOCK_SIZE)
-    elif blockType == 2:
-        holdBlock = BlockJ(offset_x, offset_y, BLOCK_SIZE)
-    elif blockType == 3:
-        holdBlock = BlockI(offset_x, offset_y, BLOCK_SIZE)
-    elif blockType == 4:
-        holdBlock = BlockL(offset_x, offset_y, BLOCK_SIZE)
-    elif blockType == 5:
-        holdBlock = BlockZ(offset_x, offset_y, BLOCK_SIZE)
-    elif blockType == 6:
-        holdBlock = BlockO(offset_x, offset_y, BLOCK_SIZE)
-    
-    holdBlock.display(GAMEDISPLAY)
-    
+    offset_x += getOffsetX(getBlockType(holdBlock))
+    offset_y += getOffsetY(getBlockType(holdBlock))
+
+    holdBlock.setX(offset_x)
+    holdBlock.setY(offset_y)
+
+    while (holdBlock.orientation % 4 != 0):
+        holdBlock.rotateR()
+
+    # first time if hold is empty
+    if (tmp == None):
+        newBlock(blockSet, nextBlocks)
+        # blockType = blockSet.pop(0)
+        # if blockListTooShort(len(blockSet)):
+        #     appendBlockList(blockSet)
+
+        # # TODO make function            
+        # if blockType == 0:
+        #     block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 1:
+        #     block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 2:
+        #     block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 3:
+        #     block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 4:
+        #     block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 5:
+        #     block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
+        # elif blockType == 6:
+        #     block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
+    else:
+        tmp.setX(int(INIT_X))
+        tmp.setY(int(INIT_Y))
+        block = tmp
+        pos_x = INIT_X
+        pos_y = INIT_Y
+
+    setNextBlocks(blockSet, nextBlocks)
+
+
 def blockListTooShort(len):
     if len <= 5:
         return True
@@ -571,7 +584,6 @@ def newBlock(blockSet, nextBlocks):
 
 
 def paused():
-    global pause
     pause = True
     global soundPosition
 
@@ -632,6 +644,7 @@ def gameOver():
     global score
     global holdBlock
     global bankedpoints
+    global gameExit
 
     score += bankedpoints
     bankedpoints = 0
@@ -659,9 +672,8 @@ def gameOver():
 #==================================================================================
 
     pygame.mixer.music.stop()
- #   pygame.mixer.music.load('end.wav')
-#    pygame.mixer.music.play(0, 0.0)
-    playSound('end.wav')
+    pygame.mixer.music.load('end.wav')
+    pygame.mixer.music.play(0, 0.0)
 
     initialSize = 16
 
@@ -682,14 +694,17 @@ def gameOver():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
-                    currentBlock = False
-                    block = None
-                    score = 0
-                    for i in range(0, len(landed)):
-                        for j in range(0, len(landed[i])):
-                            landed[i][j] = None
-                    holdBlock = None
-                    runGame()
+##                    currentBlock = False
+##                    block = None
+##                    score = 0
+##                    for i in range(0, len(landed)):
+##                        for j in range(0, len(landed[i])):
+##                            landed[i][j] = None
+##                    holdBlock = None
+
+                    gameExit = True
+                    pause = False
+                    #runGame()
                 ##                if event.key == pygame.K_x:
                 ##                    main_menu.mainloop(pygame.event.get())
                 elif event.key == pygame.K_m:
@@ -727,6 +742,7 @@ def gameOver():
         if initialSize < 30:
             initialSize += 1
         clock.tick(15)
+
 
 def drawGridLines():
 ##    SPACING = BLOCK_SIZE / 4
@@ -776,6 +792,9 @@ def runGame():
     global bankedpoints
     global mult
     global isMusicOn
+    global holdBlock
+
+    gameExit = False
 
     blockSet = getRandomBlockSet(None)
     blockT = BlockT(0, 0, BLOCK_SIZE)
@@ -804,15 +823,14 @@ def runGame():
     numTries = 0
     diff1 = out_list[4]
     num_q = 0
-    mult = 0
     scr_mult = 5
     drawCompliment(comp_input)
 
     while not gameExit:
         
         if bankedpoints > 0:
-            score += 5
-            bankedpoints -= 5
+            score += 1
+            bankedpoints -= 1
             
         # checkForQuit()
         for event in pygame.event.get():
@@ -887,26 +905,29 @@ def runGame():
                     flipSoundIcon()
                 # check for correct answer
                 elif event.key == out_list[9]:
-                    playSound('cor.wav')
-                    if numTries < 1:
-                        hard_q = False
-                        if diff1 > 4:
-                            hard_q = True
-                        controlsOn = True
-                        if num_q <= 5:
+                    if num_q > 5:
+                        comp_input = 8
+                    else:
+                        playSound('cor.wav')
+                        if numTries < 1:
+                            hard_q = False
+                            if diff1 > 4:
+                                hard_q = True
+                            comp_input = randint(0, 3)
+                            controlsOn = True
                             bankedpoints += 10 + 5 * mult
-                            mult += 1
+
                             if hard_q == True:
                                 bankedpoints += 20
-                        hard_q = False
-                        level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
-                        num_q += 1
-                        out_list = generateQues(level)
-                        diff1 = out_list[4]
-                        if num_q > 5:
-                            comp_input = 8
-                        else:
-                            comp_input = randint(0, 3)
+                            hard_q = False
+                            level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
+                            num_q += 1
+                            mult += 1
+                            if num_q <= 5:
+                                out_list = generateQues(level)
+                                diff1 = out_list[4]
+                            else:
+                                comp_input = 8
                 elif event.key != out_list[9] and (
                         event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
@@ -965,7 +986,6 @@ def runGame():
             char = out_list[9]
             comp_input = -1
             num_q = 0
-            mult = 0
 
             # draw new block
             newBlock(blockSet, nextBlocks)
@@ -1057,15 +1077,8 @@ def runGame():
         prt_scr = 10 + mult * 5
         if diff1 >= 5:
             prt_scr += 20
-        if num_q > 5:
-            prt_scr = 0
         val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
         GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 3 * BLOCK_SIZE))
-
-        # drawing next blocks
-
-        for i in range(0, len(nextBlocks)):
-            nextBlocks[i].display(GAMEDISPLAY)
 
         # draw next blocks border
         drawNextBlocksBorder()
@@ -1075,7 +1088,7 @@ def runGame():
 
         # drawing hold
         if (holdBlock != None):
-            drawHoldBlock(holdBlock)
+            holdBlock.display(GAMEDISPLAY)
 
         # draw hold border
         drawHoldBorder()
@@ -1117,6 +1130,15 @@ def runGame():
         # draw compliment
         drawCompliment(comp_input)
 
+        # drawing next blocks
+
+        for i in range(0, len(nextBlocks)):
+            nextBlocks[i].display(GAMEDISPLAY)
+
+            # drawing hold
+            if (holdBlock != None):
+                holdBlock.display(GAMEDISPLAY)
+
         # collision checking
         if not hasMove:
             # clock.tick(10) - movement speed
@@ -1146,9 +1168,18 @@ def runGame():
         clock.tick(speed)
         hasMove = False
 
-    pygame.quit()
-    quit()
+    currentBlock = False
+    block = None
+    score = 0
+    for i in range(0, len(landed)):
+        for j in range(0, len(landed[i])):
+            landed[i][j] = None
+    holdBlock = None
 
+##    pygame.quit()
+##    quit()
+
+#================================END OF RUN GAME==========================
 
 def generateQues(level):
     if level <= 4:
@@ -1177,10 +1208,7 @@ def generateQues(level):
         char = pygame.K_3
     if sol_key == 3:
         char = pygame.K_4
-    if level < 4:
-        diff1 = randint(1,4)
-    else:
-        diff1 = randint(1,5)
+    diff1 = randint(1, 5)
     diff2 = randint(1, 10)
     diff3 = randint(6, 20)
     return [q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op, char]
@@ -1249,10 +1277,7 @@ def calculateUpbound(level):
 def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
-    global level
-    level_prev = level
-    divisor = level_prev + 80
-    level = int(score / divisor) + 1
+    level = int(score / 80) + 1
     fallFreq = 1000 - 500 * (level - 1)
     return level, fallFreq
 
@@ -1284,7 +1309,7 @@ def drawCompliment(rand):
     elif rand == -1:
         compliment = " "
     elif rand == 8:
-        compliment = "Good job! Next questions worth points: after block landing."
+        compliment = "Good job! Next question upon block landing."
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
     complimentRect.center = (WIDTH / 2, TOP_BOUNDARY / 2)
@@ -1316,16 +1341,10 @@ def flipSoundIcon():
 
 
 def flipMusicIcon():
-    global pause
     global isMusicOn
     global musicOn
     global musicOff
-    if pause:
-        if isMusicOn:
-            isMusicOn = False
-        else:
-            isMusicOn = True
-    elif isMusicOn:
+    if isMusicOn:
         pygame.mixer.music.pause()
         isMusicOn = False
     else:
@@ -1415,10 +1434,10 @@ def newLeaderboard():
                             {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"SamO      \"}, \
                             {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Brandon   \"}, \
                             {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Tony      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Eric      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Btai      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"gauravnv  \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"XDSU      \"}]")
+                            {\"date\": \"2018-05-03\", \"score\": 100, \"name\": \"Eric      \"}, \
+                            {\"date\": \"2018-05-03\", \"score\": 100, \"name\": \"Btai      \"}, \
+                            {\"date\": \"2018-05-03\", \"score\": 100, \"name\": \"gauravnv  \"}, \
+                            {\"date\": \"2018-05-03\", \"score\": 100, \"name\": \"XDSU      \"}]")
     leaderboardFile.close()
 
 
@@ -1487,7 +1506,9 @@ def play_function():
     main_menu.disable()
     main_menu.reset(1)
 
-    while True:
+    test = True
+
+    while test:
 
         # Clock tick
         clock.tick(60)
@@ -1513,6 +1534,7 @@ def play_function():
         #                      int(WINDOW_SIZE[1] / 2)))
         runGame()
         pygame.display.flip()
+        test = False
 
 
 def main_background():
@@ -1564,7 +1586,7 @@ instruction_menu = pygameMenu.TextMenu(GAMEDISPLAY,
                                        onclose=PYGAME_MENU_DISABLE_CLOSE,
                                        option_shadow=True,
                                        text_color=COLOR_WHITE,
-                                       text_fontsize=25,
+                                       text_fontsize=20,
                                        title='Instruction',
                                        window_height=WINDOW_SIZE[1],
                                        window_width=WINDOW_SIZE[0],
@@ -1595,7 +1617,7 @@ leaderboard_menu = pygameMenu.TextMenu(GAMEDISPLAY,
                                        onclose=PYGAME_MENU_DISABLE_CLOSE,
                                        option_shadow=True,
                                        text_color=COLOR_WHITE,
-                                       text_fontsize=25,
+                                       text_fontsize=20,
                                        title='Leaderboard',
                                        window_height=WINDOW_SIZE[1],
                                        window_width=WINDOW_SIZE[0],
@@ -1607,6 +1629,10 @@ try:
     with open("leaderboard.json") as data_file:
         data = json.load(data_file)
 except IOError:
+    newLeaderboard()
+    with open("leaderboard.json") as data_file:
+        data = json.load(data_file)
+except ValueError:
     newLeaderboard()
     with open("leaderboard.json") as data_file:
         data = json.load(data_file)
@@ -1656,4 +1682,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    while True:
+        main()
