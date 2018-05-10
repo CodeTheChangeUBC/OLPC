@@ -34,6 +34,8 @@ class Menu(object):
     """
     Menu object.
     """
+    global pre_index
+    pre_index = 0
 
     def __init__(self,
                  surface,
@@ -476,6 +478,40 @@ class Menu(object):
                                     ycoords)), self._actual._rect_width)
             dy += 1
 
+    def get_rect_info(self, dy):
+        for i in range(0, len(self._actual._option)):
+            option = self._actual._option[i]
+            if i == dy:
+                break
+        # If selected index draw a rectangle
+        if dy == self._actual._index:
+            text = self._actual._font.render(option[0], 1,
+                                        self._actual._sel_color)
+            text_bg = self._actual._font.render(option[0], 1,
+                                        _cfg.SHADOW_COLOR)
+        else:
+            text = self._actual._font.render(option[0], 1,
+                                        self._actual._font_color)
+            text_bg = self._actual._font.render(option[0], 1,
+                                        _cfg.SHADOW_COLOR)
+        # Text anchor
+        text_width, text_height = text.get_size()
+        t_dy = -int(text_height / 2.0)
+        if self._actual._centered_option:
+            text_dx = -int(text_width / 2.0)
+        else:
+            text_dx = 0
+        if not self._actual._centered_option:
+            text_dx_tl = -text_width
+        else:
+            text_dx_tl = text_dx
+        x = self._actual._opt_posx + text_dx - 10
+        y = self._actual._opt_posy + dy * (
+                self._actual._fsize + self._actual._opt_dy) + t_dy - 2
+        width = text_width + 20
+        height = text_height + 4
+        return [x, y, width, height]
+
     def enable(self):
         """
         Enable menu.
@@ -520,6 +556,7 @@ class Menu(object):
         :param events: Pygame events
         :return: None
         """
+        global pre_index
         if self._actual._dopause:  # If menu pauses game then apply function
             self._bgfun()
         self.draw()
@@ -531,9 +568,18 @@ class Menu(object):
                 exit()
             elif event.type == _pygame.locals.KEYDOWN:
                 if event.key == _ctrl.MENU_CTRL_DOWN:
+                    if self._actual._index == None:
+                        if self._actual._size == 0:
+                            return
+                        self._actual._index = pre_index % self._actual._size
                     self._down()
+                    pre_index = self._actual._index
                 elif event.key == _ctrl.MENU_CTRL_UP:
+                    if self._actual._size == 0:
+                        return
+                    self._actual._index = pre_index % self._actual._size
                     self._up()
+                    pre_index = self._actual._index
                 elif event.key == _ctrl.MENU_CTRL_ENTER:
                     self._select()
                     if not self._actual._dopause:
@@ -590,6 +636,35 @@ class Menu(object):
                     self._select()
                 elif event.button == _locals.JOY_BUTTON_BACK:
                     self.reset(1)
+            # TODO: figure out how to implement click interface
+            elif event.type == _pygame.MOUSEBUTTONDOWN and event.button == 1:
+                for i in range(0, len(self._actual._option)):
+                    rect = self.get_rect_info(i)
+                    pos = (rect[2], rect[3])
+                    x = rect[0]
+                    y = rect[1]
+                    mousePos = _pygame.mouse.get_pos()
+                    if (mousePos[0] >= x and mousePos[0] <= x + pos[0] and
+                        mousePos[1] >= y and mousePos[1] <= y + pos[1]):
+                        if self._actual._size == 0:
+                            return
+                        self._actual._index = i % self._actual._size
+                        self._select()
+                        if not self._actual._dopause:
+                            return True
+
+        for i in range(0, len(self._actual._option)):
+            rect = self.get_rect_info(i)
+            pos = (rect[2], rect[3])
+            x = rect[0]
+            y = rect[1]
+            mousePos = _pygame.mouse.get_pos()
+            if (mousePos[0] >= x and mousePos[0] <= x + pos[0] and
+                    mousePos[1] >= y and mousePos[1] <= y + pos[1]):
+                    if self._actual._size == 0:
+                        return
+                    self._actual._index = i % self._actual._size
+                    pre_index = self._actual._index
         _pygame.display.flip()
         self._closelocked = False
         return False

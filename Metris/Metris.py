@@ -159,7 +159,6 @@ def tick(pos_y):
             pos_y += BLOCK_SIZE
     return pos_y
 
-
 def checkLandedAndDelete():
     y = 0
     rowsToDelete = []
@@ -169,13 +168,11 @@ def checkLandedAndDelete():
         y = y + 1
     deleteRows(rowsToDelete)
 
-
 def rowFilled(y):
     for x in range(0, len(landed)):
         if (landed[x][y] == None):
             return False
     return True
-
 
 def deleteRows(rows):
     global bankedpoints
@@ -191,7 +188,7 @@ def deleteRows(rows):
                     if landed[x][y - 1] != None:
                         landed[x][y - 1].setRelativeY(BLOCK_SIZE)
                     landed[x][y] = landed[x][y - 1]
-        playSound('coin.wav')
+        playSound('clr.wav')
 
     # update score
     if len(rows) == 1:
@@ -213,7 +210,6 @@ def checkGameOver():
             if landed[x][y] != None:
                 gameOver()
 
-
 def checkCollision():
     global currentBlock
     if not currentBlock:
@@ -231,7 +227,6 @@ def checkCollision():
         if blockPerimeter[i].getX() < LEFT_BOUNDARY or blockPerimeter[i].getX() > RIGHT_BOUNDARY - BLOCK_SIZE or \
                 blockPerimeter[i].getY() > BOTTOM_BOUNDARY - BLOCK_SIZE:
             return True
-
 
 def checkCollisionRotation():
     global pos_x
@@ -299,14 +294,12 @@ def checkCollisionRotation():
             break
     return False
 
-
 def x2Index(x):
     return (x - LEFT_BOUNDARY) / BLOCK_SIZE
 
 
 def y2Index(y):
     return y / BLOCK_SIZE
-
 
 ## function to get the minimum vertical difference between current block and
 #  the bottom landed Blocks
@@ -324,14 +317,12 @@ def getShadowDifference(blockList):
                 difference = y * BLOCK_SIZE - blockList[i].getY() - BLOCK_SIZE  # - 14
     return difference
 
-
 def drawShadow(blockList, dy):
     for i in range(0, len(blockList)):
         pygame.draw.rect(GAMEDISPLAY, blockList[i].getColor(),
                          [blockList[i].getX(), blockList[i].getY() + dy, BLOCK_SIZE, BLOCK_SIZE])
         pygame.draw.rect(GAMEDISPLAY, (100, 100, 100),
                          [blockList[i].getX() + 1, blockList[i].getY() + dy + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2])
-
 
 def getRandomBlockSet(lastBlock):
     set = [0, 1, 2, 3, 4, 5, 6]
@@ -341,7 +332,6 @@ def getRandomBlockSet(lastBlock):
         set[0] = set[1]
         set[1] = tmp
     return set
-
 
 def getOffsetX(blockType):
     if blockType == 0:
@@ -358,7 +348,6 @@ def getOffsetX(blockType):
         return int(0.5 * BLOCK_SIZE)
     elif blockType == 6:
         return 0
-
 
 def getOffsetY(blockType):
     if blockType == 0:
@@ -586,12 +575,14 @@ def paused():
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -675,12 +666,14 @@ def gameOver():
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
 
             if event.type == pygame.KEYDOWN:
@@ -822,12 +815,14 @@ def runGame():
                 gameExit = True
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -918,7 +913,7 @@ def runGame():
                     mult = 0
                     comp_input = randint(4, 7)
                     controlsOn = False
-                    if num_q < 5:
+                    if num_q <= 5 and numTries <= 1:
                         playSound('incor.wav')
 
             if event.type == pygame.KEYUP:
@@ -1145,8 +1140,9 @@ def runGame():
                 mus_var = randint(0,12)
             pygame.mixer.music.load(MID_FILES[mus_var])
             level_prev = level
-            if isMusicOn == True:
-                pygame.mixer.music.play(-1, 0.0)
+            pygame.mixer.music.play(-1, 0.0)
+            if isMusicOn == False:
+                pygame.mixer.music.pause()
         pygame.display.update()
 
         clock.tick(speed)
