@@ -564,7 +564,6 @@ def paused():
     pause = True
     global soundPosition
 
-    pygame.event.set_allowed(KEYDOWN)
     pygame.mixer.music.pause()
     startTime = pygame.mixer.music.get_pos()
 
@@ -627,8 +626,6 @@ def gameOver():
 
     score += bankedpoints
     bankedpoints = 0
-
-    pygame.event.set_allowed(KEYDOWN)
 
 #=================================REDRAWS THE NEW SCORE & LAST BLOCK PLACED===============================================
 
@@ -810,7 +807,6 @@ def runGame():
             score += 5
             bankedpoints -= 5
             
-        count = 0
         # checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -914,8 +910,6 @@ def runGame():
                     controlsOn = False
                     if num_q <= 5 and numTries <= 1:
                         playSound('incor.wav')
-            count += 1
-            pygame.event.clear()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     if dx < 0:
