@@ -1,3 +1,0 @@
-# Metris
-
-Math + Tetris = Metris
