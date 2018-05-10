@@ -50,7 +50,7 @@ LEADERBOARD = ['Lol      100',
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
 TEXTCOLOR = WHITE
-HEIGHT = 800
+HEIGHT = 680
 WIDTH = 800
 LEFT_BOUNDARY = WIDTH / 3
 RIGHT_BOUNDARY = WIDTH - WIDTH / 3
@@ -1389,12 +1389,15 @@ def updateHiscore(index):
     with open("leaderboard.json") as data_file:
         data = json.load(data_file)
     global score
+    global name
+    name = inputbox.ask(GAMEDISPLAY, "Enter your Name ")
     for i in range(len(data) - 1, index, -1):
         data[i]["date"] = data[i - 1]["date"]
         data[i]["score"] = data[i - 1]["score"]
         data[i]["name"] = data[i - 1]["name"]
     data[index]["date"] = str(datetime.datetime.now().date())
     data[index]["score"] = score
+    data[index]["name"] = name
     #TODO add name to data
     with open("leaderboard.json", 'w') as data_file:
         json.dump(data, data_file)
@@ -1532,7 +1535,7 @@ play_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
 instruction_menu = pygameMenu.TextMenu(GAMEDISPLAY,
                                        bgfun=main_background,
                                        color_selected=COLOR_GREEN,
-                                       font=fontdir,
+                                       font=pygameMenu.fonts.FONT_BEBAS,
                                        font_color=COLOR_WHITE,
                                        font_size_title=30,
                                        font_title=font_tit,
@@ -1562,7 +1565,7 @@ instruction_menu.add_option('Return to menu', PYGAME_MENU_BACK)
 leaderboard_menu = pygameMenu.TextMenu(GAMEDISPLAY,
                                        bgfun=main_background,
                                        color_selected=COLOR_BLUE,
-                                       font=fontdir,
+                                       font=pygameMenu.fonts.FONT_BEBAS,
                                        font_color=COLOR_WHITE,
                                        font_size_title=30,
                                        font_title=font_tit,
@@ -1592,6 +1595,8 @@ for m in LEADERBOARD:
     leaderboard_menu.add_line(m)
 
 # leaderboard_menu.add_option('View top 10 scores!', leaderboard_function)
+leaderboard_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
+leaderboard_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
 leaderboard_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
 leaderboard_menu.add_option('Return to menu', PYGAME_MENU_BACK)
 

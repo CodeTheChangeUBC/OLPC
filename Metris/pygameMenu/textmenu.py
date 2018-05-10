@@ -112,7 +112,7 @@ class TextMenu(Menu):
 
         text = text.strip()
         self._actual._text.append(text)
-        dy = -self._actual._font_textsize / 2 - self._actual._textdy / 2
+        dy = -self._actual._font_textsize - self._actual._textdy
         self._actual._opt_posy += dy
 
     def add_option(self, element_name, element, *args):
