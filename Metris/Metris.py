@@ -396,53 +396,42 @@ def hold(blockSet, nextBlocks):
     global holdBlock
 
     tmp = holdBlock
+    holdBlock = getBlockType(block)
 
-    holdBlock = block
-
-    offset_x = RIGHT_BOUNDARY + BLOCK_SIZE * 4
-    offset_y = TOP_BOUNDARY + BLOCK_SIZE * 14
-
-    offset_x += getOffsetX(getBlockType(holdBlock))
-    offset_y += getOffsetY(getBlockType(holdBlock))
-
-    holdBlock.setX(offset_x)
-    holdBlock.setY(offset_y)
-
-    while (holdBlock.orientation % 4 != 0):
-        holdBlock.rotateR()
+    # while (holdBlock.orientation % 4 != 0):
+    #     holdBlock.rotateR()
 
     # first time if hold is empty
-    if (tmp == None):
-        newBlock(blockSet, nextBlocks)
-        # blockType = blockSet.pop(0)
-        # if blockListTooShort(len(blockSet)):
-        #     appendBlockList(blockSet)
+    if (tmp != None):
+        blockSet.insert(0, tmp)
 
-        # # TODO make function            
-        # if blockType == 0:
-        #     block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
-        # elif blockType == 1:
-        #     block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
-        # elif blockType == 2:
-        #     block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
-        # elif blockType == 3:
-        #     block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
-        # elif blockType == 4:
-        #     block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
-        # elif blockType == 5:
-        #     block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
-        # elif blockType == 6:
-        #     block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
-    else:
-        tmp.setX(int(INIT_X))
-        tmp.setY(int(INIT_Y))
-        block = tmp
-        pos_x = INIT_X
-        pos_y = INIT_Y
-
+    newBlock(blockSet, nextBlocks)
     setNextBlocks(blockSet, nextBlocks)
 
+def drawHoldBlock(blockType):
+    holdBlock = None
+    offset_x = RIGHT_BOUNDARY + BLOCK_SIZE * 4
+    offset_y = TOP_BOUNDARY + BLOCK_SIZE * 14
+    offset_x += getOffsetX(blockType)
+    offset_y += getOffsetY(blockType)
 
+    if blockType == 0:
+        holdBlock = BlockT(offset_x, offset_y, BLOCK_SIZE)
+    elif blockType == 1:
+        holdBlock = BlockS(offset_x, offset_y, BLOCK_SIZE)
+    elif blockType == 2:
+        holdBlock = BlockJ(offset_x, offset_y, BLOCK_SIZE)
+    elif blockType == 3:
+        holdBlock = BlockI(offset_x, offset_y, BLOCK_SIZE)
+    elif blockType == 4:
+        holdBlock = BlockL(offset_x, offset_y, BLOCK_SIZE)
+    elif blockType == 5:
+        holdBlock = BlockZ(offset_x, offset_y, BLOCK_SIZE)
+    elif blockType == 6:
+        holdBlock = BlockO(offset_x, offset_y, BLOCK_SIZE)
+    
+    holdBlock.display(GAMEDISPLAY)
+    
 def blockListTooShort(len):
     if len <= 5:
         return True
@@ -661,8 +650,9 @@ def gameOver():
 #==================================================================================
 
     pygame.mixer.music.stop()
-    pygame.mixer.music.load('end.wav')
-    pygame.mixer.music.play(0, 0.0)
+ #   pygame.mixer.music.load('end.wav')
+#    pygame.mixer.music.play(0, 0.0)
+    playSound('end.wav')
 
     initialSize = 16
 
@@ -814,8 +804,8 @@ def runGame():
     while not gameExit:
         
         if bankedpoints > 0:
-            score += 1
-            bankedpoints -= 1
+            score += 5
+            bankedpoints -= 5
             
         # checkForQuit()
         for event in pygame.event.get():
@@ -892,29 +882,26 @@ def runGame():
                     flipSoundIcon()
                 # check for correct answer
                 elif event.key == out_list[9]:
-                    if num_q > 5:
-                        comp_input = 8
-                    else:
-                        playSound('cor.wav')
-                        if numTries < 1:
-                            hard_q = False
-                            if diff1 > 4:
-                                hard_q = True
-                            comp_input = randint(0, 3)
-                            controlsOn = True
+                    playSound('cor.wav')
+                    if numTries < 1:
+                        hard_q = False
+                        if diff1 > 4:
+                            hard_q = True
+                        controlsOn = True
+                        if num_q <= 5:
                             bankedpoints += 10 + 5 * mult
-
+                            mult += 1
                             if hard_q == True:
                                 bankedpoints += 20
-                            hard_q = False
-                            level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
-                            num_q += 1
-                            mult += 1
-                            if num_q <= 5:
-                                out_list = generateQues(level)
-                                diff1 = out_list[4]
-                            else:
-                                comp_input = 8
+                        hard_q = False
+                        level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
+                        num_q += 1
+                        out_list = generateQues(level)
+                        diff1 = out_list[4]
+                        if num_q > 5:
+                            comp_input = 8
+                        else:
+                            comp_input = randint(0, 3)
                 elif event.key != out_list[9] and (
                         event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
@@ -1065,8 +1052,15 @@ def runGame():
         prt_scr = 10 + mult * 5
         if diff1 >= 5:
             prt_scr += 20
+        if num_q > 5:
+            prt_scr = 0
         val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
         GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 3 * BLOCK_SIZE))
+
+        # drawing next blocks
+
+        for i in range(0, len(nextBlocks)):
+            nextBlocks[i].display(GAMEDISPLAY)
 
         # draw next blocks border
         drawNextBlocksBorder()
@@ -1076,7 +1070,7 @@ def runGame():
 
         # drawing hold
         if (holdBlock != None):
-            holdBlock.display(GAMEDISPLAY)
+            drawHoldBlock(holdBlock)
 
         # draw hold border
         drawHoldBorder()
@@ -1117,15 +1111,6 @@ def runGame():
 
         # draw compliment
         drawCompliment(comp_input)
-
-        # drawing next blocks
-
-        for i in range(0, len(nextBlocks)):
-            nextBlocks[i].display(GAMEDISPLAY)
-
-            # drawing hold
-            if (holdBlock != None):
-                holdBlock.display(GAMEDISPLAY)
 
         # collision checking
         if not hasMove:
@@ -1295,7 +1280,7 @@ def drawCompliment(rand):
     elif rand == -1:
         compliment = " "
     elif rand == 8:
-        compliment = "Good job! Next question upon block landing."
+        compliment = "Good job! Next questions worth points: after block landing."
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
     complimentRect.center = (WIDTH / 2, TOP_BOUNDARY / 2)
