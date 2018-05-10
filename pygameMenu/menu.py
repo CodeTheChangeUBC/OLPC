@@ -205,6 +205,7 @@ class Menu(object):
         self._prev = None  # Previous menu
         self._prev_draw = None  # Previous menu drawing function
         self._size = 0  # Menu total elements
+        self._done = False
 
         # Load fonts
         try:
@@ -681,7 +682,7 @@ class Menu(object):
         if self.is_disabled():
             return
         if self._actual._dopause:
-            while True:
+            while not self._done:
                 time.sleep(0.016666)
                 if self._main():
                     return
@@ -865,3 +866,6 @@ class Menu(object):
                 'First element of value list component must be a string'
 
         self._actual._option[selector_id][1].update_elements(values)
+
+    def done(self):
+        self._done = True
