@@ -1072,6 +1072,8 @@ def runGame():
         prt_scr = 10 + mult * 5
         if diff1 >= 5:
             prt_scr += 20
+        if num_q > 5:
+            prt_scr = 0
         val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
         GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 3 * BLOCK_SIZE))
 
