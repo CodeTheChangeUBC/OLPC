@@ -485,7 +485,6 @@ def setNextBlocks(blockSet, nextBlocks):
             nextBlocks.insert(i, BlockO(offset_x + getOffsetX(blockSet[i]),
                                         i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
 
-
 def drawHoldBorder():
     BORDER_WIDTH = 2
     borderList = [(RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 12 * BLOCK_SIZE),
@@ -631,6 +630,9 @@ def gameOver():
     global holdBlock
     global bankedpoints
     global gameExit
+    global dx
+    global dy
+    global speed
 
     score += bankedpoints
     bankedpoints = 0
@@ -687,6 +689,10 @@ def gameOver():
 ##                        for j in range(0, len(landed[i])):
 ##                            landed[i][j] = None
 ##                    holdBlock = None
+
+                    dx = 0;
+                    dy = 0;
+                    speed = 10;
 
                     gameExit = True
                     pause = False
@@ -783,13 +789,6 @@ def runGame():
     gameExit = False
 
     blockSet = getRandomBlockSet(None)
-    blockT = BlockT(0, 0, BLOCK_SIZE)
-    blockS = BlockS(0, 0, BLOCK_SIZE)
-    blockJ = BlockJ(0, 0, BLOCK_SIZE)
-    blockI = BlockI(0, 0, BLOCK_SIZE)
-    blockL = BlockL(0, 0, BLOCK_SIZE)
-    blockZ = BlockZ(0, 0, BLOCK_SIZE)
-    blockO = BlockO(0, 0, BLOCK_SIZE)
     nextBlocks = []
 
     mus_var = randint(0,12)
