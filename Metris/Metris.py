@@ -409,64 +409,50 @@ def hold(blockSet, nextBlocks):
     global holdBlock
 
     tmp = holdBlock
+    holdBlock = getBlockType(block)
 
-    holdBlock = block
+    if (tmp != None):
+        blockSet.insert(0, tmp)
 
-    offset_x = RIGHT_BOUNDARY + BLOCK_SIZE * 4
-    offset_y = TOP_BOUNDARY + BLOCK_SIZE * 14
-
-    offset_x += getOffsetX(getBlockType(holdBlock))
-    offset_y += getOffsetY(getBlockType(holdBlock))
-
-    holdBlock.setX(offset_x)
-    holdBlock.setY(offset_y)
-
-    while (holdBlock.orientation % 4 != 0):
-        holdBlock.rotateR()
-
-    # first time if hold is empty
-    if (tmp == None):
-        newBlock(blockSet, nextBlocks)
-        # blockType = blockSet.pop(0)
-        # if blockListTooShort(len(blockSet)):
-        #     appendBlockList(blockSet)
-
-        # # TODO make function            
-        # if blockType == 0:
-        #     block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
-        # elif blockType == 1:
-        #     block = BlockS(INIT_X, INIT_Y, BLOCK_SIZE)
-        # elif blockType == 2:
-        #     block = BlockJ(INIT_X, INIT_Y, BLOCK_SIZE)
-        # elif blockType == 3:
-        #     block = BlockI(INIT_X, INIT_Y, BLOCK_SIZE)
-        # elif blockType == 4:
-        #     block = BlockL(INIT_X, INIT_Y, BLOCK_SIZE)
-        # elif blockType == 5:
-        #     block = BlockZ(INIT_X, INIT_Y, BLOCK_SIZE)
-        # elif blockType == 6:
-        #     block = BlockO(INIT_X, INIT_Y, BLOCK_SIZE)
-    else:
-        tmp.setX(int(INIT_X))
-        tmp.setY(int(INIT_Y))
-        block = tmp
-        pos_x = INIT_X
-        pos_y = INIT_Y
-
+    newBlock(blockSet, nextBlocks)
     setNextBlocks(blockSet, nextBlocks)
 
+def drawHoldBlock(blockType):
+    if blockType == None:
+        return
+
+    holdBlock = None
+    offset_x = RIGHT_BOUNDARY + BLOCK_SIZE * 4
+    offset_y = TOP_BOUNDARY + BLOCK_SIZE * 14
+    offset_x += getOffsetX(blockType)
+    offset_y += getOffsetY(blockType)
+
+    if blockType == 0:
+        holdBlock = BlockT(offset_x, offset_y, BLOCK_SIZE)
+    elif blockType == 1:
+        holdBlock = BlockS(offset_x, offset_y, BLOCK_SIZE)
+    elif blockType == 2:
+        holdBlock = BlockJ(offset_x, offset_y, BLOCK_SIZE)
+    elif blockType == 3:
+        holdBlock = BlockI(offset_x, offset_y, BLOCK_SIZE)
+    elif blockType == 4:
+        holdBlock = BlockL(offset_x, offset_y, BLOCK_SIZE)
+    elif blockType == 5:
+        holdBlock = BlockZ(offset_x, offset_y, BLOCK_SIZE)
+    elif blockType == 6:
+        holdBlock = BlockO(offset_x, offset_y, BLOCK_SIZE)
+    
+    holdBlock.display(GAMEDISPLAY)
 
 def blockListTooShort(len):
     if len <= 5:
         return True
     return False
 
-
 def appendBlockList(blockSet):
     nextBlockSet = getRandomBlockSet(blockSet[len(blockSet) - 1])
     for i in range(0, len(nextBlockSet)):
         blockSet.insert(len(blockSet), nextBlockSet[i])
-
 
 def setNextBlocks(blockSet, nextBlocks):
     while (len(nextBlocks) != 0):
@@ -970,13 +956,11 @@ def runGame():
         GAMEDISPLAY.fill(INNER_BG2, [RIGHT_BOUNDARY + BLOCK_SIZE, TOP_BOUNDARY + 6 * BLOCK_SIZE, 8 * BLOCK_SIZE, 5 * BLOCK_SIZE])
         GAMEDISPLAY.fill(INNER_BG, [RIGHT_BOUNDARY + 1.5 * BLOCK_SIZE, TOP_BOUNDARY + 6.5 * BLOCK_SIZE, 7 * BLOCK_SIZE, 4 * BLOCK_SIZE])
                 
+        # draw grid lines
         drawGridLines()
 
         # drawing block objs
         if not currentBlock and not gameExit:
-            # while len(nextBlocks) != 0:
-            #     nextBlocks.pop()
-
             # calculating new questions
             level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
             numTries = 0
@@ -1080,6 +1064,11 @@ def runGame():
         val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
         GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 3 * BLOCK_SIZE))
 
+
+        # drawing next blocks
+        for i in range(0, len(nextBlocks)):
+            nextBlocks[i].display(GAMEDISPLAY)
+
         # draw next blocks border
         drawNextBlocksBorder()
 
@@ -1087,8 +1076,7 @@ def runGame():
         drawNextBlocksLabel()
 
         # drawing hold
-        if (holdBlock != None):
-            holdBlock.display(GAMEDISPLAY)
+        drawHoldBlock(holdBlock)
 
         # draw hold border
         drawHoldBorder()
@@ -1129,15 +1117,6 @@ def runGame():
 
         # draw compliment
         drawCompliment(comp_input)
-
-        # drawing next blocks
-
-        for i in range(0, len(nextBlocks)):
-            nextBlocks[i].display(GAMEDISPLAY)
-
-            # drawing hold
-            if (holdBlock != None):
-                holdBlock.display(GAMEDISPLAY)
 
         # collision checking
         if not hasMove:
