@@ -6,6 +6,6 @@ bundle_id = ctcubc.Metris
 icon = activity
 show_launcher = yes
 exec = sugar-activity Metris.Metris.py
-repository = https://github.com/sugarlabs/countries-activity.git
+repository = https://github.com/CodeTheChangeUBC/OLPC
 license = GPLv3+
 summary = A game designed to play tetris with mental math fun
