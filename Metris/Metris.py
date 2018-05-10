@@ -50,7 +50,7 @@ LEADERBOARD = ['Lol      100',
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
 TEXTCOLOR = WHITE
-HEIGHT = 800
+HEIGHT = 680
 WIDTH = 800
 LEFT_BOUNDARY = WIDTH / 3
 RIGHT_BOUNDARY = WIDTH - WIDTH / 3
@@ -1403,7 +1403,16 @@ def updateHiscore(index):
 
 def newLeaderboard():
     leaderboardFile = open("leaderboard.json", "w")
-    leaderboardFile.write("[{\"date\": \"2018-05-03\", \"score\": 10000, \"name\": \"SamC      \"}, {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Gaurav    \"}, {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Boyi      \"}, {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"SamO      \"}, {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Brandon   \"}, {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Tony      \"},{\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Eric      \"},{\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Btai      \"},{\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"gauravnv  \"},{\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"XDSU      \"}]")
+    leaderboardFile.write("[{\"date\": \"2018-05-03\", \"score\": 10000, \"name\": \"SamC      \"}, \
+                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Gaurav    \"}, \
+                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Boyi      \"}, \
+                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"SamO      \"}, \
+                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Brandon   \"}, \
+                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Tony      \"}, \
+                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Eric      \"}, \
+                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Btai      \"}, \
+                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"gauravnv  \"}, \
+                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"XDSU      \"}]")
     leaderboardFile.close()
 
 
