@@ -140,6 +140,9 @@ mus_var = randint(0,12)
 global mult
 mult = 0
 
+global level
+level = 0
+
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -804,6 +807,7 @@ def runGame():
     numTries = 0
     diff1 = out_list[4]
     num_q = 0
+    mult = 0
     scr_mult = 5
     drawCompliment(comp_input)
 
@@ -969,6 +973,7 @@ def runGame():
             char = out_list[9]
             comp_input = -1
             num_q = 0
+            mult = 0
 
             # draw new block
             newBlock(blockSet, nextBlocks)
@@ -1183,7 +1188,10 @@ def generateQues(level):
         char = pygame.K_3
     if sol_key == 3:
         char = pygame.K_4
-    diff1 = randint(1, 5)
+    if level < 4:
+        diff1 = randint(1,4)
+    else:
+        diff1 = randint(1,5)
     diff2 = randint(1, 10)
     diff3 = randint(6, 20)
     return [q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op, char]
@@ -1252,7 +1260,10 @@ def calculateUpbound(level):
 def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
-    level = int(score / 80) + 1
+    global level
+    level_prev = level
+    divisor = level_prev + 80
+    level = int(score / divisor) + 1
     fallFreq = 1000 - 500 * (level - 1)
     return level, fallFreq
 
@@ -1369,17 +1380,26 @@ def checkForQuit():
 # checks if there is a new hiscore. If there is, returns the index of the new hiscore
 #  is to be placed, otherwise returns -1.
 def checkForNewHiscore():
-    with open("leaderboard.json") as data_file:
-        data = json.load(data_file)
+    try:
+        with open("leaderboard.json") as data_file:
+            data = json.load(data_file)
+    except IOError:
+        newLeaderboard()
+        with open("leaderboard.json") as data_file:
+            data = json.load(data_file)
     global score
-    if score <= int(data[len(data) - 1]["score"]):
-        return -1
+    try:
+        if score <= int(data[len(data) - 1]["score"]):
+            return -1
 
-    for i in range (len(data)-1, 0, -1):
-        if score > data[i]["score"] and score <= data[i-1]["score"]:
-            return i
-    if score > int(data[0]["score"]):
-        return 0
+        for i in range (len(data)-1, 0, -1):
+            if score > data[i]["score"] and score <= data[i-1]["score"]:
+                return i
+        if score > int(data[0]["score"]):
+            return 0
+    except ValueError:
+        newLeaderboard()
+        return -1
 
 
 def updateHiscore(index):
@@ -1400,6 +1420,11 @@ def updateHiscore(index):
     #TODO add name to data
     with open("leaderboard.json", 'w') as data_file:
         json.dump(data, data_file)
+
+def newLeaderboard():
+    leaderboardFile = open("leaderboard.json", "w")
+    leaderboardFile.write("[{\"date\": \"2018-05-03\", \"score\": 10000, \"name\": \"SamC      \"}, {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Gaurav    \"}, {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Boyi      \"}, {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"SamO      \"}, {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Brandon   \"}, {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Tony      \"},{\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Eric      \"},{\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Btai      \"},{\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"gauravnv  \"},{\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"XDSU      \"}]")
+    leaderboardFile.close()
 
 
 # =================================================================
@@ -1583,12 +1608,19 @@ leaderboard_menu = pygameMenu.TextMenu(GAMEDISPLAY,
                                        menu_alpha=100,
                                        menu_color=COLOR_BLACK
                                        )
-
-with open("leaderboard.json") as data_file:
-    data = json.load(data_file)
+try:
+    with open("leaderboard.json") as data_file:
+        data = json.load(data_file)
+except IOError:
+    newLeaderboard()
+    with open("leaderboard.json") as data_file:
+        data = json.load(data_file)
 LEADERBOARD = []
-for i in range(0, len(data)):
-    LEADERBOARD.insert(len(LEADERBOARD), str(i+1) + "]   " + str(data[i]["name"]) + "                        " + str(data[i]["score"]) + "          " + str(data[i]["date"])) 
+try:
+    for i in range(0, len(data)):
+        LEADERBOARD.insert(len(LEADERBOARD), str(i+1) + "]   " + str(data[i]["date"]) + "          " + str(data[i]["name"]) + "          " + str(data[i]["score"]))
+except ValueError:
+    newLeaderboard()
     
 for m in LEADERBOARD:
     leaderboard_menu.add_line(m)
