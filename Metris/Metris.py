@@ -193,7 +193,7 @@ def deleteRows(rows):
                     if landed[x][y - 1] != None:
                         landed[x][y - 1].setRelativeY(BLOCK_SIZE)
                     landed[x][y] = landed[x][y - 1]
-        playSound('coin.wav')
+        playSound('clr.wav')
 
     # update score
     if len(rows) == 1:
