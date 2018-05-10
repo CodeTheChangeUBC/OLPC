@@ -1528,6 +1528,7 @@ def play_function():
         GAMEDISPLAY.fill(bg_color)
         # GAMEDISPLAY.blit(f, (int(WINDOW_SIZE[0] - f_rect.width()) / 2,
         #                      int(WINDOW_SIZE[1] / 2)))
+        main_menu.done()
         runGame()
         pygame.display.flip()
         test = False
@@ -1541,137 +1542,141 @@ def main_background():
     """
     GAMEDISPLAY.fill(RED)
 
-
-# -----------------------------------------------------------------------------
-# PLAY MENU
-
-play_menu = pygameMenu.Menu(GAMEDISPLAY,
-                            bgfun=main_background,
-                            color_selected=COLOR_RED,
-                            font=fontdir,
-                            font_color=COLOR_WHITE,
-                            font_title=font_tit,
-                            font_size=30,
-                            menu_alpha=100,
-                            menu_color=MENU_BACKGROUND_COLOR,
-                            menu_color_title=COLOR_RED,
-                            menu_height=int(WINDOW_SIZE[1] * 1),
-                            menu_width=int(WINDOW_SIZE[0] * 1),
-                            onclose=PYGAME_MENU_DISABLE_CLOSE,
-                            option_shadow=False,
-                            title='Play menu',
-                            window_height=WINDOW_SIZE[1],
-                            window_width=WINDOW_SIZE[0]
-                            )
-
-play_menu.add_option('Start', play_function)
-
-play_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
-
-# instruction MENU
-instruction_menu = pygameMenu.TextMenu(GAMEDISPLAY,
-                                       bgfun=main_background,
-                                       color_selected=COLOR_GREEN,
-                                       font=fontdir,
-                                       font_color=COLOR_WHITE,
-                                       font_size_title=30,
-                                       font_title=font_tit,
-                                       menu_color_title=COLOR_GREEN,
-                                       menu_height=int(WINDOW_SIZE[1] * 1),
-                                       menu_width=int(WINDOW_SIZE[0] * 1),
-                                       onclose=PYGAME_MENU_DISABLE_CLOSE,
-                                       option_shadow=True,
-                                       text_color=COLOR_WHITE,
-                                       text_fontsize=20,
-                                       title='Instruction',
-                                       window_height=WINDOW_SIZE[1],
-                                       window_width=WINDOW_SIZE[0],
-                                       # menu_color=MENU_BACKGROUND_COLOR,
-                                       font_size=30,
-                                       menu_alpha=100,
-                                       menu_color=COLOR_BLACK
-                                       )
-for m in INSTRUCTION:
-    instruction_menu.add_line(m)
-instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
-instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
-instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
-instruction_menu.add_option('Return to menu', PYGAME_MENU_BACK)
-
-# Leaderboard MENU
-leaderboard_menu = pygameMenu.TextMenu(GAMEDISPLAY,
-                                       bgfun=main_background,
-                                       color_selected=COLOR_BLUE,
-                                       font=fontdir,
-                                       font_color=COLOR_WHITE,
-                                       font_size_title=30,
-                                       font_title=font_tit,
-                                       # menu_color=MENU_BACKGROUND_COLOR,
-                                       menu_color_title=COLOR_BLUE,
-                                       menu_height=int(WINDOW_SIZE[1] * 1),
-                                       menu_width=int(WINDOW_SIZE[0] * 1),
-                                       onclose=PYGAME_MENU_DISABLE_CLOSE,
-                                       option_shadow=True,
-                                       text_color=COLOR_WHITE,
-                                       text_fontsize=20,
-                                       title='Leaderboard',
-                                       window_height=WINDOW_SIZE[1],
-                                       window_width=WINDOW_SIZE[0],
-                                       font_size=30,
-                                       menu_alpha=100,
-                                       menu_color=COLOR_BLACK
-                                       )
-try:
-    with open("leaderboard.json") as data_file:
-        data = json.load(data_file)
-except IOError:
-    newLeaderboard()
-    with open("leaderboard.json") as data_file:
-        data = json.load(data_file)
-except ValueError:
-    newLeaderboard()
-    with open("leaderboard.json") as data_file:
-        data = json.load(data_file)
-LEADERBOARD = []
-try:
-    for i in range(0, len(data)):
-        LEADERBOARD.insert(len(LEADERBOARD), str(i+1) + "]   " + str(data[i]["date"]) + "          " + str(data[i]["name"]) + "          " + str(data[i]["score"]))
-except ValueError:
-    newLeaderboard()
+global main_menu
+def buildMain():
+    global main_menu
     
-for m in LEADERBOARD:
-    leaderboard_menu.add_line(m)
+    # -----------------------------------------------------------------------------
+    # PLAY MENU
 
-# leaderboard_menu.add_option('View top 10 scores!', leaderboard_function)
-leaderboard_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
-leaderboard_menu.add_option('Return to menu', PYGAME_MENU_BACK)
+    play_menu = pygameMenu.Menu(GAMEDISPLAY,
+                                bgfun=main_background,
+                                color_selected=COLOR_RED,
+                                font=fontdir,
+                                font_color=COLOR_WHITE,
+                                font_title=font_tit,
+                                font_size=30,
+                                menu_alpha=100,
+                                menu_color=MENU_BACKGROUND_COLOR,
+                                menu_color_title=COLOR_RED,
+                                menu_height=int(WINDOW_SIZE[1] * 1),
+                                menu_width=int(WINDOW_SIZE[0] * 1),
+                                onclose=PYGAME_MENU_DISABLE_CLOSE,
+                                option_shadow=False,
+                                title='Play menu',
+                                window_height=WINDOW_SIZE[1],
+                                window_width=WINDOW_SIZE[0]
+                                )
 
-# MAIN MENU
-main_menu = pygameMenu.Menu(GAMEDISPLAY,
-                            bgfun=main_background,
-                            color_selected=RED,
-                            font=fontdir,
-                            font_color=COLOR_WHITE,
-                            font_size=30,
-                            menu_alpha=100,
-                            menu_color=COLOR_BLACK,
-                            menu_height=int(WINDOW_SIZE[1] * 1),
-                            menu_width=int(WINDOW_SIZE[0] * 1),
-                            menu_color_title=COLOR_RED,
-                            onclose=PYGAME_MENU_DISABLE_CLOSE,
-                            font_title=font_tit,
-                            option_shadow=True,
-                            title='Metris',
-                            window_height=WINDOW_SIZE[1],
-                            window_width=WINDOW_SIZE[0]
-                            )
-main_menu.add_option('Play', play_menu)
-main_menu.add_option('Instruction', instruction_menu)
-main_menu.add_option('Leaderboard', leaderboard_menu)
-main_menu.add_option('Quit', PYGAME_MENU_EXIT)
+    play_menu.add_option('Start', play_function)
+
+    play_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
+
+    # instruction MENU
+    instruction_menu = pygameMenu.TextMenu(GAMEDISPLAY,
+                                           bgfun=main_background,
+                                           color_selected=COLOR_GREEN,
+                                           font=fontdir,
+                                           font_color=COLOR_WHITE,
+                                           font_size_title=30,
+                                           font_title=font_tit,
+                                           menu_color_title=COLOR_GREEN,
+                                           menu_height=int(WINDOW_SIZE[1] * 1),
+                                           menu_width=int(WINDOW_SIZE[0] * 1),
+                                           onclose=PYGAME_MENU_DISABLE_CLOSE,
+                                           option_shadow=True,
+                                           text_color=COLOR_WHITE,
+                                           text_fontsize=20,
+                                           title='Instruction',
+                                           window_height=WINDOW_SIZE[1],
+                                           window_width=WINDOW_SIZE[0],
+                                           # menu_color=MENU_BACKGROUND_COLOR,
+                                           font_size=30,
+                                           menu_alpha=100,
+                                           menu_color=COLOR_BLACK
+                                           )
+    for m in INSTRUCTION:
+        instruction_menu.add_line(m)
+    instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
+    instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
+    instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
+    instruction_menu.add_option('Return to menu', PYGAME_MENU_BACK)
+
+    # Leaderboard MENU
+    leaderboard_menu = pygameMenu.TextMenu(GAMEDISPLAY,
+                                           bgfun=main_background,
+                                           color_selected=COLOR_BLUE,
+                                           font=fontdir,
+                                           font_color=COLOR_WHITE,
+                                           font_size_title=30,
+                                           font_title=font_tit,
+                                           # menu_color=MENU_BACKGROUND_COLOR,
+                                           menu_color_title=COLOR_BLUE,
+                                           menu_height=int(WINDOW_SIZE[1] * 1),
+                                           menu_width=int(WINDOW_SIZE[0] * 1),
+                                           onclose=PYGAME_MENU_DISABLE_CLOSE,
+                                           option_shadow=True,
+                                           text_color=COLOR_WHITE,
+                                           text_fontsize=20,
+                                           title='Leaderboard',
+                                           window_height=WINDOW_SIZE[1],
+                                           window_width=WINDOW_SIZE[0],
+                                           font_size=30,
+                                           menu_alpha=100,
+                                           menu_color=COLOR_BLACK
+                                           )
+    try:
+        with open("leaderboard.json") as data_file:
+            data = json.load(data_file)
+    except IOError:
+        newLeaderboard()
+        with open("leaderboard.json") as data_file:
+            data = json.load(data_file)
+    except ValueError:
+        newLeaderboard()
+        with open("leaderboard.json") as data_file:
+            data = json.load(data_file)
+    LEADERBOARD = []
+    try:
+        for i in range(0, len(data)):
+            LEADERBOARD.insert(len(LEADERBOARD), str(i+1) + "]   " + str(data[i]["date"]) + "          " + str(data[i]["name"]) + "          " + str(data[i]["score"]))
+    except ValueError:
+        newLeaderboard()
+        
+    for m in LEADERBOARD:
+        leaderboard_menu.add_line(m)
+
+    # leaderboard_menu.add_option('View top 10 scores!', leaderboard_function)
+    leaderboard_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
+    leaderboard_menu.add_option('Return to menu', PYGAME_MENU_BACK)
+
+    # MAIN MENU
+    main_menu = pygameMenu.Menu(GAMEDISPLAY,
+                                bgfun=main_background,
+                                color_selected=RED,
+                                font=fontdir,
+                                font_color=COLOR_WHITE,
+                                font_size=30,
+                                menu_alpha=100,
+                                menu_color=COLOR_BLACK,
+                                menu_height=int(WINDOW_SIZE[1] * 1),
+                                menu_width=int(WINDOW_SIZE[0] * 1),
+                                menu_color_title=COLOR_RED,
+                                onclose=PYGAME_MENU_DISABLE_CLOSE,
+                                font_title=font_tit,
+                                option_shadow=True,
+                                title='Metris',
+                                window_height=WINDOW_SIZE[1],
+                                window_width=WINDOW_SIZE[0]
+                                )
+    main_menu.add_option('Play', play_menu)
+    main_menu.add_option('Instruction', instruction_menu)
+    main_menu.add_option('Leaderboard', leaderboard_menu)
+    main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 
 
 def main():
+    global main_menu
     # Main menu
     # runGame()
     main_menu.mainloop(pygame.event.get())
@@ -1679,4 +1684,5 @@ def main():
 
 if __name__ == '__main__':
     while True:
+        buildMain()
         main()
