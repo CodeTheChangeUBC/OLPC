@@ -634,9 +634,6 @@ def gameOver():
     global score
     global holdBlock
     global bankedpoints
-    global dx
-    global dy
-    global speed
 
     score += bankedpoints
     bankedpoints = 0
@@ -692,9 +689,6 @@ def gameOver():
                     currentBlock = False
                     block = None
                     score = 0
-                    dx = 0;
-                    dy = 0;
-                    speed = 10;
                     for i in range(0, len(landed)):
                         for j in range(0, len(landed[i])):
                             landed[i][j] = None
@@ -899,29 +893,26 @@ def runGame():
                     flipSoundIcon()
                 # check for correct answer
                 elif event.key == out_list[9]:
-                    if num_q > 5:
-                        comp_input = 8
-                    else:
-                        playSound('cor.wav')
-                        if numTries < 1:
-                            hard_q = False
-                            if diff1 > 4:
-                                hard_q = True
-                            comp_input = randint(0, 3)
-                            controlsOn = True
+                    playSound('cor.wav')
+                    if numTries < 1:
+                        hard_q = False
+                        if diff1 > 4:
+                            hard_q = True
+                        controlsOn = True
+                        if num_q <= 5:
                             bankedpoints += 10 + 5 * mult
-
+                            mult += 1
                             if hard_q == True:
                                 bankedpoints += 20
-                            hard_q = False
-                            level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
-                            num_q += 1
-                            mult += 1
-                            if num_q <= 5:
-                                out_list = generateQues(level)
-                                diff1 = out_list[4]
-                            else:
-                                comp_input = 8
+                        hard_q = False
+                        level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
+                        num_q += 1
+                        out_list = generateQues(level)
+                        diff1 = out_list[4]
+                        if num_q > 5:
+                            comp_input = 8
+                        else:
+                            comp_input = randint(0, 3)
                 elif event.key != out_list[9] and (
                         event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
@@ -1304,7 +1295,7 @@ def drawCompliment(rand):
     elif rand == -1:
         compliment = " "
     elif rand == 8:
-        compliment = "Good job! Next question upon block landing."
+        compliment = "Good job! Next questions worth points: after block landing."
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
     complimentRect.center = (WIDTH / 2, TOP_BOUNDARY / 2)
