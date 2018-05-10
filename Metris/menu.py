@@ -35,7 +35,7 @@ def get_key():
 
 def display_box(screen, message):
   "Print a message in a box in the middle of the screen"
-  fontobject = pygame.font.Font(None, 28)
+  fontobject = pygame.font.Font(None, 18)
   pygame.draw.rect(screen, (0,0,0),
                    ((screen.get_width() / 2) - 100,
                     (screen.get_height() / 2) - 10,
@@ -52,8 +52,9 @@ def display_box(screen, message):
 def ask(screen, question):
   "ask(screen, question) -> answer"
   pygame.font.init()
-  current_string = []
+  current_string = ["               "]
   display_box(screen, question + ": " + string.join(current_string,""))
+  counter = 10
   while 1:
     inkey = get_key()
     if inkey == K_BACKSPACE:
@@ -65,6 +66,7 @@ def ask(screen, question):
     elif inkey <= 127:
       current_string.append(chr(inkey))
     display_box(screen, question + ": " + string.join(current_string,""))
+    counter -= 1
   return string.join(current_string,"")
 
 
