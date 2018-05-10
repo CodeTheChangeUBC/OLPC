@@ -30,7 +30,7 @@ This project is multi-part and includes:
 - **Samuel Or** - @sor2
 - **Brandon Tai** - @beetai
 - **Tony Su** - @tonyxdsu
-## *Installation REDs :*
+## *Installation Steps :*
 
 #### **Metris**
 1. Install Python 2.7.x
