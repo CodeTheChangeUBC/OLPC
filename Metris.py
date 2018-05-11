@@ -138,6 +138,8 @@ mus_var = randint(0,12)
 global mult
 mult = 0
 
+global level
+level = 0
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -580,12 +582,14 @@ def paused():
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -661,8 +665,7 @@ def gameOver():
 #==================================================================================
 
     pygame.mixer.music.stop()
-    pygame.mixer.music.load('end.wav')
-    pygame.mixer.music.play(0, 0.0)
+    playSound('end.wav')
 
     initialSize = 16
 
@@ -673,12 +676,14 @@ def gameOver():
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
 
             if event.type == pygame.KEYDOWN:
@@ -809,14 +814,15 @@ def runGame():
     numTries = 0
     diff1 = out_list[4]
     num_q = 0
+    mult = 0
     scr_mult = 5
     drawCompliment(comp_input)
 
     while not gameExit:
         
         if bankedpoints > 0:
-            score += 1
-            bankedpoints -= 1
+            score += 5
+            bankedpoints -= 5
             
         # checkForQuit()
         for event in pygame.event.get():
@@ -824,12 +830,14 @@ def runGame():
                 gameExit = True
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -891,37 +899,34 @@ def runGame():
                     flipSoundIcon()
                 # check for correct answer
                 elif event.key == out_list[9]:
-                    if num_q > 5:
-                        comp_input = 8
-                    else:
-                        playSound('cor.wav')
-                        if numTries < 1:
-                            hard_q = False
-                            if diff1 > 4:
-                                hard_q = True
-                            comp_input = randint(0, 3)
-                            controlsOn = True
-                            bankedpoints += 10 + 5 * mult
-
+                    playSound('cor.wav')
+                    if numTries < 1:
+                        hard_q = False
+                        if diff1 > 4:
+                            hard_q = True
+                        controlsOn = True
+                        if num_q <= 5:
+                            bankedpoints += 10
+                            mult += 1
                             if hard_q == True:
                                 bankedpoints += 20
-                            hard_q = False
-                            level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
-                            num_q += 1
-                            mult += 1
-                            if num_q <= 5:
-                                out_list = generateQues(level)
-                                diff1 = out_list[4]
-                            else:
-                                comp_input = 8
+                        hard_q = False
+                        level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
+                        num_q += 1
+                        out_list = generateQues(level)
+                        diff1 = out_list[4]
+                        if num_q > 5:
+                            comp_input = 8
+                        else:
+                            comp_input = randint(0,3)
                 elif event.key != out_list[9] and (
                         event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
                     mult = 0
-                    comp_input = randint(4, 7)
-                    controlsOn = False
-                    if num_q < 5:
+                    if num_q <= 5 and numTries <= 1:
+                        controlsOn = False
                         playSound('incor.wav')
+                        comp_input = randint(4, 7)
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -970,6 +975,7 @@ def runGame():
             char = out_list[9]
             comp_input = -1
             num_q = 0
+            mult = 0
 
             # draw new block
             newBlock(blockSet, nextBlocks)
@@ -1061,6 +1067,8 @@ def runGame():
         prt_scr = 10 + mult * 5
         if diff1 >= 5:
             prt_scr += 20
+        if num_q > 5:
+            prt_scr = 0
         val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
         GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 3 * BLOCK_SIZE))
 
@@ -1140,8 +1148,9 @@ def runGame():
                 mus_var = randint(0,12)
             pygame.mixer.music.load(MID_FILES[mus_var])
             level_prev = level
-            if isMusicOn == True:
-                pygame.mixer.music.play(-1, 0.0)
+            pygame.mixer.music.play(-1,0.0)
+            if isMusicOn == False:
+                pygame.mixer.music.pause()
         pygame.display.update()
 
         clock.tick(speed)
@@ -1187,7 +1196,10 @@ def generateQues(level):
         char = pygame.K_3
     if sol_key == 3:
         char = pygame.K_4
-    diff1 = randint(1, 5)
+    if level < 4:
+        diff1 = randint(1,4)
+    else:
+        diff1 = randint(1,5)
     diff2 = randint(1, 10)
     diff3 = randint(6, 20)
     return [q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op, char]
@@ -1256,7 +1268,10 @@ def calculateUpbound(level):
 def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
-    level = int(score / 80) + 1
+    global level
+    level_prev = level
+    divisor = level_prev + 80
+    level = int(score/divisor) + 1
     fallFreq = 1000 - 500 * (level - 1)
     return level, fallFreq
 
@@ -1288,7 +1303,7 @@ def drawCompliment(rand):
     elif rand == -1:
         compliment = " "
     elif rand == 8:
-        compliment = "Good job! Next question upon block landing."
+        compliment = "Good job! Next questions worth points upon block landing."
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
     complimentRect.center = (WIDTH / 2, TOP_BOUNDARY / 2)
@@ -1546,6 +1561,7 @@ def play_function():
         GAMEDISPLAY.fill(bg_color)
         # GAMEDISPLAY.blit(f, (int(WINDOW_SIZE[0] - f_rect.width()) / 2,
         #                      int(WINDOW_SIZE[1] / 2)))
+        main_menu.done()
         runGame()
         pygame.display.flip()
         test = False
@@ -1559,137 +1575,141 @@ def main_background():
     """
     GAMEDISPLAY.fill(RED)
 
-
-# -----------------------------------------------------------------------------
-# PLAY MENU
-
-play_menu = pygameMenu.Menu(GAMEDISPLAY,
-                            bgfun=main_background,
-                            color_selected=COLOR_RED,
-                            font=fontdir,
-                            font_color=COLOR_WHITE,
-                            font_title=font_tit,
-                            font_size=30,
-                            menu_alpha=100,
-                            menu_color=MENU_BACKGROUND_COLOR,
-                            menu_color_title=COLOR_RED,
-                            menu_height=int(WINDOW_SIZE[1] * 1),
-                            menu_width=int(WINDOW_SIZE[0] * 1),
-                            onclose=PYGAME_MENU_DISABLE_CLOSE,
-                            option_shadow=False,
-                            title='Play menu',
-                            window_height=WINDOW_SIZE[1],
-                            window_width=WINDOW_SIZE[0]
-                            )
-
-play_menu.add_option('Start', play_function)
-
-play_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
-
-# instruction MENU
-instruction_menu = pygameMenu.TextMenu(GAMEDISPLAY,
-                                       bgfun=main_background,
-                                       color_selected=COLOR_GREEN,
-                                       font=fontdir,
-                                       font_color=COLOR_WHITE,
-                                       font_size_title=30,
-                                       font_title=font_tit,
-                                       menu_color_title=COLOR_GREEN,
-                                       menu_height=int(WINDOW_SIZE[1] * 1),
-                                       menu_width=int(WINDOW_SIZE[0] * 1),
-                                       onclose=PYGAME_MENU_DISABLE_CLOSE,
-                                       option_shadow=True,
-                                       text_color=COLOR_WHITE,
-                                       text_fontsize=20,
-                                       title='Instruction',
-                                       window_height=WINDOW_SIZE[1],
-                                       window_width=WINDOW_SIZE[0],
-                                       # menu_color=MENU_BACKGROUND_COLOR,
-                                       font_size=30,
-                                       menu_alpha=100,
-                                       menu_color=COLOR_BLACK
-                                       )
-for m in INSTRUCTION:
-    instruction_menu.add_line(m)
-instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
-instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
-instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
-instruction_menu.add_option('Return to menu', PYGAME_MENU_BACK)
-
-# Leaderboard MENU
-leaderboard_menu = pygameMenu.TextMenu(GAMEDISPLAY,
-                                       bgfun=main_background,
-                                       color_selected=COLOR_BLUE,
-                                       font=fontdir,
-                                       font_color=COLOR_WHITE,
-                                       font_size_title=30,
-                                       font_title=font_tit,
-                                       # menu_color=MENU_BACKGROUND_COLOR,
-                                       menu_color_title=COLOR_BLUE,
-                                       menu_height=int(WINDOW_SIZE[1] * 1),
-                                       menu_width=int(WINDOW_SIZE[0] * 1),
-                                       onclose=PYGAME_MENU_DISABLE_CLOSE,
-                                       option_shadow=True,
-                                       text_color=COLOR_WHITE,
-                                       text_fontsize=20,
-                                       title='Leaderboard',
-                                       window_height=WINDOW_SIZE[1],
-                                       window_width=WINDOW_SIZE[0],
-                                       font_size=30,
-                                       menu_alpha=100,
-                                       menu_color=COLOR_BLACK
-                                       )
-try:
-    with open("leaderboard.json") as data_file:
-        data = json.load(data_file)
-except IOError:
-    newLeaderboard()
-    with open("leaderboard.json") as data_file:
-        data = json.load(data_file)
-except ValueError:
-    newLeaderboard()
-    with open("leaderboard.json") as data_file:
-        data = json.load(data_file)
-LEADERBOARD = []
-try:
-    for i in range(0, len(data)):
-        LEADERBOARD.insert(len(LEADERBOARD), str(i+1) + "]   " + str(data[i]["date"]) + "          " + str(data[i]["name"]) + "          " + str(data[i]["score"]))
-except ValueError:
-    newLeaderboard()
+global main_menu
+def buildMain():
+    global main_menu
     
-for m in LEADERBOARD:
-    leaderboard_menu.add_line(m)
+    # -----------------------------------------------------------------------------
+    # PLAY MENU
 
-# leaderboard_menu.add_option('View top 10 scores!', leaderboard_function)
-leaderboard_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
-leaderboard_menu.add_option('Return to menu', PYGAME_MENU_BACK)
+    play_menu = pygameMenu.Menu(GAMEDISPLAY,
+                                bgfun=main_background,
+                                color_selected=COLOR_RED,
+                                font=fontdir,
+                                font_color=COLOR_WHITE,
+                                font_title=font_tit,
+                                font_size=30,
+                                menu_alpha=100,
+                                menu_color=MENU_BACKGROUND_COLOR,
+                                menu_color_title=COLOR_RED,
+                                menu_height=int(WINDOW_SIZE[1] * 1),
+                                menu_width=int(WINDOW_SIZE[0] * 1),
+                                onclose=PYGAME_MENU_DISABLE_CLOSE,
+                                option_shadow=False,
+                                title='Play menu',
+                                window_height=WINDOW_SIZE[1],
+                                window_width=WINDOW_SIZE[0]
+                                )
 
-# MAIN MENU
-main_menu = pygameMenu.Menu(GAMEDISPLAY,
-                            bgfun=main_background,
-                            color_selected=RED,
-                            font=fontdir,
-                            font_color=COLOR_WHITE,
-                            font_size=30,
-                            menu_alpha=100,
-                            menu_color=COLOR_BLACK,
-                            menu_height=int(WINDOW_SIZE[1] * 1),
-                            menu_width=int(WINDOW_SIZE[0] * 1),
-                            menu_color_title=COLOR_RED,
-                            onclose=PYGAME_MENU_DISABLE_CLOSE,
-                            font_title=font_tit,
-                            option_shadow=True,
-                            title='Metris',
-                            window_height=WINDOW_SIZE[1],
-                            window_width=WINDOW_SIZE[0]
-                            )
-main_menu.add_option('Play', play_menu)
-main_menu.add_option('Instruction', instruction_menu)
-main_menu.add_option('Leaderboard', leaderboard_menu)
-main_menu.add_option('Quit', PYGAME_MENU_EXIT)
+    play_menu.add_option('Start', play_function)
+
+    play_menu.add_option('Return to main menu', PYGAME_MENU_BACK)
+
+    # instruction MENU
+    instruction_menu = pygameMenu.TextMenu(GAMEDISPLAY,
+                                           bgfun=main_background,
+                                           color_selected=COLOR_GREEN,
+                                           font=fontdir,
+                                           font_color=COLOR_WHITE,
+                                           font_size_title=30,
+                                           font_title=font_tit,
+                                           menu_color_title=COLOR_GREEN,
+                                           menu_height=int(WINDOW_SIZE[1] * 1),
+                                           menu_width=int(WINDOW_SIZE[0] * 1),
+                                           onclose=PYGAME_MENU_DISABLE_CLOSE,
+                                           option_shadow=True,
+                                           text_color=COLOR_WHITE,
+                                           text_fontsize=20,
+                                           title='Instruction',
+                                           window_height=WINDOW_SIZE[1],
+                                           window_width=WINDOW_SIZE[0],
+                                           # menu_color=MENU_BACKGROUND_COLOR,
+                                           font_size=30,
+                                           menu_alpha=100,
+                                           menu_color=COLOR_BLACK
+                                           )
+    for m in INSTRUCTION:
+        instruction_menu.add_line(m)
+    instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
+    instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
+    instruction_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
+    instruction_menu.add_option('Return to menu', PYGAME_MENU_BACK)
+
+    # Leaderboard MENU
+    leaderboard_menu = pygameMenu.TextMenu(GAMEDISPLAY,
+                                           bgfun=main_background,
+                                           color_selected=COLOR_BLUE,
+                                           font=fontdir,
+                                           font_color=COLOR_WHITE,
+                                           font_size_title=30,
+                                           font_title=font_tit,
+                                           # menu_color=MENU_BACKGROUND_COLOR,
+                                           menu_color_title=COLOR_BLUE,
+                                           menu_height=int(WINDOW_SIZE[1] * 1),
+                                           menu_width=int(WINDOW_SIZE[0] * 1),
+                                           onclose=PYGAME_MENU_DISABLE_CLOSE,
+                                           option_shadow=True,
+                                           text_color=COLOR_WHITE,
+                                           text_fontsize=20,
+                                           title='Leaderboard',
+                                           window_height=WINDOW_SIZE[1],
+                                           window_width=WINDOW_SIZE[0],
+                                           font_size=30,
+                                           menu_alpha=100,
+                                           menu_color=COLOR_BLACK
+                                           )
+    try:
+        with open("leaderboard.json") as data_file:
+            data = json.load(data_file)
+    except IOError:
+        newLeaderboard()
+        with open("leaderboard.json") as data_file:
+            data = json.load(data_file)
+    except ValueError:
+        newLeaderboard()
+        with open("leaderboard.json") as data_file:
+            data = json.load(data_file)
+    LEADERBOARD = []
+    try:
+        for i in range(0, len(data)):
+            LEADERBOARD.insert(len(LEADERBOARD), str(i+1) + "]   " + str(data[i]["date"]) + "          " + str(data[i]["name"]) + "          " + str(data[i]["score"]))
+    except ValueError:
+        newLeaderboard()
+        
+    for m in LEADERBOARD:
+        leaderboard_menu.add_line(m)
+
+    # leaderboard_menu.add_option('View top 10 scores!', leaderboard_function)
+    leaderboard_menu.add_line(PYGAMEMENU_TEXT_NEWLINE)
+    leaderboard_menu.add_option('Return to menu', PYGAME_MENU_BACK)
+
+    # MAIN MENU
+    main_menu = pygameMenu.Menu(GAMEDISPLAY,
+                                bgfun=main_background,
+                                color_selected=RED,
+                                font=fontdir,
+                                font_color=COLOR_WHITE,
+                                font_size=30,
+                                menu_alpha=100,
+                                menu_color=COLOR_BLACK,
+                                menu_height=int(WINDOW_SIZE[1] * 1),
+                                menu_width=int(WINDOW_SIZE[0] * 1),
+                                menu_color_title=COLOR_RED,
+                                onclose=PYGAME_MENU_DISABLE_CLOSE,
+                                font_title=font_tit,
+                                option_shadow=True,
+                                title='Metris',
+                                window_height=WINDOW_SIZE[1],
+                                window_width=WINDOW_SIZE[0]
+                                )
+    main_menu.add_option('Play', play_menu)
+    main_menu.add_option('Instruction', instruction_menu)
+    main_menu.add_option('Leaderboard', leaderboard_menu)
+    main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 
 
 def main():
+    global main_menu
     # Main menu
     # runGame()
     main_menu.mainloop(pygame.event.get())
@@ -1697,4 +1717,5 @@ def main():
 
 if __name__ == '__main__':
     while True:
+        buildMain()
         main()
