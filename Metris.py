@@ -45,14 +45,9 @@ INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                '*Only after answering correctly',
                ]
 
-LEADERBOARD = ['Lol      100',
-               'LOL      200',
-               'lol      300'
-               ]
 
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 50)
-TEXTCOLOR = WHITE
 HEIGHT = 680
 WIDTH = 800
 LEFT_BOUNDARY = WIDTH / 3
@@ -696,9 +691,9 @@ def gameOver():
 ##                            landed[i][j] = None
 ##                    holdBlock = None
 
-                    dx = 0;
-                    dy = 0;
-                    speed = 10;
+                    dx = 0
+                    dy = 0
+                    speed = 10
 
                     gameExit = True
                     pause = False
@@ -743,21 +738,21 @@ def gameOver():
 
 
 def drawGridLines():
-##    SPACING = BLOCK_SIZE / 4
-##    for i in range (1, 10):
-##        for j in range (0, 85):
-##            if j % 2 == 0:
-##                pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
-##                                (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING),
-##                                (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING + SPACING),
-##                                1)
-##    for i in range (1, 20):
-##        for j in range (0, 43):
-##            if j % 2 == 0:
-##                pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
-##                                (LEFT_BOUNDARY + j * SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
-##                                (LEFT_BOUNDARY + j * SPACING + SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
-##                                1)
+   # SPACING = BLOCK_SIZE / 4
+   # for i in range (1, 10):
+   #     for j in range (0, 85):
+   #         if j % 2 == 0:
+   #             pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
+   #                             (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING),
+   #                             (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING + SPACING),
+   #                             1)
+   # for i in range (1, 20):
+   #     for j in range (0, 43):
+   #         if j % 2 == 0:
+   #             pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
+   #                             (LEFT_BOUNDARY + j * SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
+   #                             (LEFT_BOUNDARY + j * SPACING + SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
+   #                             1)
     for i in range (1, 10):
         pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
                         (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY),
@@ -768,7 +763,7 @@ def drawGridLines():
                         (LEFT_BOUNDARY, TOP_BOUNDARY + i * BLOCK_SIZE),
                         (LEFT_BOUNDARY + 10 * BLOCK_SIZE, TOP_BOUNDARY + i * BLOCK_SIZE),
                         1)
-    
+
 
 #=================================================================================================
 
@@ -1411,7 +1406,7 @@ def updateHiscore(index):
         data = json.load(data_file)
     global score
     global name
-    drawHighScore("You made a new High Score!")
+    drawHighScore("You made a new High Score!", level, score)
     name = inputbox.ask(GAMEDISPLAY, "Name")
     for i in range(len(data) - 1, index, -1):
         data[i]["date"] = data[i - 1]["date"]
@@ -1423,7 +1418,7 @@ def updateHiscore(index):
     with open("leaderboard.json", 'w') as data_file:
         json.dump(data, data_file)
 
-def drawHighScore(text):
+def drawHighScore(text, lvl, pts):
     # This function displays large text in the
     # center of the screen until a key is pressed.
     # Draw the text drop shadow
@@ -1436,6 +1431,16 @@ def drawHighScore(text):
     titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
     titleRect.center = (int(WIDTH / 2) - 3, int(HEIGHT / 4) - 46)
     GAMEDISPLAY.blit(titleSurf, titleRect)
+
+    # Level text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Level: ' + str(lvl), BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 95)
+    GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
+
+    # Score text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Score: ' + str(pts), BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 120)
+    GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
 
 
     # while checkForKeyPress() is None:
@@ -1454,6 +1459,24 @@ def checkForKeyPress():
             continue
         return event.key
     return None
+
+def drawGameOver(text):
+    # This function displays large text in the
+    # center of the screen until a key is pressed.
+    # Draw the text drop shadow
+    GAMEDISPLAY.fill(BLACK)
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
+    titleRect.center = (int(WIDTH / 2)-3, int(HEIGHT / 4) - 40)
+    GAMEDISPLAY.blit(titleSurf, titleRect)
+
+    # Draw the text
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
+    titleRect.center = (int(WIDTH / 2) - 3, int(HEIGHT / 4) - 46)
+    GAMEDISPLAY.blit(titleSurf, titleRect)
+
+    while checkForKeyPress() is None:
+        pygame.display.update()
+        clock.tick()
 
 def newLeaderboard():
     leaderboardFile = open("leaderboard.json", "w")

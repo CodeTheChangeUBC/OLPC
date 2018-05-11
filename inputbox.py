@@ -55,6 +55,7 @@ def ask(screen, question):
         inkey = get_key()
         if inkey == K_BACKSPACE:
             current_string = current_string[0:-1]
+            counter += 2
         elif inkey == K_RETURN:
             break
         elif inkey == K_MINUS:
