@@ -240,6 +240,38 @@ def checkCollision():
                 blockPerimeter[i].getY() > BOTTOM_BOUNDARY - BLOCK_SIZE:
             return True
 
+def checkBlockCollision():
+    global pos_x
+    global pos_y
+    global currentBlock
+    if not currentBlock:
+        return False
+    global landed
+    isCollision = False
+    blockPerimeter = block.getPerimeter()
+    for i in range(0, len(blockPerimeter)):
+        for j in range(0, len(landed)):
+            for k in range(0, len(landed[j])):
+                if landed[j][k] is not None:
+                    isCollision = False
+                    if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
+                        
+                        block.setY(block.getY() + BLOCK_SIZE)
+                        pos_y += BLOCK_SIZE
+                        if checkCollision():
+                            block.setY(block.getY() - BLOCK_SIZE)
+                            pos_y -= BLOCK_SIZE
+                            isCollision = True
+
+                        if checkCollision():
+                            block.setY(block.getY() - BLOCK_SIZE)
+                            pos_y -= BLOCK_SIZE
+                            if checkCollision():
+                                block.setY(block.getY() + BLOCK_SIZE)
+                                pos_y += BLOCK_SIZE
+                                return isCollision
+    return False
+    
 
 def checkCollisionRotation():
     global pos_x
@@ -249,23 +281,32 @@ def checkCollisionRotation():
         return False
     global landed
     blockPerimeter = block.getPerimeter()
-    for i in range(0, len(blockPerimeter)):
-        for j in range(0, len(landed)):
-            for k in range(0, len(landed[j])):
-                if landed[j][k] is not None:
-                    if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][
-                        k].getY():
-                        block.setY(block.getY() - BLOCK_SIZE)
-                        pos_y -= BLOCK_SIZE
-                        if checkCollision():
-                            block.setY(block.getY() + BLOCK_SIZE)
-                            pos_y += BLOCK_SIZE
-                            return True
-
+##    for i in range(0, len(blockPerimeter)):
+##        for j in range(0, len(landed)):
+##            for k in range(0, len(landed[j])):
+##                if landed[j][k] is not None:
+##                    if blockPerimeter[i].getX() == landed[j][k].getX() and blockPerimeter[i].getY() == landed[j][k].getY():
+##                        
+##                        block.setY(block.getY() + BLOCK_SIZE)
+##                        pos_y += BLOCK_SIZE
+##                        checkBoundaryCollision()
+##                        if checkCollision():
+##                            block.setY(block.getY() - BLOCK_SIZE)
+##                            pos_y -= BLOCK_SIZE
+##
+##                        if checkCollision():
+##                            block.setY(block.getY() - BLOCK_SIZE)
+##                            pos_y -= BLOCK_SIZE
+##                            if checkCollision():
+##                                block.setY(block.getY() + BLOCK_SIZE)
+##                                pos_y += BLOCK_SIZE
+##                                return True
+                        
     for i in range(0, len(blockPerimeter)):
         if blockPerimeter[i].getX() < LEFT_BOUNDARY - BLOCK_SIZE:
             block.setX(block.getX() + 2 * BLOCK_SIZE)
             pos_x += 2 * BLOCK_SIZE
+            checkBlockCollision()
             if checkCollision():
                 block.setX(block.getX() - 2 * BLOCK_SIZE)
                 pos_x -= 2 * BLOCK_SIZE
@@ -274,16 +315,26 @@ def checkCollisionRotation():
         elif blockPerimeter[i].getX() > RIGHT_BOUNDARY:
             block.setX(block.getX() - 2 * BLOCK_SIZE)
             pos_x -= 2 * BLOCK_SIZE
+            checkBlockCollision()
             if checkCollision():
                 block.setX(block.getX() + 2 * BLOCK_SIZE)
                 pos_x += 2 * BLOCK_SIZE
                 return True
             break
-
+        elif blockPerimeter[i].getY() > BOTTOM_BOUNDARY:
+            block.setY(block.getY() - 2 * BLOCK_SIZE)
+            pos_y -= 2 * BLOCK_SIZE
+            checkBlockCollision()
+            if checkCollision():
+                block.setY(block.getX() + 2 * BLOCK_SIZE)
+                pos_y += 2 * BLOCK_SIZE
+                return True
+            break
     for i in range(0, len(blockPerimeter)):
         if blockPerimeter[i].getX() < LEFT_BOUNDARY:
             block.setX(block.getX() + BLOCK_SIZE)
             pos_x += BLOCK_SIZE
+            checkBlockCollision()
             if checkCollision():
                 block.setX(block.getX() - BLOCK_SIZE)
                 pos_x -= BLOCK_SIZE
@@ -292,6 +343,7 @@ def checkCollisionRotation():
         elif blockPerimeter[i].getX() > RIGHT_BOUNDARY - BLOCK_SIZE:
             block.setX(block.getX() - BLOCK_SIZE)
             pos_x -= BLOCK_SIZE
+            checkBlockCollision()
             if checkCollision():
                 block.setX(block.getX() + BLOCK_SIZE)
                 pos_x += BLOCK_SIZE
@@ -300,6 +352,7 @@ def checkCollisionRotation():
         elif blockPerimeter[i].getY() > BOTTOM_BOUNDARY - BLOCK_SIZE:
             block.setY(block.getY() - BLOCK_SIZE)
             pos_y -= BLOCK_SIZE
+            checkBlockCollision()
             if checkCollision():
                 block.setY(block.getX() + BLOCK_SIZE)
                 pos_y += BLOCK_SIZE
@@ -819,8 +872,8 @@ def runGame():
             
         # checkForQuit()
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                gameExit = True
+##            if event.type == pygame.QUIT:
+##                gameExit = True
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos
@@ -856,11 +909,15 @@ def runGame():
                         block.rotateR()
                         if checkCollisionRotation():
                             block.rotateL()
+                        elif checkBlockCollision():
+                            block.rotateL()
 
                 elif event.key == pygame.K_z and controlsOn == True:
                     if currentBlock:
                         block.rotateL()
                         if checkCollisionRotation():
+                            block.rotateR()
+                        elif checkBlockCollision():
                             block.rotateR()
 
                 elif event.key == pygame.K_SPACE:
@@ -975,7 +1032,7 @@ def runGame():
             currentBlock = True
             hasSwap = True
 
-        difference = getShadowDifference(block.getPerimeter())
+        difference = getShadowDifference(block.getPerimeter())    
         drawShadow(block.getPerimeter(), difference)
 
         # drawing question/answer text
