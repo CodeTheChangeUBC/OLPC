@@ -15,6 +15,8 @@
 import pygame, pygame.font, pygame.event, pygame.draw, string
 from pygame.locals import *
 
+import re
+
 
 def get_key():
     while 1:
@@ -45,22 +47,25 @@ def display_box(screen, message):
 def ask(screen, question):
     "ask(screen, question) -> answer"
     pygame.font.init()
+    global current_string
     current_string = []
     display_box(screen, question + ": " + string.join(current_string, ""))
-    counter = 10
-    while counter:
+    counter = 20
+    while counter > 0:
         inkey = get_key()
         if inkey == K_BACKSPACE:
             current_string = current_string[0:-1]
+            counter += 2
         elif inkey == K_RETURN:
             break
         elif inkey == K_MINUS:
-            current_string.append("_")
+            current_string.append("-")
         elif inkey <= 127:
             current_string.append(chr(inkey))
         display_box(screen, question + ": " + string.join(current_string, ""))
         counter -= 1
-    return string.join(current_string, "")
+
+    return '{:_^15}'.format(string.join(current_string, ""))[:15]
 
 
 def main():

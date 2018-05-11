@@ -25,9 +25,12 @@ pygame.init()
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLACK = (20, 20, 20)
+GRAY = (185, 185, 185)
 BORDER_COLOR = (200, 200, 200)
 INNER_BG = (0, 75, 75)
 INNER_BG2 = (0, 50, 50)
+TEXTCOLOR = WHITE
+TEXTSHADOWCOLOR = GRAY
 
 INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                'Rotate-left with UP key*',
@@ -42,14 +45,9 @@ INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                '*Only after answering correctly',
                ]
 
-LEADERBOARD = ['Lol      100',
-               'LOL      200',
-               'lol      300'
-               ]
 
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
-BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
-TEXTCOLOR = WHITE
+BIGFONT = pygame.font.Font('freesansbold.ttf', 50)
 HEIGHT = 680
 WIDTH = 800
 LEFT_BOUNDARY = WIDTH / 3
@@ -59,8 +57,6 @@ TOP_BOUNDARY = 4 * BLOCK_SIZE
 BOTTOM_BOUNDARY = TOP_BOUNDARY + 20 * BLOCK_SIZE
 INIT_X = LEFT_BOUNDARY + 5 * BLOCK_SIZE
 INIT_Y = BLOCK_SIZE
-BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
-BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
 
 MID_FILES = ['mp3s/m0', 'mp3s/m1', 'mp3s/m2', 'mp3s/m3',
              'mp3s/m4', 'mp3s/m5', 'mp3s/m6', 'mp3s/m7',
@@ -137,6 +133,8 @@ mus_var = randint(0,12)
 global mult
 mult = 0
 
+global level
+level = 0
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -632,12 +630,14 @@ def paused():
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -713,8 +713,7 @@ def gameOver():
 #==================================================================================
 
     pygame.mixer.music.stop()
-    pygame.mixer.music.load('end.wav')
-    pygame.mixer.music.play(0, 0.0)
+    playSound('end.wav')
 
     initialSize = 16
 
@@ -725,12 +724,14 @@ def gameOver():
         checkForQuit()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
 
             if event.type == pygame.KEYDOWN:
@@ -743,9 +744,9 @@ def gameOver():
 ##                            landed[i][j] = None
 ##                    holdBlock = None
 
-                    dx = 0;
-                    dy = 0;
-                    speed = 10;
+                    dx = 0
+                    dy = 0
+                    speed = 10
 
                     gameExit = True
                     pause = False
@@ -790,21 +791,21 @@ def gameOver():
 
 
 def drawGridLines():
-##    SPACING = BLOCK_SIZE / 4
-##    for i in range (1, 10):
-##        for j in range (0, 85):
-##            if j % 2 == 0:
-##                pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
-##                                (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING),
-##                                (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING + SPACING),
-##                                1)
-##    for i in range (1, 20):
-##        for j in range (0, 43):
-##            if j % 2 == 0:
-##                pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
-##                                (LEFT_BOUNDARY + j * SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
-##                                (LEFT_BOUNDARY + j * SPACING + SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
-##                                1)
+   # SPACING = BLOCK_SIZE / 4
+   # for i in range (1, 10):
+   #     for j in range (0, 85):
+   #         if j % 2 == 0:
+   #             pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
+   #                             (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING),
+   #                             (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING + SPACING),
+   #                             1)
+   # for i in range (1, 20):
+   #     for j in range (0, 43):
+   #         if j % 2 == 0:
+   #             pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
+   #                             (LEFT_BOUNDARY + j * SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
+   #                             (LEFT_BOUNDARY + j * SPACING + SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
+   #                             1)
     for i in range (1, 10):
         pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
                         (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY),
@@ -815,7 +816,7 @@ def drawGridLines():
                         (LEFT_BOUNDARY, TOP_BOUNDARY + i * BLOCK_SIZE),
                         (LEFT_BOUNDARY + 10 * BLOCK_SIZE, TOP_BOUNDARY + i * BLOCK_SIZE),
                         1)
-    
+
 
 #=================================================================================================
 
@@ -861,14 +862,15 @@ def runGame():
     numTries = 0
     diff1 = out_list[4]
     num_q = 0
+    mult = 0
     scr_mult = 5
     drawCompliment(comp_input)
 
     while not gameExit:
         
         if bankedpoints > 0:
-            score += 1
-            bankedpoints -= 1
+            score += 5
+            bankedpoints -= 5
             
         # checkForQuit()
         for event in pygame.event.get():
@@ -876,12 +878,14 @@ def runGame():
 ##                gameExit = True
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                x, y = event.pos
-                if x >= soundPosition[0] and x <= soundPosition[0] + soundOn.get_rect().width and y <= soundPosition[
-                    1] + soundOn.get_rect().height and y >= soundPosition[1]:
+                pos = soundOn.get_rect()
+                pos.x = soundPosition[0]
+                pos.y = soundPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipSoundIcon()
-                if x >= musicPosition[0] and x <= musicPosition[0] + musicOn.get_rect().width and y <= musicPosition[
-                    1] + musicOn.get_rect().height and y >= musicPosition[1]:
+                pos.x = musicPosition[0]
+                pos.y = musicPosition[1]
+                if pos.collidepoint(pygame.mouse.get_pos()):
                     flipMusicIcon()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -947,37 +951,34 @@ def runGame():
                     flipSoundIcon()
                 # check for correct answer
                 elif event.key == out_list[9]:
-                    if num_q > 5:
-                        comp_input = 8
-                    else:
-                        playSound('cor.wav')
-                        if numTries < 1:
-                            hard_q = False
-                            if diff1 > 4:
-                                hard_q = True
-                            comp_input = randint(0, 3)
-                            controlsOn = True
-                            bankedpoints += 10 + 5 * mult
-
+                    playSound('cor.wav')
+                    if numTries < 1:
+                        hard_q = False
+                        if diff1 > 4:
+                            hard_q = True
+                        controlsOn = True
+                        if num_q <= 5:
+                            bankedpoints += 10
+                            mult += 1
                             if hard_q == True:
                                 bankedpoints += 20
-                            hard_q = False
-                            level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
-                            num_q += 1
-                            mult += 1
-                            if num_q <= 5:
-                                out_list = generateQues(level)
-                                diff1 = out_list[4]
-                            else:
-                                comp_input = 8
+                        hard_q = False
+                        level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
+                        num_q += 1
+                        out_list = generateQues(level)
+                        diff1 = out_list[4]
+                        if num_q > 5:
+                            comp_input = 8
+                        else:
+                            comp_input = randint(0,3)
                 elif event.key != out_list[9] and (
                         event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3 or event.key == pygame.K_4):
                     numTries += 1
                     mult = 0
-                    comp_input = randint(4, 7)
-                    controlsOn = False
-                    if num_q < 5:
+                    if num_q <= 5 and numTries <= 1:
+                        controlsOn = False
                         playSound('incor.wav')
+                        comp_input = randint(4, 7)
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -1026,6 +1027,7 @@ def runGame():
             char = out_list[9]
             comp_input = -1
             num_q = 0
+            mult = 0
 
             # draw new block
             newBlock(blockSet, nextBlocks)
@@ -1117,6 +1119,8 @@ def runGame():
         prt_scr = 10 + mult * 5
         if diff1 >= 5:
             prt_scr += 20
+        if num_q > 5:
+            prt_scr = 0
         val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
         GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 3 * BLOCK_SIZE))
 
@@ -1196,8 +1200,9 @@ def runGame():
                 mus_var = randint(0,12)
             pygame.mixer.music.load(MID_FILES[mus_var])
             level_prev = level
-            if isMusicOn == True:
-                pygame.mixer.music.play(-1, 0.0)
+            pygame.mixer.music.play(-1,0.0)
+            if isMusicOn == False:
+                pygame.mixer.music.pause()
         pygame.display.update()
 
         clock.tick(speed)
@@ -1243,7 +1248,10 @@ def generateQues(level):
         char = pygame.K_3
     if sol_key == 3:
         char = pygame.K_4
-    diff1 = randint(1, 5)
+    if level < 4:
+        diff1 = randint(1,4)
+    else:
+        diff1 = randint(1,5)
     diff2 = randint(1, 10)
     diff3 = randint(6, 20)
     return [q1, q2, operator, sol_key, diff1, diff2, diff3, multi_var, two_op, char]
@@ -1312,7 +1320,10 @@ def calculateUpbound(level):
 def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
-    level = int(score / 80) + 1
+    global level
+    level_prev = level
+    divisor = level_prev + 80
+    level = int(score/divisor) + 1
     fallFreq = 1000 - 500 * (level - 1)
     return level, fallFreq
 
@@ -1344,7 +1355,7 @@ def drawCompliment(rand):
     elif rand == -1:
         compliment = " "
     elif rand == 8:
-        compliment = "Good job! Next question upon block landing."
+        compliment = "Good job! Next questions worth points upon block landing."
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
     complimentRect.center = (WIDTH / 2, TOP_BOUNDARY / 2)
@@ -1452,30 +1463,90 @@ def updateHiscore(index):
         data = json.load(data_file)
     global score
     global name
-    name = inputbox.ask(GAMEDISPLAY, "Enter your name")
+    drawHighScore("You made a new High Score!", level, score)
+    name = inputbox.ask(GAMEDISPLAY, "Name")
     for i in range(len(data) - 1, index, -1):
         data[i]["date"] = data[i - 1]["date"]
         data[i]["score"] = data[i - 1]["score"]
         data[i]["name"] = data[i - 1]["name"]
-    data[index]["date"] = str(datetime.datetime.now().date())
+    data[index]["date"] = str(datetime.datetime.now().date())+" "*20
     data[index]["score"] = score
     data[index]["name"] = name
-    #TODO add name to data
     with open("leaderboard.json", 'w') as data_file:
         json.dump(data, data_file)
 
+def drawHighScore(text, lvl, pts):
+    # This function displays large text in the
+    # center of the screen until a key is pressed.
+    # Draw the text drop shadow
+    GAMEDISPLAY.fill(BLACK)
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
+    titleRect.center = (int(WIDTH / 2)-3, int(HEIGHT / 4) - 40)
+    GAMEDISPLAY.blit(titleSurf, titleRect)
+
+    # Draw the text
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
+    titleRect.center = (int(WIDTH / 2) - 3, int(HEIGHT / 4) - 46)
+    GAMEDISPLAY.blit(titleSurf, titleRect)
+
+    # Level text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Level: ' + str(lvl), BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 95)
+    GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
+
+    # Score text.
+    pressKeySurf, pressKeyRect = makeTextObjs('Score: ' + str(pts), BASICFONT, TEXTCOLOR)
+    pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 120)
+    GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
+
+
+    # while checkForKeyPress() is None:
+    #     pygame.display.update()
+    #     clock.tick()
+
+
+def checkForKeyPress():
+    # Go through event queue looking for a KEYUP event.
+    # Grab KEYDOWN events to remove them from the event queue.
+
+    checkForQuit()
+
+    for event in pygame.event.get([KEYDOWN, KEYUP]):
+        if event.type == KEYDOWN:
+            continue
+        return event.key
+    return None
+
+def drawGameOver(text):
+    # This function displays large text in the
+    # center of the screen until a key is pressed.
+    # Draw the text drop shadow
+    GAMEDISPLAY.fill(BLACK)
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
+    titleRect.center = (int(WIDTH / 2)-3, int(HEIGHT / 4) - 40)
+    GAMEDISPLAY.blit(titleSurf, titleRect)
+
+    # Draw the text
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
+    titleRect.center = (int(WIDTH / 2) - 3, int(HEIGHT / 4) - 46)
+    GAMEDISPLAY.blit(titleSurf, titleRect)
+
+    while checkForKeyPress() is None:
+        pygame.display.update()
+        clock.tick()
+
 def newLeaderboard():
     leaderboardFile = open("leaderboard.json", "w")
-    leaderboardFile.write("[{\"date\": \"2018-05-03\", \"score\": 10000, \"name\": \"SamC      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Gaurav    \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Boyi      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"SamO      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Brandon   \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Tony      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 100, \"name\": \"Eric      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 100, \"name\": \"Btai      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 100, \"name\": \"gauravnv  \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 100, \"name\": \"XDSU      \"}]")
+    leaderboardFile.write("[{\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"SamC______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Gaurav____\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Boyi______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"SamO______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Brandon___\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Tony______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Eric______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Btai______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"gauravnv__\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"XDSU______\"}]")
     leaderboardFile.close()
 
 
