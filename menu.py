@@ -67,7 +67,7 @@ def ask(screen, question):
       current_string.append(chr(inkey))
     display_box(screen, question + ": " + string.join(current_string,""))
     counter -= 1
-  return string.join(current_string,"")
+  return string.join(current_string, "")
 
 
 def main():

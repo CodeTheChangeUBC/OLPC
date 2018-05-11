@@ -25,9 +25,12 @@ pygame.init()
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLACK = (20, 20, 20)
+GRAY = (185, 185, 185)
 BORDER_COLOR = (200, 200, 200)
 INNER_BG = (0, 75, 75)
 INNER_BG2 = (0, 50, 50)
+TEXTCOLOR = WHITE
+TEXTSHADOWCOLOR = GRAY
 
 INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                'Rotate-left with UP key*',
@@ -48,7 +51,7 @@ LEADERBOARD = ['Lol      100',
                ]
 
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
-BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
+BIGFONT = pygame.font.Font('freesansbold.ttf', 50)
 TEXTCOLOR = WHITE
 HEIGHT = 680
 WIDTH = 800
@@ -59,8 +62,6 @@ TOP_BOUNDARY = 4 * BLOCK_SIZE
 BOTTOM_BOUNDARY = TOP_BOUNDARY + 20 * BLOCK_SIZE
 INIT_X = LEFT_BOUNDARY + 5 * BLOCK_SIZE
 INIT_Y = BLOCK_SIZE
-BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
-BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
 
 MID_FILES = ['mp3s/m0', 'mp3s/m1', 'mp3s/m2', 'mp3s/m3',
              'mp3s/m4', 'mp3s/m5', 'mp3s/m6', 'mp3s/m7',
@@ -1395,30 +1396,62 @@ def updateHiscore(index):
         data = json.load(data_file)
     global score
     global name
-    name = inputbox.ask(GAMEDISPLAY, "Enter your name")
+    drawHighScore("You made a new High Score!")
+    name = inputbox.ask(GAMEDISPLAY, "Name")
     for i in range(len(data) - 1, index, -1):
         data[i]["date"] = data[i - 1]["date"]
         data[i]["score"] = data[i - 1]["score"]
         data[i]["name"] = data[i - 1]["name"]
-    data[index]["date"] = str(datetime.datetime.now().date())
+    data[index]["date"] = str(datetime.datetime.now().date())+" "*20
     data[index]["score"] = score
     data[index]["name"] = name
-    #TODO add name to data
     with open("leaderboard.json", 'w') as data_file:
         json.dump(data, data_file)
 
+def drawHighScore(text):
+    # This function displays large text in the
+    # center of the screen until a key is pressed.
+    # Draw the text drop shadow
+    GAMEDISPLAY.fill(BLACK)
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
+    titleRect.center = (int(WIDTH / 2)-3, int(HEIGHT / 4) - 40)
+    GAMEDISPLAY.blit(titleSurf, titleRect)
+
+    # Draw the text
+    titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
+    titleRect.center = (int(WIDTH / 2) - 3, int(HEIGHT / 4) - 46)
+    GAMEDISPLAY.blit(titleSurf, titleRect)
+
+
+    # while checkForKeyPress() is None:
+    #     pygame.display.update()
+    #     clock.tick()
+
+
+def checkForKeyPress():
+    # Go through event queue looking for a KEYUP event.
+    # Grab KEYDOWN events to remove them from the event queue.
+
+    checkForQuit()
+
+    for event in pygame.event.get([KEYDOWN, KEYUP]):
+        if event.type == KEYDOWN:
+            continue
+        return event.key
+    return None
+
 def newLeaderboard():
     leaderboardFile = open("leaderboard.json", "w")
-    leaderboardFile.write("[{\"date\": \"2018-05-03\", \"score\": 10000, \"name\": \"SamC      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Gaurav    \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Boyi      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"SamO      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Brandon   \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 9999, \"name\": \"Tony      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 100, \"name\": \"Eric      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 100, \"name\": \"Btai      \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 100, \"name\": \"gauravnv  \"}, \
-                            {\"date\": \"2018-05-03\", \"score\": 100, \"name\": \"XDSU      \"}]")
+    leaderboardFile.write("[{\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"SamC______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Gaurav____\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Boyi______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"SamO______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Brandon___\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Tony______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Eric______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Btai______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"gauravnv__\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"XDSU______\"}]")
     leaderboardFile.close()
 
 
