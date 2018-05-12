@@ -35,7 +35,7 @@ TEXTSHADOWCOLOR = GRAY
 INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                'Rotate-left with UP key*',
                'Rotate-right with Z key*',
-               'self.move the block with LEFT, RIGHT, DOWN',
+               'Move the block with LEFT, RIGHT, DOWN',
                'Hard drop by pressing SPACE',
                'Pause the game by pressing P',
                'Exit the game pressing ESCAPE key',
@@ -89,7 +89,7 @@ global pos_y
 pos_y = 10
 dx = 0
 dy = 0
-hasself.move = False
+hasMove = False
 font = pygame.font.SysFont(None, 25)
 gone_down = False
 global currentBlock
@@ -161,7 +161,7 @@ class Metris(object):
         global GAMEDISPLAY
         global gameExit
         global currentBlock
-        global hasself.move
+        global hasMove
         global dx
         global dy
         global block
@@ -197,18 +197,18 @@ class Metris(object):
 
         hasSwap = True
 
-        level, fallFreq = self.calculateLevelAndFallFreq(score)
+        level, fallFreq = calculateLevelAndFallFreq(score)
         level_prev = level
         qSolved = False
         comp_input = 10
-        out_list = self.generateQues(level)
+        out_list = generateQues(level)
         controlsOn = False
         numTries = 0
         diff1 = out_list[4]
         num_q = 0
         mult = 0
         scr_mult = 5
-        self.drawCompliment(comp_input)
+        drawCompliment(comp_input)
         fontsize = 18
         total_lines = 0
 
@@ -218,8 +218,8 @@ class Metris(object):
         pygame.time.set_timer(TIMEREMAINING, 1000)
     ##    TIMEUP = pygame.USEREVENT + 3
     ##    pygame.time.set_timer(TIMEUP, time)
-        self.move = pygame.USEREVENT + 4
-        pygame.time.set_timer(self.move, 125)
+        MOVE = pygame.USEREVENT + 4
+        pygame.time.set_timer(MOVE, 125)
 
         while not gameExit:
         
@@ -227,7 +227,7 @@ class Metris(object):
                 score += 1
                 bankedpoints -= 1
                 
-            # self.checkForQuit()
+            # checkForQuit()
             for event in pygame.event.get():
     ##            if event.type == pygame.QUIT:
     ##                gameExit = True
@@ -253,11 +253,11 @@ class Metris(object):
                     pos.x = soundPosition[0]
                     pos.y = soundPosition[1]
                     if pos.collidepoint(pygame.mouse.get_pos()):
-                        self.flipSoundIcon()
+                        flipSoundIcon()
                     pos.x = musicPosition[0]
                     pos.y = musicPosition[1]
                     if pos.collidepoint(pygame.mouse.get_pos()):
-                        self.flipMusicIcon()
+                        flipMusicIcon()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         if pos_x:
@@ -276,7 +276,7 @@ class Metris(object):
                     elif event.key == pygame.K_DOWN:
                         dy = BLOCK_SIZE
                         # dx = 0
-                        self.playSound('beep.wav')
+                        playSound('beep.wav')
     ##                    speed = 20
 
                     elif event.key == pygame.K_UP and controlsOn == True:
@@ -317,12 +317,12 @@ class Metris(object):
                             mult = 0
                             hasSwap = False
                     elif event.key == pygame.K_m:
-                        self.flipMusicIcon()
+                        flipMusicIcon()
                     elif event.key == pygame.K_s:
-                        self.flipSoundIcon()
+                        flipSoundIcon()
                     # check for correct answer
                     elif event.key == out_list[9]:
-                        self.playSound('cor.wav')
+                        playSound('cor.wav')
                         if numTries < 1:
                             hard_q = False
                             if diff1 > 4:
@@ -334,9 +334,9 @@ class Metris(object):
                                 if hard_q == True:
                                     bankedpoints += 20
                             hard_q = False
-                            level, fallFreq = self.calculateLevelAndFallFreq(score + bankedpoints)
+                            level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
                             num_q += 1
-                            out_list = self.generateQues(level)
+                            out_list = generateQues(level)
                             diff1 = out_list[4]
                             if num_q > 5:
                                 comp_input = 8
@@ -348,7 +348,7 @@ class Metris(object):
                         mult = 0
                         if num_q <= 5 and numTries <= 1:
                             controlsOn = False
-                            self.playSound('incor.wav')
+                            playSound('incor.wav')
                             comp_input = randint(4, 7)
 
                 if event.type == pygame.KEYUP:
@@ -365,8 +365,8 @@ class Metris(object):
     ##                    speed = 10
                 if event.type == TICK:
                     pos_y = self.tick(pos_y)
-                if event.type == self.move:
-                    self.move()
+                if event.type == MOVE:
+                    move()
                 #=============TIMED METRIS============
                 if event.type == TIMEREMAINING:
                     time -= 1000
@@ -398,10 +398,10 @@ class Metris(object):
             # drawing block objs
             if not currentBlock and not gameExit:
                 # calculating new questions
-                level, fallFreq = self.calculateLevelAndFallFreq(score + bankedpoints)
+                level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
                 numTries = 0
                 controlsOn = True #False
-                out_list = self.generateQues(level)
+                out_list = generateQues(level)
                 diff1 = out_list[4]
                 char = out_list[9]
                 comp_input = -1
@@ -581,10 +581,10 @@ class Metris(object):
                 GAMEDISPLAY.blit(qSurf, qRect)
 
             # draw compliment
-            self.drawCompliment(comp_input)
+            drawCompliment(comp_input)
 
             drawSoundIcon()
-            self.drawMusicIcon()
+            drawMusicIcon()
             if level_prev != level:
                 old_var = mus_var
                 while mus_var == old_var:
@@ -596,8 +596,8 @@ class Metris(object):
                     pygame.mixer.music.pause()
 
             # collision checking
-    ##        if not hasself.move:
-    ##            # clock.tick(10) - self.movement speed
+    ##        if not hasMove:
+    ##            # clock.tick(10) - movement speed
     ##            block.setX(pos_x + dx)
     ##            block.setY(pos_y + dy)
     ##            if checkCollision():
@@ -607,12 +607,12 @@ class Metris(object):
     ##                pos_x += dx
     ##                pos_y += dy
     ##
-    ##            hasself.move = True
+    ##            hasMove = True
                     
             pygame.display.update()
 
             clock.tick(speed)
-            hasself.move = False
+            hasMove = False
 
         currentBlock = False
         block = None
@@ -642,7 +642,7 @@ class Metris(object):
                     landed[self.x2Index(block.getPerimeter()[i].getX())][self.y2Index(block.getPerimeter()[i].getY())] = \
                         block.getPerimeter()[i]
                 self.checkLandedAndDelete()
-                self.playSound('landSound.wav')
+                playSound('landSound.wav')
                 self.checkGameOver()
             else:
                 pos_y += BLOCK_SIZE
@@ -674,7 +674,7 @@ class Metris(object):
         for i in range(0, len(rows)):
             for x in range(0, len(landed)):
                 landed[x][rows[i]] = None
-        # self.move rows above deleted rows down
+        # move rows above deleted rows down
         for i in range(0, len(rows)):
             for y in range(rows[i], 0, -1):
                 for x in range(0, len(landed)):
@@ -682,7 +682,7 @@ class Metris(object):
                         if landed[x][y - 1] != None:
                             landed[x][y - 1].setRelativeY(BLOCK_SIZE)
                         landed[x][y] = landed[x][y - 1]
-            self.playSound('clr.wav')
+            playSound('clr.wav')
 
         # update score
         if len(rows) == 1:
@@ -1118,27 +1118,27 @@ class Metris(object):
         startTime = pygame.mixer.music.get_pos()
 
         while pause:
-            self.checkForQuit()
+            checkForQuit()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     pos = soundOn.get_rect()
                     pos.x = soundPosition[0]
                     pos.y = soundPosition[1]
                     if pos.collidepoint(pygame.get_pos()):
-                        self.flipSoundIcon()
+                        flipSoundIcon()
                     pos.x = musicPosition[0]
                     pos.y = musicPosition[1]
                     if pos.collidepoint(pygame.mouse.get_pos()):
-                        self.flipMusicIcon()
+                        flipMusicIcon()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_p:
                         if isMusicOn == True:
                             pygame.mixer.music.unpause()
                         pause = False
                     elif event.key == pygame.K_m:
-                        self.flipMusicIcon()
+                        flipMusicIcon()
                     elif event.key == pygame.K_s:
-                        self.flipSoundIcon()
+                        flipSoundIcon()
 
             GAMEDISPLAY.fill(WHITE, [LEFT_BOUNDARY, TOP_BOUNDARY, 11 * BLOCK_SIZE, 21 * BLOCK_SIZE])
             myfont = pygame.font.SysFont('Comic Sans MS', 30)
@@ -1206,11 +1206,11 @@ class Metris(object):
     #==================================================================================
 
         pygame.mixer.music.stop()
-        self.playSound('end.wav')
+        playSound('end.wav')
 
         initialSize = 16
 
-        self.updateHiscore(self.checkForNewHiscore())
+        updateHiscore(checkForNewHiscore())
 
         while pause:
 
@@ -1221,11 +1221,11 @@ class Metris(object):
                     pos.x = soundPosition[0]
                     pos.y = soundPosition[1]
                     if pos.collidepoint(pygame.mouse.get_pos()):
-                        self.flipSoundIcon()
+                        flipSoundIcon()
                     pos.x = musicPosition[0]
                     pos.y = musicPosition[1]
                     if pos.collidepoint(pygame.mouse.get_pos()):
-                        self.flipMusicIcon()
+                        flipMusicIcon()
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
@@ -1247,9 +1247,9 @@ class Metris(object):
                     ##                if event.key == pygame.K_x:
                     ##                    main_menu.mainloop(pygame.event.get())
                     elif event.key == pygame.K_m:
-                        self.flipMusicIcon()
+                        flipMusicIcon()
                     elif event.key == pygame.K_s:
-                        self.flipSoundIcon()
+                        flipSoundIcon()
 
             myfont = pygame.font.SysFont('Comic Sans MS', initialSize)
             gameOverText = myfont.render("Game Over", True, BLACK)
@@ -1334,7 +1334,7 @@ class Metris(object):
         else:
             multi_var = randint(0, 40)
         two_op = randint(0, 1)
-        bound_list = self.calculateUpbound(level)
+        bound_list = calculateUpbound(level)
         o_upbound = bound_list[0]
         q1_upbound = bound_list[1]
         q2_upbound = bound_list[2]
@@ -1506,8 +1506,20 @@ class Metris(object):
         else:
             pygame.mixer.music.unpause()
             isMusicOn = True
-        self.drawMusicIcon()
+        drawMusicIcon()
         pygame.display.update()
+
+
+    def drawSoundIcon(self):
+        global isSoundOn
+        global soundOn
+        global soundOff
+        global soundPosition
+        if isSoundOn:
+            GAMEDISPLAY.blit(soundOn, soundPosition)
+        else:
+            GAMEDISPLAY.blit(soundOff, soundPosition)
+
 
     def drawMusicIcon(self):
         global isMusicOn
@@ -1522,10 +1534,10 @@ class Metris(object):
 
     def checkForQuit(self):
         for event in pygame.event.get(QUIT):  # get all the QUIT events
-            self.terminate()  # self.terminate if any QUIT events are present
+            terminate()  # terminate if any QUIT events are present
         for event in pygame.event.get(KEYUP):  # get all the KEYUP events
             if event.key == K_ESCAPE:
-                self.terminate()  # self.terminate if the KEYUP event was for the Esc key
+                terminate()  # terminate if the KEYUP event was for the Esc key
             pygame.event.post(event)  # put the other KEYUP event objects back
 
 
@@ -1536,7 +1548,7 @@ class Metris(object):
             with open("leaderboard.json") as data_file:
                 data = json.load(data_file)
         except IOError:
-            self.newLeaderBoard()
+            newLeaderboard()
             with open("leaderboard.json") as data_file:
                 data = json.load(data_file)
         global score
@@ -1550,7 +1562,7 @@ class Metris(object):
             if score * (total_lines / 10.0) > int(data[0]["score"]):
                 return 0
         except ValueError:
-            self.newLeaderBoard()
+            newLeaderboard()
             return -1
 
 
@@ -1562,7 +1574,7 @@ class Metris(object):
         global score
         global name
         global total_lines
-        self.drawHighScore("You made a new High Score!", level, score, total_lines)
+        drawHighScore("You made a new High Score!", level, score, total_lines)
         name = inputbox.ask(GAMEDISPLAY, "Name")
         for i in range(len(data) - 1, index, -1):
             data[i]["date"] = data[i - 1]["date"]
@@ -1587,33 +1599,33 @@ class Metris(object):
         elif abs(new_score - int(pts * (tL/10.0))) > 10:
             speed = 30
         GAMEDISPLAY.fill(BLACK)
-        titleSurf, titleRect = self.makeTextObs(text, BIGFONT, TEXTSHADOWCOLOR)
+        titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
         titleRect.center = (int(WIDTH / 2)-3, int(HEIGHT / 4) - 40)
         GAMEDISPLAY.blit(titleSurf, titleRect)
 
         # Draw the text
-        titleSurf, titleRect = self.makeTextObs(text, BIGFONT, TEXTCOLOR)
+        titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
         titleRect.center = (int(WIDTH / 2) - 3, int(HEIGHT / 4) - 46)
         GAMEDISPLAY.blit(titleSurf, titleRect)
         while i < 6:
             if i == 1:
                 # Level text.
-                pressKeySurf, pressKeyRect = self.makeTextObs('Level: ' + str(lvl), BASICFONT, TEXTCOLOR)
+                pressKeySurf, pressKeyRect = makeTextObjs('Level: ' + str(lvl), BASICFONT, TEXTCOLOR)
                 pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 95)
                 GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
             if i == 2:
                 # Score text.
-                pressKeySurf, pressKeyRect = self.makeTextObs('Score: ' + str(pts), BASICFONT, TEXTCOLOR)
+                pressKeySurf, pressKeyRect = makeTextObjs('Score: ' + str(pts), BASICFONT, TEXTCOLOR)
                 pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 120)
                 GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
             if i == 3:
                 # Lines text.
-                pressKeySurf, pressKeyRect = self.makeTextObs('Lines Cleared: ' + str(tL), BASICFONT, TEXTCOLOR)
+                pressKeySurf, pressKeyRect = makeTextObjs('Lines Cleared: ' + str(tL), BASICFONT, TEXTCOLOR)
                 pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 145)
                 GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
             if i == 4:
                 # Total text.
-                pressKeySurf, pressKeyRect = self.makeTextObs('Total = ' + str(pts) + " x " + str(tL/10.0), BASICFONT, TEXTCOLOR)
+                pressKeySurf, pressKeyRect = makeTextObjs('Total = ' + str(pts) + " x " + str(tL/10.0), BASICFONT, TEXTCOLOR)
                 pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 170)
                 GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
             while i == 5 and new_score !=  int(pts * (tL/10.0)):
@@ -1621,7 +1633,7 @@ class Metris(object):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         new_score = int(pts * (tL/10.0))
-                pressKeySurf, pressKeyRect = self.makeTextObs(str(int(new_score)), BASICFONT, TEXTCOLOR)
+                pressKeySurf, pressKeyRect = makeTextObjs(str(int(new_score)), BASICFONT, TEXTCOLOR)
                 pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 195)
                 pygame.draw.rect(GAMEDISPLAY, BLACK, [int(WIDTH / 6), int(HEIGHT / 2) + 185, WIDTH / 2, 25])
                 GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
@@ -1632,7 +1644,7 @@ class Metris(object):
                 pygame.display.update()
                 clock.tick(speed)
             if i == 5 and new_score == int(pts * (tL/10.0)):
-                pressKeySurf, pressKeyRect = self.makeTextObs(str(int(new_score)), BASICFONT, TEXTCOLOR)
+                pressKeySurf, pressKeyRect = makeTextObjs(str(int(new_score)), BASICFONT, TEXTCOLOR)
                 pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 195)
                 pygame.draw.rect(GAMEDISPLAY, BLACK, [int(WIDTH / 6), int(HEIGHT / 2) + 185, WIDTH / 2, 25])
                 GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
@@ -1640,16 +1652,16 @@ class Metris(object):
             pygame.display.update()
             clock.tick(1)
 
-        # while self.checkForKeyPress() is None:
+        # while checkForKeyPress() is None:
         #     pygame.display.update()
         #     clock.tick()
 
 
     def checkForKeyPress(self):
         # Go through event queue looking for a KEYUP event.
-        # Grab KEYDOWN events to reself.move them from the event queue.
+        # Grab KEYDOWN events to remove them from the event queue.
 
-        self.checkForQuit()
+        checkForQuit()
 
         for event in pygame.event.get([KEYDOWN, KEYUP]):
             if event.type == KEYDOWN:
@@ -1662,20 +1674,20 @@ class Metris(object):
         # center of the screen until a key is pressed.
         # Draw the text drop shadow
         GAMEDISPLAY.fill(BLACK)
-        titleSurf, titleRect = self.makeTextObs(text, BIGFONT, TEXTSHADOWCOLOR)
+        titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
         titleRect.center = (int(WIDTH / 2)-3, int(HEIGHT / 4) - 40)
         GAMEDISPLAY.blit(titleSurf, titleRect)
 
         # Draw the text
-        titleSurf, titleRect = self.makeTextObs(text, BIGFONT, TEXTCOLOR)
+        titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
         titleRect.center = (int(WIDTH / 2) - 3, int(HEIGHT / 4) - 46)
         GAMEDISPLAY.blit(titleSurf, titleRect)
 
-        while self.checkForKeyPress() is None:
+        while checkForKeyPress() is None:
             pygame.display.update()
             clock.tick()
 
-    def newLeaderBoard(self):
+    def newLeaderboard(self):
         leaderboardFile = open("leaderboard.json", "w")
         leaderboardFile.write("[{\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"_____SamC______\"}, \
                                 {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"_____Gaurav____\"}, \
@@ -1733,7 +1745,7 @@ class Metris(object):
             pygame.display.flip()
 
 
-    def makeTextObs(self, text, font, color):
+    def makeTextObjs(self, text, font, color):
         surf = font.render(text, True, color)
         return surf, surf.get_rect()
 
@@ -1882,11 +1894,11 @@ class Metris(object):
             with open("leaderboard.json") as data_file:
                 data = json.load(data_file)
         except IOError:
-            self.newLeaderBoard()
+            newLeaderboard()
             with open("leaderboard.json") as data_file:
                 data = json.load(data_file)
         except ValueError:
-            self.newLeaderBoard()
+            newLeaderboard()
             with open("leaderboard.json") as data_file:
                 data = json.load(data_file)
         LEADERBOARD = []
@@ -1894,7 +1906,7 @@ class Metris(object):
             for i in range(0, len(data)):
                 LEADERBOARD.insert(len(LEADERBOARD), str(i+1) + "]   " + str(data[i]["date"]) + "          " + str(data[i]["name"]) + "          " + str(data[i]["score"]))
         except ValueError:
-            self.newLeaderBoard()
+            newLeaderboard()
             
         for m in LEADERBOARD:
             leaderboard_menu.add_line(m)
