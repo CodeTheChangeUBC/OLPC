@@ -51,7 +51,7 @@ def ask(screen, question):
     current_string = []
     display_box(screen, question + ": " + string.join(current_string, ""))
     counter = 20
-    while counter > 0:
+    while True:
         inkey = get_key()
         if inkey == K_BACKSPACE:
             current_string = current_string[0:-1]
@@ -61,7 +61,8 @@ def ask(screen, question):
         elif inkey == K_MINUS:
             current_string.append("-")
         elif inkey <= 127:
-            current_string.append(chr(inkey))
+            if counter > 0:
+                current_string.append(chr(inkey))
         display_box(screen, question + ": " + string.join(current_string, ""))
         counter -= 1
 
