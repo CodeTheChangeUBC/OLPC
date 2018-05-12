@@ -45,11 +45,18 @@ INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                '*Only after answering correctly',
                ]
 
-
+SCOREFONT = pygame.font.Font('freesansbold.ttf', 18)
 BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
 BIGFONT = pygame.font.Font('freesansbold.ttf', 50)
+global HEIGHT
 HEIGHT = 680
-WIDTH = 800
+global WIDTH
+WIDTH = HEIGHT * 7 / 6
+global LEFT_BOUNDARY
+global RIGHT_BOUNDARY
+global BLOCK_SIZE
+global TOP_BOUNDARY
+global BOTTOM_BOUNDARY
 LEFT_BOUNDARY = WIDTH / 3
 RIGHT_BOUNDARY = WIDTH - WIDTH / 3
 BLOCK_SIZE = (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 10
@@ -65,6 +72,7 @@ MID_FILES = ['mp3s/m0', 'mp3s/m1', 'mp3s/m2', 'mp3s/m3',
 global score
 score = 0
 
+global GAMEDISPLAY
 GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 
 pygame.display.set_caption('Metris')
@@ -74,7 +82,7 @@ pygame.display.update()
 global gameExit
 gameExit = False
 
-block1 = [BLOCK_SIZE, BLOCK_SIZE]
+#block1 = [BLOCK_SIZE, BLOCK_SIZE]
 global pos_x
 pos_x = WIDTH / 2
 global pos_y
@@ -91,7 +99,7 @@ global blockPlaced
 blockPlaced = False
 global landed
 landed = []
-speed = 10
+speed = 60
 global bankedpoints
 bankedpoints = 0
 
@@ -120,6 +128,7 @@ landed = [[None for i in range(24)] for j in range(10)]
 
 TICK = pygame.USEREVENT + 1
 pygame.time.set_timer(TICK, 1000)
+
 clock = pygame.time.Clock()
 
 global fallFreq
@@ -135,6 +144,9 @@ mult = 0
 
 global level
 level = 0
+
+global total_lines
+total_lines = 0
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -179,6 +191,8 @@ def rowFilled(y):
 
 def deleteRows(rows):
     global bankedpoints
+    global total_lines
+    total_lines += len(rows)
     # delete rows
     for i in range(0, len(rows)):
         for x in range(0, len(landed)):
@@ -705,9 +719,11 @@ def gameOver():
     # draw score, level, multiplier
     drawVarsBorder()
 
-    GAMEDISPLAY.fill(BLACK, [RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 2 * BLOCK_SIZE, 7.5 * BLOCK_SIZE, BLOCK_SIZE])
-    screen_text = BASICFONT.render("Score: " + str(score), True, WHITE)
-    GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 2 * BLOCK_SIZE))
+    GAMEDISPLAY.fill(BLACK, [RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 1.5 * BLOCK_SIZE, 7.5 * BLOCK_SIZE, BLOCK_SIZE])
+    screen_text = BASICFONT.render("Score: ", True, WHITE)
+    score_text = SCOREFONT.render("            " + str(score), True, WHITE)
+    GAMEDISPLAY.blit(score_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 1.5 * BLOCK_SIZE))
+    GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 1.5 * BLOCK_SIZE))
 
 
 #==================================================================================
@@ -746,7 +762,7 @@ def gameOver():
 
                     dx = 0
                     dy = 0
-                    speed = 10
+                    #speed = 10
 
                     gameExit = True
                     pause = False
@@ -791,21 +807,21 @@ def gameOver():
 
 
 def drawGridLines():
-   # SPACING = BLOCK_SIZE / 4
-   # for i in range (1, 10):
-   #     for j in range (0, 85):
-   #         if j % 2 == 0:
-   #             pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
-   #                             (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING),
-   #                             (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING + SPACING),
-   #                             1)
-   # for i in range (1, 20):
-   #     for j in range (0, 43):
-   #         if j % 2 == 0:
-   #             pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
-   #                             (LEFT_BOUNDARY + j * SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
-   #                             (LEFT_BOUNDARY + j * SPACING + SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
-   #                             1)
+##    SPACING = BLOCK_SIZE / 4
+##    for i in range (1, 10):
+##        for j in range (0, 85):
+##            if j % 2 == 0:
+##                pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
+##                                (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING),
+##                                (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY + j * SPACING + SPACING),
+##                                1)
+##    for i in range (1, 20):
+##        for j in range (0, 43):
+##            if j % 2 == 0:
+##                pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
+##                                (LEFT_BOUNDARY + j * SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
+##                                (LEFT_BOUNDARY + j * SPACING + SPACING, TOP_BOUNDARY + i * BLOCK_SIZE),
+##                                1)
     for i in range (1, 10):
         pygame.draw.line(GAMEDISPLAY, (200, 200, 200),
                         (LEFT_BOUNDARY + i * BLOCK_SIZE, TOP_BOUNDARY),
@@ -817,12 +833,29 @@ def drawGridLines():
                         (LEFT_BOUNDARY + 10 * BLOCK_SIZE, TOP_BOUNDARY + i * BLOCK_SIZE),
                         1)
 
+def move():
+    global block
+    global pos_x
+    global pos_y
+    global dx
+    global dy
+    block.setX(pos_x + dx)
+    block.setY(pos_y + dy)
+    if checkCollision():
+        block.setX(pos_x)
+        block.setY(pos_y)
+    else:
+        pos_x += dx
+        pos_y += dy
+
+
 
 #=================================================================================================
 
 
 def runGame():
-    GAMEDISPLAY.fill(BLACK)
+    #GAMEDISPLAY.fill(BLACK)
+    global GAMEDISPLAY
     global gameExit
     global currentBlock
     global hasMove
@@ -839,6 +872,14 @@ def runGame():
     global mult
     global isMusicOn
     global holdBlock
+    global HEIGHT
+    global WIDTH
+    global LEFT_BOUNDARY
+    global RIGHT_BOUNDARY
+    global BLOCK_SIZE
+    global TOP_BOUNDARY
+    global BOTTOM_BOUNDARY
+    global total_lines
 
     gameExit = False
 
@@ -865,18 +906,45 @@ def runGame():
     mult = 0
     scr_mult = 5
     drawCompliment(comp_input)
+    fontsize = 18
+    total_lines = 0
+
+    time = 300000
+    timeleft  = BASICFONT.render(str(time/1000/60) + " : " + str(time/1000 - (time/1000/60)*60), True, TEXTCOLOR)
+    TIMEREMAINING = pygame.USEREVENT + 2
+    pygame.time.set_timer(TIMEREMAINING, 1000)
+##    TIMEUP = pygame.USEREVENT + 3
+##    pygame.time.set_timer(TIMEUP, time)
+    MOVE = pygame.USEREVENT + 4
+    pygame.time.set_timer(MOVE, 125)
 
     while not gameExit:
-        
+    
         if bankedpoints > 0:
-            score += 5
-            bankedpoints -= 5
+            score += 1
+            bankedpoints -= 1
             
         # checkForQuit()
         for event in pygame.event.get():
 ##            if event.type == pygame.QUIT:
 ##                gameExit = True
-
+            #======PARTIAL RESIZABLE WINDOW CODE=============
+##            if event.type == pygame.VIDEORESIZE:
+##                HEIGHT = event.h
+##                WIDTH = HEIGHT * 7 / 6
+##                GAMEDISPLAY = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+##                LEFT_BOUNDARY = WIDTH / 3
+##                RIGHT_BOUNDARY = WIDTH - WIDTH / 3
+##                BLOCK_SIZE = (RIGHT_BOUNDARY - LEFT_BOUNDARY) / 10
+##                TOP_BOUNDARY = 4 * BLOCK_SIZE
+##                BOTTOM_BOUNDARY = TOP_BOUNDARY + 20 * BLOCK_SIZE
+##                INIT_X = LEFT_BOUNDARY + 5 * BLOCK_SIZE
+##                INIT_Y = BLOCK_SIZE
+            #==================================================
+            if event.type == pygame.VIDEORESIZE:
+                GAMEDISPLAY = pygame.display.set_mode((event.size), pygame.RESIZABLE)
+                GAMEDISPLAY.fill(BLACK)
+            #==================================================
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = soundOn.get_rect()
                 pos.x = soundPosition[0]
@@ -892,21 +960,21 @@ def runGame():
                     if pos_x:
                         dx = -BLOCK_SIZE
                         # dy = 0
-                        if event.key == pygame.K_DOWN:
-                            speed = 10
+##                        if event.key == pygame.K_DOWN:
+##                            speed = 10
 
                 elif event.key == pygame.K_RIGHT:
                     if pos_x:
                         dx = BLOCK_SIZE
                         # dy = 0
-                        if event.key == pygame.K_DOWN:
-                            speed = 10
+##                        if event.key == pygame.K_DOWN:
+##                            speed = 10
 
                 elif event.key == pygame.K_DOWN:
                     dy = BLOCK_SIZE
                     # dx = 0
                     playSound('beep.wav')
-                    speed = 20
+##                    speed = 20
 
                 elif event.key == pygame.K_UP and controlsOn == True:
                     if currentBlock:
@@ -958,7 +1026,7 @@ def runGame():
                             hard_q = True
                         controlsOn = True
                         if num_q <= 5:
-                            bankedpoints += 10
+                            bankedpoints += 10 + 5 * mult
                             mult += 1
                             if hard_q == True:
                                 bankedpoints += 20
@@ -991,9 +1059,17 @@ def runGame():
                 if event.key == pygame.K_DOWN:
                     dy = 0
                     # dx = 0
-                    speed = 10
+##                    speed = 10
             if event.type == TICK:
                 pos_y = tick(pos_y)
+            if event.type == MOVE:
+                move()
+            #=============TIMED METRIS============
+            if event.type == TIMEREMAINING:
+                time -= 1000
+                if time <= 0:
+                    gameOver()
+            #=====================================
 
         # main_menu.mainloop(pygame.event.get())
 
@@ -1021,7 +1097,7 @@ def runGame():
             # calculating new questions
             level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
             numTries = 0
-            controlsOn = False
+            controlsOn = True #False
             out_list = generateQues(level)
             diff1 = out_list[4]
             char = out_list[9]
@@ -1029,13 +1105,18 @@ def runGame():
             num_q = 0
             mult = 0
 
+            # setting new fall frequency
+            pygame.time.set_timer(TICK, fallFreq)
+
             # draw new block
             newBlock(blockSet, nextBlocks)
             currentBlock = True
             hasSwap = True
-
-        difference = getShadowDifference(block.getPerimeter())    
-        drawShadow(block.getPerimeter(), difference)
+            
+        # drawing shadow
+        if not block is None:
+            difference = getShadowDifference(block.getPerimeter())    
+            drawShadow(block.getPerimeter(), difference)
 
         # drawing question/answer text
 
@@ -1107,14 +1188,31 @@ def runGame():
         # drawing top cover
         GAMEDISPLAY.fill(BLACK, [0, 0, WIDTH, TOP_BOUNDARY])
 
+        # drawing timeleft ======================TIMED METRIS=================
+        if time / 1000 - (time / 1000 / 60) * 60 < 10:
+            timeleft_text = BASICFONT.render("Time: " + str(time/1000/60) + " : 0" + str(time/1000 - (time/1000/60)*60), True, (255,255,0))
+        else:
+            timeleft_text = BASICFONT.render("Time: " + str(time/1000/60) + " : " + str(time/1000 - (time/1000/60)*60), True, (255,255,0))
+        GAMEDISPLAY.blit(timeleft_text, (WIDTH / 2 - 2*BLOCK_SIZE, TOP_BOUNDARY - 1.5 * BLOCK_SIZE))
+        #=====================================================================
+
         # draw score, level, multiplier
         drawVarsBorder()
 
         level_text = BASICFONT.render("Level: " + str(level), True, WHITE)
-        GAMEDISPLAY.blit(level_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + BLOCK_SIZE))
+        GAMEDISPLAY.blit(level_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 0.5 * BLOCK_SIZE))
 
-        screen_text = BASICFONT.render("Score: " + str(score), True, WHITE)
-        GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 2 * BLOCK_SIZE))
+        #==============POP UP SCORE=====================================
+        if bankedpoints > 0 and fontsize < 24:
+            fontsize += 1
+        if bankedpoints is 0 and fontsize > 18:
+            fontsize -= 1
+        SCOREFONT = pygame.font.Font('freesansbold.ttf', fontsize)
+        screen_text = BASICFONT.render("Score: ", True, WHITE)
+        score_text = SCOREFONT.render("            " + str(score), True, WHITE) #=====================
+        GAMEDISPLAY.blit(score_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 1.5 * BLOCK_SIZE)) #=========
+        GAMEDISPLAY.blit(screen_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 1.5 * BLOCK_SIZE))
+        #=================================================================
 
         prt_scr = 10 + mult * 5
         if diff1 >= 5:
@@ -1122,7 +1220,11 @@ def runGame():
         if num_q > 5:
             prt_scr = 0
         val_text = BASICFONT.render("Question worth: " + str(prt_scr), True, WHITE)
-        GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 3 * BLOCK_SIZE))
+        GAMEDISPLAY.blit(val_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 2.5 * BLOCK_SIZE))
+
+        #=============LINES CLEARED======================================
+        lines_text = BASICFONT.render("Lines Cleared: " + str(total_lines), True, WHITE)
+        GAMEDISPLAY.blit(lines_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 3.5 * BLOCK_SIZE))
 
 
         # drawing next blocks
@@ -1178,20 +1280,6 @@ def runGame():
         # draw compliment
         drawCompliment(comp_input)
 
-        # collision checking
-        if not hasMove:
-            # clock.tick(10) - movement speed
-            block.setX(pos_x + dx)
-            block.setY(pos_y + dy)
-            if checkCollision():
-                block.setX(pos_x)
-                block.setY(pos_y)
-            else:
-                pos_x += dx
-                pos_y += dy
-
-            hasMove = True
-
         drawSoundIcon()
         drawMusicIcon()
         if level_prev != level:
@@ -1203,6 +1291,21 @@ def runGame():
             pygame.mixer.music.play(-1,0.0)
             if isMusicOn == False:
                 pygame.mixer.music.pause()
+
+        # collision checking
+##        if not hasMove:
+##            # clock.tick(10) - movement speed
+##            block.setX(pos_x + dx)
+##            block.setY(pos_y + dy)
+##            if checkCollision():
+##                block.setX(pos_x)
+##                block.setY(pos_y)
+##            else:
+##                pos_x += dx
+##                pos_y += dy
+##
+##            hasMove = True
+                
         pygame.display.update()
 
         clock.tick(speed)
@@ -1321,10 +1424,11 @@ def calculateLevelAndFallFreq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
     global level
+    global total_lines
     level_prev = level
     divisor = level_prev + 80
     level = int(score/divisor) + 1
-    fallFreq = 1000 - 500 * (level - 1)
+    fallFreq = 1010 - (total_lines + level) * 10 # 500 * (level - 1)
     return level, fallFreq
 
 
@@ -1358,7 +1462,7 @@ def drawCompliment(rand):
         compliment = "Good job! Next questions worth points upon block landing."
     complimentSurf = BASICFONT.render(compliment, True, TEXTCOLOR)
     complimentRect = complimentSurf.get_rect()
-    complimentRect.center = (WIDTH / 2, TOP_BOUNDARY / 2)
+    complimentRect.center = (WIDTH / 2, TOP_BOUNDARY - 2.5 * BLOCK_SIZE)
     GAMEDISPLAY.blit(complimentSurf, complimentRect)
     if rand == 4 or rand == 5 or rand == 6 or rand == 7:
         controlSurf = BASICFONT.render("Lost controls.", True, TEXTCOLOR)
@@ -1443,13 +1547,13 @@ def checkForNewHiscore():
             data = json.load(data_file)
     global score
     try:
-        if score <= int(data[len(data) - 1]["score"]):
+        if score * (total_lines / 10.0) <= int(data[len(data) - 1]["score"]):
             return -1
 
         for i in range (len(data)-1, 0, -1):
-            if score > data[i]["score"] and score <= data[i-1]["score"]:
+            if score * (total_lines / 10.0) > data[i]["score"] and score <= data[i-1]["score"]:
                 return i
-        if score > int(data[0]["score"]):
+        if score * (total_lines / 10.0) > int(data[0]["score"]):
             return 0
     except ValueError:
         newLeaderboard()
@@ -1463,22 +1567,31 @@ def updateHiscore(index):
         data = json.load(data_file)
     global score
     global name
-    drawHighScore("You made a new High Score!", level, score)
+    global total_lines
+    drawHighScore("You made a new High Score!", level, score, total_lines)
     name = inputbox.ask(GAMEDISPLAY, "Name")
     for i in range(len(data) - 1, index, -1):
         data[i]["date"] = data[i - 1]["date"]
         data[i]["score"] = data[i - 1]["score"]
         data[i]["name"] = data[i - 1]["name"]
     data[index]["date"] = str(datetime.datetime.now().date())+" "*20
-    data[index]["score"] = score
+    data[index]["score"] = int(score * (total_lines / 10.0))
     data[index]["name"] = name
     with open("leaderboard.json", 'w') as data_file:
         json.dump(data, data_file)
 
-def drawHighScore(text, lvl, pts):
+def drawHighScore(text, lvl, pts, tL):
     # This function displays large text in the
     # center of the screen until a key is pressed.
     # Draw the text drop shadow
+    i = 0
+    new_score = pts
+    if abs(new_score - int(pts * (tL/10.0))) > 1000:
+        speed = 300
+    elif abs(new_score - int(pts * (tL/10.0))) > 100:
+        speed = 60
+    elif abs(new_score - int(pts * (tL/10.0))) > 10:
+        speed = 30
     GAMEDISPLAY.fill(BLACK)
     titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTSHADOWCOLOR)
     titleRect.center = (int(WIDTH / 2)-3, int(HEIGHT / 4) - 40)
@@ -1488,17 +1601,50 @@ def drawHighScore(text, lvl, pts):
     titleSurf, titleRect = makeTextObjs(text, BIGFONT, TEXTCOLOR)
     titleRect.center = (int(WIDTH / 2) - 3, int(HEIGHT / 4) - 46)
     GAMEDISPLAY.blit(titleSurf, titleRect)
-
-    # Level text.
-    pressKeySurf, pressKeyRect = makeTextObjs('Level: ' + str(lvl), BASICFONT, TEXTCOLOR)
-    pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 95)
-    GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
-
-    # Score text.
-    pressKeySurf, pressKeyRect = makeTextObjs('Score: ' + str(pts), BASICFONT, TEXTCOLOR)
-    pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 120)
-    GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
-
+    while i < 6:
+        if i == 1:
+            # Level text.
+            pressKeySurf, pressKeyRect = makeTextObjs('Level: ' + str(lvl), BASICFONT, TEXTCOLOR)
+            pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 95)
+            GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
+        if i == 2:
+            # Score text.
+            pressKeySurf, pressKeyRect = makeTextObjs('Score: ' + str(pts), BASICFONT, TEXTCOLOR)
+            pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 120)
+            GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
+        if i == 3:
+            # Lines text.
+            pressKeySurf, pressKeyRect = makeTextObjs('Lines Cleared: ' + str(tL), BASICFONT, TEXTCOLOR)
+            pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 145)
+            GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
+        if i == 4:
+            # Total text.
+            pressKeySurf, pressKeyRect = makeTextObjs('Total = ' + str(pts) + " x " + str(tL/10.0), BASICFONT, TEXTCOLOR)
+            pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 170)
+            GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
+        while i == 5 and new_score !=  int(pts * (tL/10.0)):
+            event = pygame.event.poll()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    new_score = int(pts * (tL/10.0))
+            pressKeySurf, pressKeyRect = makeTextObjs(str(int(new_score)), BASICFONT, TEXTCOLOR)
+            pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 195)
+            pygame.draw.rect(GAMEDISPLAY, BLACK, [int(WIDTH / 6), int(HEIGHT / 2) + 185, WIDTH / 2, 25])
+            GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
+            if new_score > int(pts * (tL/10.0)):                                          
+                new_score -= 1
+            else:
+                new_score += 1
+            pygame.display.update()
+            clock.tick(speed)
+        if i == 5 and new_score == int(pts * (tL/10.0)):
+            pressKeySurf, pressKeyRect = makeTextObjs(str(int(new_score)), BASICFONT, TEXTCOLOR)
+            pressKeyRect.center = (int(WIDTH / 2), int(HEIGHT / 2) + 195)
+            pygame.draw.rect(GAMEDISPLAY, BLACK, [int(WIDTH / 6), int(HEIGHT / 2) + 185, WIDTH / 2, 25])
+            GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
+        i += 1
+        pygame.display.update()
+        clock.tick(1)
 
     # while checkForKeyPress() is None:
     #     pygame.display.update()
@@ -1537,16 +1683,16 @@ def drawGameOver(text):
 
 def newLeaderboard():
     leaderboardFile = open("leaderboard.json", "w")
-    leaderboardFile.write("[{\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"SamC______\"}, \
-                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Gaurav____\"}, \
-                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Boyi______\"}, \
-                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"SamO______\"}, \
-                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Brandon___\"}, \
-                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Tony______\"}, \
-                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Eric______\"}, \
-                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"Btai______\"}, \
-                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"gauravnv__\"}, \
-                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"XDSU______\"}]")
+    leaderboardFile.write("[{\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"_____SamC______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"_____Gaurav____\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"_____Boyi______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"_____SamO______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"_____Brandon___\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"_____Tony______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"_____Eric______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"_____Btai______\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"_____gauravnv__\"}, \
+                            {\"date\": \"2018-05-03          \", \"score\": 0, \"name\": \"_____XDSU______\"}]")
     leaderboardFile.close()
 
 
