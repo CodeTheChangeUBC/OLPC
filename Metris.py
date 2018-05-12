@@ -307,13 +307,13 @@ class Metris(object):
 
                     elif event.key == pygame.K_p:
                         mult = 0
-                        paused()
-                        out_list = self.generateQues(level)
+                        self.paused()
+                        out_list = generateQues(level)
 
                     elif event.key == pygame.K_LSHIFT:
                         if (hasSwap == True):
-                            hold(blockSet, nextBlocks)
-                            out_list = self.generateQues(level)
+                            self.hold(blockSet, nextBlocks)
+                            out_list = generateQues(level)
                             mult = 0
                             hasSwap = False
                     elif event.key == pygame.K_m:
@@ -371,7 +371,7 @@ class Metris(object):
                 if event.type == TIMEREMAINING:
                     time -= 1000
                     if time <= 0:
-                        gameOver()
+                        self.gameOver()
                 #=====================================
 
             # main_menu.mainloop(pygame.event.get())
@@ -412,7 +412,7 @@ class Metris(object):
                 pygame.time.set_timer(TICK, fallFreq)
 
                 # draw new block
-                newBlock(blockSet, nextBlocks)
+                self.newBlock(blockSet, nextBlocks)
                 currentBlock = True
                 hasSwap = True
                 
@@ -500,7 +500,7 @@ class Metris(object):
             #=====================================================================
 
             # draw score, level, multiplier
-            drawVarsBorder()
+            self.drawVarsBorder()
 
             level_text = BASICFONT.render("Level: " + str(level), True, WHITE)
             GAMEDISPLAY.blit(level_text, (RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 0.5 * BLOCK_SIZE))
@@ -535,25 +535,25 @@ class Metris(object):
                 nextBlocks[i].display(GAMEDISPLAY)
 
             # draw next blocks border
-            drawNextBlocksBorder()
+            self.drawNextBlocksBorder()
 
             # draw next blocks label
-            drawNextBlocksLabel()
+            self.drawNextBlocksLabel()
 
             # drawing hold
-            drawHoldBlock(holdBlock)
+            self.drawHoldBlock(holdBlock)
 
             # draw hold border
-            drawHoldBorder()
+            self.drawHoldBorder()
 
             # draw hold label
-            drawHoldLabel()
+            self.drawHoldLabel()
 
             # draw game area border
-            drawGameAreaBorder()
+            self.drawGameAreaBorder()
 
             # draw question & answer border
-            drawQuesAnsBorder()
+            self.drawQuesAnsBorder()
 
             questionSurf = BASICFONT.render('Question :', True, TEXTCOLOR)
             questionRect = questionSurf.get_rect()
@@ -705,7 +705,7 @@ class Metris(object):
                 break
             for x in range(0, len(landed)):
                 if landed[x][y] != None:
-                    gameOver()
+                    self.gameOver()
                     done = True
                     break
                     
@@ -956,8 +956,8 @@ class Metris(object):
         if (tmp != None):
             blockSet.insert(0, tmp)
 
-        newBlock(blockSet, nextBlocks)
-        setNextBlocks(blockSet, nextBlocks)
+        self.newBlock(blockSet, nextBlocks)
+        self.setNextBlocks(blockSet, nextBlocks)
 
     def drawHoldBlock(self, blockType):
         if blockType == None:
@@ -966,8 +966,8 @@ class Metris(object):
         holdBlock = None
         offset_x = RIGHT_BOUNDARY + BLOCK_SIZE * 4
         offset_y = TOP_BOUNDARY + BLOCK_SIZE * 14
-        offset_x += getOffsetX(blockType)
-        offset_y += getOffsetY(blockType)
+        offset_x += self.getOffsetX(blockType)
+        offset_y += self.getOffsetY(blockType)
 
         if blockType == 0:
             holdBlock = BlockT(offset_x, offset_y, BLOCK_SIZE)
@@ -992,7 +992,7 @@ class Metris(object):
         return False
 
     def appendBlockList(self, blockSet):
-        nextBlockSet = getRandomBlockSet(blockSet[len(blockSet) - 1])
+        nextBlockSet = self.getRandomBlockSet(blockSet[len(blockSet) - 1])
         for i in range(0, len(nextBlockSet)):
             blockSet.insert(len(blockSet), nextBlockSet[i])
 
@@ -1006,26 +1006,26 @@ class Metris(object):
 
         for i in range(0, 1):
             if blockSet[i] == 0:
-                nextBlocks.insert(i, BlockT(offset_x + getOffsetX(blockSet[i]),
-                                            i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+                nextBlocks.insert(i, BlockT(offset_x + self.getOffsetX(blockSet[i]),
+                                            i * y_spacing + offset_y + self.getOffsetY(blockSet[i]), BLOCK_SIZE))
             elif blockSet[i] == 1:
-                nextBlocks.insert(i, BlockS(offset_x + getOffsetX(blockSet[i]),
-                                            i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+                nextBlocks.insert(i, BlockS(offset_x + self.getOffsetX(blockSet[i]),
+                                            i * y_spacing + offset_y + self.getOffsetY(blockSet[i]), BLOCK_SIZE))
             elif blockSet[i] == 2:
-                nextBlocks.insert(i, BlockJ(offset_x + getOffsetX(blockSet[i]),
-                                            i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+                nextBlocks.insert(i, BlockJ(offset_x + self.getOffsetX(blockSet[i]),
+                                            i * y_spacing + offset_y + self.getOffsetY(blockSet[i]), BLOCK_SIZE))
             elif blockSet[i] == 3:
-                nextBlocks.insert(i, BlockI(offset_x + getOffsetX(blockSet[i]),
-                                            i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+                nextBlocks.insert(i, BlockI(offset_x + self.getOffsetX(blockSet[i]),
+                                            i * y_spacing + offset_y + self.getOffsetY(blockSet[i]), BLOCK_SIZE))
             elif blockSet[i] == 4:
-                nextBlocks.insert(i, BlockL(offset_x + getOffsetX(blockSet[i]),
-                                            i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+                nextBlocks.insert(i, BlockL(offset_x + self.getOffsetX(blockSet[i]),
+                                            i * y_spacing + offset_y + self.getOffsetY(blockSet[i]), BLOCK_SIZE))
             elif blockSet[i] == 5:
-                nextBlocks.insert(i, BlockZ(offset_x + getOffsetX(blockSet[i]),
-                                            i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+                nextBlocks.insert(i, BlockZ(offset_x + self.getOffsetX(blockSet[i]),
+                                            i * y_spacing + offset_y + self.getOffsetY(blockSet[i]), BLOCK_SIZE))
             elif blockSet[i] == 6:
-                nextBlocks.insert(i, BlockO(offset_x + getOffsetX(blockSet[i]),
-                                            i * y_spacing + offset_y + getOffsetY(blockSet[i]), BLOCK_SIZE))
+                nextBlocks.insert(i, BlockO(offset_x + self.getOffsetX(blockSet[i]),
+                                            i * y_spacing + offset_y + self.getOffsetY(blockSet[i]), BLOCK_SIZE))
 
     def drawHoldBorder(self):
         BORDER_WIDTH = 2
@@ -1087,10 +1087,10 @@ class Metris(object):
         global pos_y
 
         rand = blockSet.pop(0)
-        if blockListTooShort(len(blockSet)):
-            appendBlockList(blockSet)
+        if self.blockListTooShort(len(blockSet)):
+            self.appendBlockList(blockSet)
 
-        setNextBlocks(blockSet, nextBlocks)
+        self.setNextBlocks(blockSet, nextBlocks)
 
         if rand == 0:
             block = BlockT(INIT_X, INIT_Y, BLOCK_SIZE)
@@ -1194,7 +1194,7 @@ class Metris(object):
         GAMEDISPLAY.fill(BLACK, [0, 0, WIDTH, TOP_BOUNDARY])
 
         # draw score, level, multiplier
-        drawVarsBorder()
+        self.drawVarsBorder()
 
         GAMEDISPLAY.fill(BLACK, [RIGHT_BOUNDARY + BLOCK_SIZE + 10, TOP_BOUNDARY + 1.5 * BLOCK_SIZE, 7.5 * BLOCK_SIZE, BLOCK_SIZE])
         screen_text = BASICFONT.render("Score: ", True, WHITE)
