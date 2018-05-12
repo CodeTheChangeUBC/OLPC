@@ -161,7 +161,7 @@ def tick(pos_y):
                 landed[x2Index(block.getPerimeter()[i].getX())][y2Index(block.getPerimeter()[i].getY())] = \
                     block.getPerimeter()[i]
             checkLandedAndDelete()
-            playSound('landSound.wav')
+            playSound('wavs/landSound.wav')
             checkGameOver()
         else:
             pos_y += BLOCK_SIZE
@@ -201,7 +201,7 @@ def deleteRows(rows):
                     if landed[x][y - 1] != None:
                         landed[x][y - 1].setRelativeY(BLOCK_SIZE)
                     landed[x][y] = landed[x][y - 1]
-        playSound('clr.wav')
+        playSound('wavs/clr.wav')
 
     # update score
     if len(rows) == 1:
@@ -725,7 +725,7 @@ def gameOver():
 #==================================================================================
 
     pygame.mixer.music.stop()
-    playSound('end.wav')
+    playSound('wavs/end.wav')
 
     initialSize = 16
 
@@ -969,7 +969,7 @@ def runGame():
                 elif event.key == pygame.K_DOWN:
                     dy = BLOCK_SIZE
                     # dx = 0
-                    playSound('beep.wav')
+                    playSound('wavs/beep.wav')
 ##                    speed = 20
 
                 elif event.key == pygame.K_UP and controlsOn == True:
@@ -1015,7 +1015,7 @@ def runGame():
                     flipSoundIcon()
                 # check for correct answer
                 elif event.key == out_list[9]:
-                    playSound('cor.wav')
+                    playSound('wavs/cor.wav')
                     if numTries < 1:
                         hard_q = False
                         if diff1 > 4:
@@ -1041,7 +1041,7 @@ def runGame():
                     mult = 0
                     if num_q <= 5 and numTries <= 1:
                         controlsOn = False
-                        playSound('incor.wav')
+                        playSound('wavs/incor.wav')
                         comp_input = randint(4, 7)
 
             if event.type == pygame.KEYUP:
