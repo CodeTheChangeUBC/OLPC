@@ -1097,7 +1097,7 @@ def runGame():
             # calculating new questions
             level, fallFreq = calculateLevelAndFallFreq(score + bankedpoints)
             numTries = 0
-            controlsOn = True #False
+            controlsOn = True
             out_list = generateQues(level)
             diff1 = out_list[4]
             char = out_list[9]
