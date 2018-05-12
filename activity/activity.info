@@ -1,11 +1,10 @@
 [Activity]
 name = Metris
-activity_version = 1
-host_version = 1
 bundle_id = ctcubc.Metris
 icon = activity
-show_launcher = yes
-exec = sugar-activity Metris.Metris.py
-repository = https://github.com/CodeTheChangeUBC/OLPC
+exec = sugar-activity activity.MetrisActivity
+activity_version = 1
 license = GPLv3+
+show_launcher = no
+repository = https://github.com/CodeTheChangeUBC/OLPC
 summary = A game designed to play tetris with mental math fun

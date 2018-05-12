@@ -7,9 +7,6 @@ from leaderboard import *
 import json
 import datetime
 
-import os
-import leaderboard
-
 from Block.BlockT import *
 from Block.BlockO import *
 from Block.BlockI import *
@@ -149,7 +146,6 @@ global total_lines
 total_lines = 0
 
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 def tick(pos_y):
     if gameExit:
@@ -1938,6 +1934,7 @@ def main():
     global main_menu
     # Main menu
     # runGame()
+    # buildMain()
     main_menu.mainloop(pygame.event.get())
 
 
