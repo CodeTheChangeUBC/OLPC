@@ -154,6 +154,7 @@ total_lines = 0
 def tick(pos_y):
     if gameExit:
         return pos_y
+
     if block != None:
         global currentBlock
         block.setY(pos_y + BLOCK_SIZE)
