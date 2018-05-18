@@ -1,14 +1,8 @@
 import pygame
 import inputbox
 import random, time, sys, math
-from pygame.locals import *
-from random import randint
-from leaderboard import *
 import json
 import datetime
-
-import os
-import leaderboard
 
 from Block.BlockT import *
 from Block.BlockO import *
@@ -17,8 +11,6 @@ from Block.BlockL import *
 from Block.BlockS import *
 from Block.BlockZ import *
 from Block.BlockJ import *
-
-# import Block
 
 from menu import *
 
@@ -54,14 +46,7 @@ class Metris:
         self.SCOREFONT = pygame.font.Font('freesansbold.ttf', 18)
         self.BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
         self.BIGFONT = pygame.font.Font('freesansbold.ttf', 50)
-        # global self.HEIGHT
-        # global self.WIDTH
-        # global self.LEFT_BOUNDARY
-        # global self.RIGHT_BOUNDARY
-        # global self.BLOCK_SIZE
-        # global self.TOP_BOUNDARY
-        # global self.BOTTOM_BOUNDARY
-        self.HEIGHT = 680
+        self.HEIGHT = 900
         self.WIDTH = self.HEIGHT * 7 / 6
         self.LEFT_BOUNDARY = self.WIDTH / 3
         self.RIGHT_BOUNDARY = self.WIDTH - self.WIDTH / 3
@@ -75,27 +60,14 @@ class Metris:
                         'mp3s/m4', 'mp3s/m5', 'mp3s/m6', 'mp3s/m7',
                         'mp3s/m8', 'mp3s/m9', 'mp3s/m10', 'mp3s/m11', 'mp3s/m12', 'mp3s/m13']
 
-        # global self.score
-
-        # global self.GAMEDISPLAY
         self.score = 0
         self.GAMEDISPLAY = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
 
         pygame.display.set_caption('Metris')
         pygame.display.update()
 
-        # global gameExit
         self.gameExit = False
 
-        # block1 = [BLOCK_SIZE, self.BLOCK_SIZE]
-        # global pos_x
-        # pos_x = self.WIDTH / 2
-        # global pos_y
-        # pos_y = 10
-        # global currentBlock
-        # global blockPlaced
-        # global self.landed
-        # global bankedpoints
         self.dx = 0
         self.dy = 0
         self.hasMove = False
@@ -109,14 +81,6 @@ class Metris:
         self.speed = 60
         self.bankedpoints = 0
 
-        # global isSoundOn
-        # global self.soundOn
-        # global soundOff
-        # global soundPosition
-        # global self.isMusicOn
-        # global musicOn
-        # global musicOff
-        # global self.musicPosition
         self.isSoundOn = True
         self.soundOn = pygame.image.load('images/soundon.png')  # @copyright from Robin Kylander in FLATICON
         self.soundOn.convert()
@@ -132,16 +96,9 @@ class Metris:
 
         self.clock = pygame.time.Clock()
 
-        # global fallFreq
-        # global self.holdBlock
         self.fallFreq = 1
         self.holdBlock = None
 
-        # global mus_var
-        # global mult
-        # global self.level
-        # global total_lines
-        #self.mus_var = randint(0, 12)
         self.mult = 0
         self.level = 0
         self.total_lines = 0
@@ -154,32 +111,6 @@ class Metris:
 
 
     def runGame(self):
-        #self.GAMEDISPLAY.fill(self.BLACK)
-        # global self.GAMEDISPLAY
-        # global gameExit
-        # global currentBlock
-        # global hasMove
-        # global self.dx
-        # global self.dy
-        # global block
-        # global self.speed
-        # global pos_y
-        # global pos_x
-        # global self.score
-        # global self.soundOn
-        # global mus_var
-        # global bankedpoints
-        # global mult
-        # global self.isMusicOn
-        # global self.holdBlock
-        # global self.HEIGHT
-        # global self.WIDTH
-        # global self.LEFT_BOUNDARY
-        # global self.RIGHT_BOUNDARY
-        # global self.BLOCK_SIZE
-        # global self.TOP_BOUNDARY
-        # global self.BOTTOM_BOUNDARY
-        # global total_lines
 
         self.gameExit = False
 
@@ -260,21 +191,14 @@ class Metris:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         self.dx = -self.BLOCK_SIZE
-                            # self.dy = 0
-    ##                        if event.key == pygame.K_DOWN:
-    ##                            self.speed = 10
 
                     elif event.key == pygame.K_RIGHT:
                         self.dx = self.BLOCK_SIZE
-                            # self.dy = 0
-    ##                        if event.key == pygame.K_DOWN:
-    ##                            self.speed = 10
+
 
                     elif event.key == pygame.K_DOWN:
                         self.dy = self.BLOCK_SIZE
-                        # self.dx = 0
                         self.playSound('beep.wav')
-    ##                    self.speed = 20
 
                     elif event.key == pygame.K_UP and controlsOn == True:
                         if self.currentBlock:
@@ -295,15 +219,13 @@ class Metris:
                     elif event.key == pygame.K_SPACE:
                         while not self.checkCollision():
                             self.block.setY(self.block.getY() + self.BLOCK_SIZE)
-                            # pos_y += self.BLOCK_SIZE
 
                         self.block.setY(self.block.getY() - self.BLOCK_SIZE)
-                        # pos_y -= self.BLOCK_SIZE
 
                         self.tick()
 
                     elif event.key == pygame.K_p:
-                        mult = 0
+                        self.mult = 0
                         self.paused()
                         out_list = self.generateQues()
 
@@ -352,14 +274,11 @@ class Metris:
                     if event.key == pygame.K_LEFT:
                         if self.dx < 0:
                             self.dx = 0
-                        # self.dy = 0
                     if event.key == pygame.K_RIGHT:
                         if self.dx > 0:
                             self.dx = 0
                     if event.key == pygame.K_DOWN:
                         self.dy = 0
-                        # self.dx = 0
-    ##                    self.speed = 10
                 if event.type == TICK:
                     # pos_y = self.tick(pos_y)
                     self.tick()
@@ -372,13 +291,9 @@ class Metris:
                         self.gameOver()
                 #=====================================
 
-            # self.main_menu.mainloop(pygame.event.get())
 
             # drawing bg
-            ##        self.GAMEDISPLAY.fill((100, 100, 100))
-            ##        self.GAMEDISPLAY.fill(self.BLACK, [0, 0, self.LEFT_BOUNDARY, self.HEIGHT])
-            ##        self.GAMEDISPLAY.fill(self.BLACK, [self.RIGHT_BOUNDARY, 0, self.WIDTH - self.RIGHT_BOUNDARY, self.HEIGHT])
-            ##        self.GAMEDISPLAY.fill(self.BLACK, [0, 0, self.WIDTH, self.HEIGHT - 20*BLOCK_SIZE])
+
             self.GAMEDISPLAY.fill(self.BLACK, [0, 0, self.WIDTH, self.HEIGHT])
             
             self.GAMEDISPLAY.fill(self.INNER_BG2, [self.LEFT_BOUNDARY, self.TOP_BOUNDARY, 10 * self.BLOCK_SIZE, 20 * self.BLOCK_SIZE])
@@ -398,7 +313,7 @@ class Metris:
                 # calculating new questions
                 self.calculateLevelAndFallFreq()
                 numTries = 0
-                controlsOn = True #False
+                controlsOn = True
                 out_list = self.generateQues()
                 diff1 = out_list[4]
                 char = out_list[9]
@@ -592,27 +507,13 @@ class Metris:
                 pygame.mixer.music.play(-1,0.0)
                 if self.isMusicOn == False:
                     pygame.mixer.music.pause()
-
-            # collision checking
-    ##        if not hasMove:
-    ##            # self.clock.tick(10) - movement self.speed
-    ##            self.block.setX(pos_x + self.dx)
-    ##            self.block.setY(pos_y + self.dy)
-    ##            if checkCollision():
-    ##                self.block.setX(pos_x)
-    ##                self.block.setY(pos_y)
-    ##            else:
-    ##                pos_x += self.dx
-    ##                pos_y += self.dy
-    ##
-    ##            hasMove = True
                     
             pygame.display.update()
 
             self.clock.tick(self.speed)
-            hasMove = False
+            self.hasMove = False
 
-        currentBlock = False
+        self.currentBlock = False
         self.block = None
         self.score = 0
         for i in range(0, len(self.landed)):
@@ -630,7 +531,6 @@ class Metris:
         if self.gameExit:
             return
         if self.block != None:
-            # global currentBlock
             self.block.setY(self.block.getY() + self.BLOCK_SIZE)
             if self.checkCollision():
                 self.block.setY(self.block.getY() - self.BLOCK_SIZE)
@@ -642,10 +542,6 @@ class Metris:
                 self.checkLandedAndDelete()
                 self.playSound('landSound.wav')
                 self.checkGameOver()
-            # else:
-            #     pos_y += self.BLOCK_SIZE
-        # return pos_y
-
 
     def checkLandedAndDelete(self):
         y = 0
@@ -665,8 +561,6 @@ class Metris:
 
 
     def deleteRows(self, rows):
-        # global bankedpoints
-        # global total_lines
         self.total_lines += len(rows)
         # delete rows
         for i in range(0, len(rows)):
@@ -696,7 +590,6 @@ class Metris:
 
 
     def checkGameOver(self):
-        # global gameExit
         done = False
         for y in range(0, len(self.landed[0]) - 20):
             if done:
@@ -710,10 +603,8 @@ class Metris:
 
 
     def checkCollision(self):
-        # global currentBlock
         if not self.currentBlock:
             return False
-        # global self.landed
         blockPerimeter = self.block.getPerimeter()
         for i in range(0, len(blockPerimeter)):
             for j in range(0, len(self.landed)):
@@ -728,12 +619,8 @@ class Metris:
                 return True
 
     def checkBlockCollision(self):
-        # global pos_x
-        # global pos_y
-        # global currentBlock
         if not self.currentBlock:
             return False
-        # global self.landed
         isCollision = False
         blockPerimeter = self.block.getPerimeter()
         for i in range(0, len(blockPerimeter)):
@@ -742,107 +629,66 @@ class Metris:
                     if self.landed[j][k] is not None:
                         isCollision = False
                         if blockPerimeter[i].getX() == self.landed[j][k].getX() and blockPerimeter[i].getY() == self.landed[j][k].getY():
-                            
                             self.block.setY(self.block.getY() + self.BLOCK_SIZE)
-                            # pos_y += self.BLOCK_SIZE
                             if self.checkCollision():
                                 self.block.setY(self.block.getY() - self.BLOCK_SIZE)
-                                # pos_y -= self.BLOCK_SIZE
                                 isCollision = True
 
                             if self.checkCollision():
                                 self.block.setY(self.block.getY() - self.BLOCK_SIZE)
-                                # pos_y -= self.BLOCK_SIZE
                                 if self.checkCollision():
                                     self.block.setY(self.block.getY() + self.BLOCK_SIZE)
-                                    # pos_y += self.BLOCK_SIZE
                                     return isCollision
         return False
         
 
     def checkCollisionRotation(self):
-        # global pos_x
-        # global pos_y
-        # global currentBlock
         if not self.currentBlock:
             return False
-        # global self.landed
         blockPerimeter = self.block.getPerimeter()
-    ##    for i in range(0, len(blockPerimeter)):
-    ##        for j in range(0, len(self.landed)):
-    ##            for k in range(0, len(self.landed[j])):
-    ##                if self.landed[j][k] is not None:
-    ##                    if blockPerimeter[i].getX() == self.landed[j][k].getX() and blockPerimeter[i].getY() == self.landed[j][k].getY():
-    ##                        
-    ##                        self.block.setY(block.getY() + self.BLOCK_SIZE)
-    ##                        pos_y += self.BLOCK_SIZE
-    ##                        checkBoundaryCollision()
-    ##                        if checkCollision():
-    ##                            self.block.setY(block.getY() - self.BLOCK_SIZE)
-    ##                            pos_y -= self.BLOCK_SIZE
-    ##
-    ##                        if checkCollision():
-    ##                            self.block.setY(block.getY() - self.BLOCK_SIZE)
-    ##                            pos_y -= self.BLOCK_SIZE
-    ##                            if checkCollision():
-    ##                                self.block.setY(block.getY() + self.BLOCK_SIZE)
-    ##                                pos_y += self.BLOCK_SIZE
-    ##                                return True
                             
         for i in range(0, len(blockPerimeter)):
             if blockPerimeter[i].getX() < self.LEFT_BOUNDARY - self.BLOCK_SIZE:
                 self.block.setX(self.block.getX() + 2 * self.BLOCK_SIZE)
-                # pos_x += 2 * self.BLOCK_SIZE
                 self.checkBlockCollision()
                 if self.checkCollision():
                     self.block.setX(self.block.getX() - 2 * self.BLOCK_SIZE)
-                    # pos_x -= 2 * self.BLOCK_SIZE
                     return True
                 break
             elif blockPerimeter[i].getX() > self.RIGHT_BOUNDARY:
                 self.block.setX(self.block.getX() - 2 * self.BLOCK_SIZE)
-                # pos_x -= 2 * self.BLOCK_SIZE
                 self.checkBlockCollision()
                 if self.checkCollision():
                     self.block.setX(self.block.getX() + 2 * self.BLOCK_SIZE)
-                    # pos_x += 2 * self.BLOCK_SIZE
                     return True
                 break
             elif blockPerimeter[i].getY() > self.BOTTOM_BOUNDARY:
                 self.block.setY(self.block.getY() - 2 * self.BLOCK_SIZE)
-                # pos_y -= 2 * self.BLOCK_SIZE
                 self.checkBlockCollision()
                 if self.checkCollision():
                     self.block.setY(self.block.getX() + 2 * self.BLOCK_SIZE)
-                    # pos_y += 2 * self.BLOCK_SIZE
                     return True
                 break
         for i in range(0, len(blockPerimeter)):
             if blockPerimeter[i].getX() < self.LEFT_BOUNDARY:
                 self.block.setX(self.block.getX() + self.BLOCK_SIZE)
-                # pos_x += self.BLOCK_SIZE
                 self.checkBlockCollision()
                 if self.checkCollision():
                     self.block.setX(self.block.getX() - self.BLOCK_SIZE)
-                    # pos_x -= self.BLOCK_SIZE
                     return True
                 break
             elif blockPerimeter[i].getX() > self.RIGHT_BOUNDARY - self.BLOCK_SIZE:
                 self.block.setX(self.block.getX() - self.BLOCK_SIZE)
-                # pos_x -= self.BLOCK_SIZE
                 self.checkBlockCollision()
                 if self.checkCollision():
                     self.block.setX(self.block.getX() + self.BLOCK_SIZE)
-                    # pos_x += self.BLOCK_SIZE
                     return True
                 break
             elif blockPerimeter[i].getY() > self.BOTTOM_BOUNDARY - self.BLOCK_SIZE:
                 self.block.setY(self.block.getY() - self.BLOCK_SIZE)
-                # pos_y -= self.BLOCK_SIZE
                 self.checkBlockCollision()
                 if self.checkCollision():
                     self.block.setY(self.block.getX() + self.BLOCK_SIZE)
-                    # pos_y += self.BLOCK_SIZE
                     return True
                 break
         return False
@@ -944,11 +790,6 @@ class Metris:
 
 
     def hold(self, nextBlocks):
-        # global block
-        # global pos_x
-        # global pos_y
-        # global self.holdBlock
-
         tmp = self.holdBlock
         self.holdBlock = self.getBlockType()
 
@@ -1082,9 +923,6 @@ class Metris:
 
 
     def newBlock(self, nextBlocks):
-        # global block
-        # global pos_x
-        # global pos_y
 
         rand = self.blockSet.pop(0)
         if self.blockListTooShort(len(self.blockSet)):
@@ -1106,8 +944,6 @@ class Metris:
             self.block = BlockZ(self.INIT_X, self.INIT_Y, self.BLOCK_SIZE)
         elif rand == 6:
             self.block = BlockO(self.INIT_X, self.INIT_Y, self.BLOCK_SIZE)
-        pos_x = self.INIT_X
-        pos_y = self.INIT_Y
 
 
     def paused(self):
@@ -1241,7 +1077,7 @@ class Metris:
                         self.dy = 0
                         #self.speed = 10
 
-                        gameExit = True
+                        self.gameExit = True
                         pause = False
                         #runGame()
                     ##                if event.key == pygame.K_x:
