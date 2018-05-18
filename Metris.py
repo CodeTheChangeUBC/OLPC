@@ -98,7 +98,6 @@ class Metris:
 
         self.fallFreq = 1
         self.holdBlock = None
-
         self.mult = 0
         self.level = 0
         self.total_lines = 0
@@ -280,7 +279,6 @@ class Metris:
                     if event.key == pygame.K_DOWN:
                         self.dy = 0
                 if event.type == TICK:
-                    # pos_y = self.tick(pos_y)
                     self.tick()
                 if event.type == MOVE:
                     self.move()
@@ -1052,23 +1050,13 @@ class Metris:
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
-    ##                    currentBlock = False
-    ##                    self.block = None
-    ##                    self.score = 0
-    ##                    for i in range(0, len(self.landed)):
-    ##                        for j in range(0, len(self.landed[i])):
-    ##                            self.landed[i][j] = None
-    ##                    self.holdBlock = None
 
                         self.dx = 0
                         self.dy = 0
-                        #self.speed = 10
 
                         self.gameExit = True
                         pause = False
-                        #runGame()
-                    ##                if event.key == pygame.K_x:
-                    ##                    self.main_menu.mainloop(pygame.event.get())
+
                     elif event.key == pygame.K_m:
                         self.flipMusicIcon()
                     elif event.key == pygame.K_s:
@@ -1107,6 +1095,7 @@ class Metris:
 
 
     def drawGridLines(self):
+    ##    DOTTTED LINES
     ##    SPACING = self.BLOCK_SIZE / 4
     ##    for i in range (1, 10):
     ##        for j in range (0, 85):
@@ -1134,6 +1123,8 @@ class Metris:
                             1)
 
     def move(self):
+        if self.block is None:
+            return
         self.block.setX(self.block.getX() + self.dx)
         self.block.setY(self.block.getY() + self.dy)
         if self.checkCollision():
