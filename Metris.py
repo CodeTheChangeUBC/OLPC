@@ -122,7 +122,7 @@ class Metris:
         self.soundOn.convert()
         self.soundOff = pygame.image.load('images/soundoff.png')  # @copyright from Robin Kylander in FLATICON
         self.soundOff.convert()
-        soundPosition = (self.LEFT_BOUNDARY / 2, self.HEIGHT * 3 / 4)
+        self.soundPosition = (self.LEFT_BOUNDARY / 2, self.HEIGHT * 3 / 4)
         self.isMusicOn = True
         self.musicOn = pygame.image.load('images/musicon.png')  # @copyright from Freepik in FLATICON
         self.musicOn.convert()
@@ -906,6 +906,7 @@ class Metris:
             return int(0.5 * self.BLOCK_SIZE)
         elif blockType == 6:
             return 0
+        return 0
 
 
     def getOffsetY(self, blockType):
@@ -923,7 +924,7 @@ class Metris:
             return int(0.5 * self.BLOCK_SIZE)
         elif blockType == 6:
             return int(0.5 * self.BLOCK_SIZE)
-
+        return 0
 
     def getBlockType(self):
         if type(self.block) == BlockT:
@@ -981,8 +982,9 @@ class Metris:
             self.holdBlock = BlockZ(offset_x, offset_y, self.BLOCK_SIZE)
         elif blockType == 6:
             self.holdBlock = BlockO(offset_x, offset_y, self.BLOCK_SIZE)
-        
-        self.holdBlock.display(self.GAMEDISPLAY)
+
+        if self.holdBlock is not None:
+            self.holdBlock.display(self.GAMEDISPLAY)
 
     def blockListTooShort(self, len):
         if len <= 5:
@@ -1810,7 +1812,7 @@ class Metris:
         # PLAY MENU
 
         play_menu = pygameMenu.Menu(self.GAMEDISPLAY,
-                                    bgfun=Metris().main_background,
+                                    bgfun=None,
                                     color_selected=COLOR_RED,
                                     font=fontdir,
                                     font_color=COLOR_WHITE,
@@ -1834,7 +1836,7 @@ class Metris:
 
         # instruction MENU
         instruction_menu = pygameMenu.TextMenu(self.GAMEDISPLAY,
-                                               bgfun=Metris().main_background,
+                                               bgfun=None,
                                                color_selected=COLOR_GREEN,
                                                font=fontdir,
                                                font_color=COLOR_WHITE,
@@ -1864,7 +1866,7 @@ class Metris:
 
         # Leaderboard MENU
         leaderboard_menu = pygameMenu.TextMenu(self.GAMEDISPLAY,
-                                               bgfun=Metris().main_background,
+                                               bgfun=None,
                                                color_selected=COLOR_BLUE,
                                                font=fontdir,
                                                font_color=COLOR_WHITE,
@@ -1912,7 +1914,7 @@ class Metris:
 
         # MAIN MENU
         self.main_menu = pygameMenu.Menu(self.GAMEDISPLAY,
-                                    bgfun=Metris().main_background,
+                                    bgfun=None,
                                     color_selected=self.RED,
                                     font=fontdir,
                                     font_color=COLOR_WHITE,
