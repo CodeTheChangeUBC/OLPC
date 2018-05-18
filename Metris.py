@@ -126,7 +126,7 @@ class Metris:
 
         self.calculateLevelAndFallFreq()
         self.level_prev = self.level
-        qSolved = False
+        self.qSolved = False
         comp_input = 10
         out_list = self.generateQues()
         controlsOn = False
@@ -134,7 +134,7 @@ class Metris:
         diff1 = out_list[4]
         num_q = 0
         self.mult = 0
-        scr_mult = 5
+        self.scr_mult = 5
         self.drawCompliment(comp_input)
         fontsize = 18
         self.total_lines = 0
@@ -142,7 +142,7 @@ class Metris:
         TICK = pygame.USEREVENT + 1
         pygame.time.set_timer(TICK, 1000)
         time = 300000
-        timeleft  = self.BASICFONT.render(str(time/1000/60) + " : " + str(time/1000 - (time/1000/60)*60), True, self.TEXTCOLOR)
+        self.timeleft  = self.BASICFONT.render(str(time/1000/60) + " : " + str(time/1000 - (time/1000/60)*60), True, self.TEXTCOLOR)
         TIMEREMAINING = pygame.USEREVENT + 2
         pygame.time.set_timer(TIMEREMAINING, 1000)
     ##    TIMEUP = pygame.USEREVENT + 3
@@ -251,7 +251,7 @@ class Metris:
                                 self.mult += 1
                                 if hard_q:
                                     self.bankedpoints += 20
-                            hard_q = False
+                            self.hard_q = False
                             self.calculateLevelAndFallFreq()
                             num_q += 1
                             out_list = self.generateQues()
@@ -619,7 +619,7 @@ class Metris:
     def checkBlockCollision(self):
         if not self.currentBlock:
             return False
-        isCollision = False
+        self.isCollision = False
         blockPerimeter = self.block.getPerimeter()
         for i in range(0, len(blockPerimeter)):
             for j in range(0, len(self.landed)):
@@ -945,7 +945,7 @@ class Metris:
     def paused(self):
         pause = True
         pygame.mixer.music.pause()
-        startTime = pygame.mixer.music.get_pos()
+        self.startTime = pygame.mixer.music.get_pos()
 
         while pause:
             self.checkForQuit()
@@ -1284,9 +1284,9 @@ class Metris:
 
     def flipSoundIcon(self):
         if self.isSoundOn:
-            isSoundOn = False
+            self.isSoundOn = False
         else:
-            isSoundOn = True
+            self.isSoundOn = True
         self.drawSoundIcon()
         pygame.display.update()
 
