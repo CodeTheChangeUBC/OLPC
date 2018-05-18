@@ -948,8 +948,6 @@ class Metris:
 
     def paused(self):
         pause = True
-        # global soundPosition
-
         pygame.mixer.music.pause()
         startTime = pygame.mixer.music.get_pos()
 
@@ -1003,17 +1001,6 @@ class Metris:
 
     def gameOver(self):
         pause = True
-        # global currentBlock
-        # global block
-        # global self.landed
-        # global self.score
-        # global self.holdBlock
-        # global bankedpoints
-        # global gameExit
-        # global self.dx
-        # global self.dy
-        # global self.speed
-
         self.score += self.bankedpoints
         self.bankedpoints = 0
 
@@ -1147,19 +1134,11 @@ class Metris:
                             1)
 
     def move(self):
-        # global block
-        # global pos_x
-        # global pos_y
-        # global self.dx
-        # global self.dy
         self.block.setX(self.block.getX() + self.dx)
         self.block.setY(self.block.getY() + self.dy)
         if self.checkCollision():
             self.block.setX(self.block.getX() - self.dx)
             self.block.setY(self.block.getY() - self.dy)
-        # else:
-        #     pos_x += self.dx
-        #     pos_y += self.dy
 
     def generateQues(self):
         if self.level <= 4:
@@ -1260,15 +1239,13 @@ class Metris:
     def calculateLevelAndFallFreq(self):
         # Based on the self.score, return the self.level the player is on and
         # how many seconds pass until a falling piece falls one space.
-        # global self.level
-        # global total_lines
+
         self.level_prev = self.level
         divisor = self.level_prev + 80
         self.level = int(self.score/divisor) + 1
         self.fallFreq = 1010 - (self.total_lines + self.level) * 10 # 500 * (level - 1)
         if self.fallFreq < 50:
             self.fallFreq = 50
-        # return self.level, fallFreq
 
 
     def terminate(self):
@@ -1311,16 +1288,12 @@ class Metris:
 
 
     def playSound(self, soundSource):
-        # global isSoundOn
         if self.isSoundOn:
             sound = pygame.mixer.Sound(soundSource)
             sound.play()
 
 
     def flipSoundIcon(self):
-        # global isSoundOn
-        # global self.soundOn
-        # global soundOff
         if self.isSoundOn:
             isSoundOn = False
         else:
@@ -1330,9 +1303,6 @@ class Metris:
 
 
     def flipMusicIcon(self):
-        # global self.isMusicOn
-        # global musicOn
-        # global musicOff
         if self.isMusicOn:
             pygame.mixer.music.pause()
             self.isMusicOn = False
@@ -1344,10 +1314,6 @@ class Metris:
 
 
     def drawSoundIcon(self):
-        # global isSoundOn
-        # global self.soundOn
-        # global soundOff
-        # global soundPosition
         if self.isSoundOn:
             self.GAMEDISPLAY.blit(self.soundOn, self.soundPosition)
         else:
@@ -1355,10 +1321,6 @@ class Metris:
 
 
     def drawMusicIcon(self):
-        # global self.isMusicOn
-        # global musicOn
-        # global musicOff
-        # global self.musicPosition
         if self.isMusicOn:
             self.GAMEDISPLAY.blit(self.musicOn, self.musicPosition)
         else:
@@ -1404,9 +1366,6 @@ class Metris:
             return
         with open("leaderboard.json") as data_file:
             data = json.load(data_file)
-        # global self.score
-        # global name
-        # global total_lines
         self.drawHighScore("You made a new High Score!", self.level, self.score, self.total_lines)
         name = inputbox.ask(self.GAMEDISPLAY, "Name")
         for i in range(len(data) - 1, index, -1):
@@ -1484,11 +1443,6 @@ class Metris:
             i += 1
             pygame.display.update()
             self.clock.tick(1)
-
-        # while checkForKeyPress() is None:
-        #     pygame.display.update()
-        #     self.clock.tick()
-
 
     def checkForKeyPress(self):
         # Go through event queue looking for a KEYUP event.
