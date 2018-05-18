@@ -97,7 +97,7 @@ class Metris:
         self.clock = pygame.time.Clock()
 
         self.fallFreq = 1
-        self.holdBlock = None
+        self.holdBlock = None # holdBlock is a int type specifying block type
 
         self.mult = 0
         self.level = 0
@@ -234,7 +234,7 @@ class Metris:
                             self.hold(nextBlocks)
                             out_list = self.generateQues()
                             self.mult = 0
-                            self.hasSwap = False
+                            hasSwap = False
                     elif event.key == pygame.K_m:
                         self.flipMusicIcon()
                     elif event.key == pygame.K_s:
@@ -454,7 +454,7 @@ class Metris:
             self.drawNextBlocksLabel()
 
             # drawing hold
-            self.drawHoldBlock(self.block)
+            self.drawHoldBlock(self.holdBlock)
 
             # draw hold border
             self.drawHoldBorder()
@@ -803,34 +803,32 @@ class Metris:
         if blockType is None:
             return
 
-        self.holdBlock = None
+        block = None;
+        # self.holdBlock = None
         offset_x = self.RIGHT_BOUNDARY + self.BLOCK_SIZE * 4
         offset_y = self.TOP_BOUNDARY + self.BLOCK_SIZE * 14
         offset_x += self.getOffsetX(blockType)
         offset_y += self.getOffsetY(blockType)
 
         if blockType == 0:
-            self.holdBlock = BlockT(offset_x, offset_y, self.BLOCK_SIZE)
+            block = BlockT(offset_x, offset_y, self.BLOCK_SIZE)
         elif blockType == 1:
-            self.holdBlock = BlockS(offset_x, offset_y, self.BLOCK_SIZE)
+            block = BlockS(offset_x, offset_y, self.BLOCK_SIZE)
         elif blockType == 2:
-            self.holdBlock = BlockJ(offset_x, offset_y, self.BLOCK_SIZE)
+            block = BlockJ(offset_x, offset_y, self.BLOCK_SIZE)
         elif blockType == 3:
-            self.holdBlock = BlockI(offset_x, offset_y, self.BLOCK_SIZE)
+            block = BlockI(offset_x, offset_y, self.BLOCK_SIZE)
         elif blockType == 4:
-            self.holdBlock = BlockL(offset_x, offset_y, self.BLOCK_SIZE)
+            block = BlockL(offset_x, offset_y, self.BLOCK_SIZE)
         elif blockType == 5:
-            self.holdBlock = BlockZ(offset_x, offset_y, self.BLOCK_SIZE)
+            block = BlockZ(offset_x, offset_y, self.BLOCK_SIZE)
         elif blockType == 6:
-            self.holdBlock = BlockO(offset_x, offset_y, self.BLOCK_SIZE)
+            block = BlockO(offset_x, offset_y, self.BLOCK_SIZE)
 
-        if self.holdBlock is not None:
-            self.holdBlock.display(self.GAMEDISPLAY)
+        block.display(self.GAMEDISPLAY)
 
     def blockListTooShort(self, len):
-        if len <= 5:
-            return True
-        return False
+        return (len <= 1)
 
     def appendBlockList(self):
         nextBlockSet = self.getRandomBlockSet(self.blockSet[len(self.blockSet) - 1])
