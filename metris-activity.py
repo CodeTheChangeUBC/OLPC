@@ -9,14 +9,16 @@ from sugar3.activity.widgets import ActivityToolbarButton
 from sugar3.graphics.toolbutton import ToolButton
 from sugar3.activity.widgets import StopButton
 from gettext import gettext as _
-import Metris
+from Metris import *
 
 class MetrisActivity(activity.Activity):
 
     def __init__(self, handle):
         activity.Activity.__init__(self, handle)
-        self.game = Metris.buildMenu() # call menu instead
-        self.game.main()
+        self.game = Metris() # call menu instead
+        self.game.runNewGame()
+        # self.game.buildMain()
+        # self.game.main()
 
         toolbarbox = ToolbarBox()
         activity_button = ActivityToolbarButton(self)
@@ -35,4 +37,4 @@ class MetrisActivity(activity.Activity):
         # save_bundle_button.connect('clicked', self.save_bundle)
         # save_bundle_button.show()
 
-        toolbarbox.show_all()
+        self.show_all()

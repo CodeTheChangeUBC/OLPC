@@ -61,7 +61,7 @@ class Metris:
                         'mp3s/m8', 'mp3s/m9', 'mp3s/m10', 'mp3s/m11', 'mp3s/m12', 'mp3s/m13']
 
         self.score = 0
-        self.GAMEDISPLAY = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+        self.GAMEDISPLAY = pygame.display.set_mode((self.WIDTH, self.HEIGHT),  pygame.FULLSCREEN, pygame.RESIZABLE)
 
         pygame.display.set_caption('Metris')
         pygame.display.update()
@@ -1720,9 +1720,13 @@ class Metris:
         # global self.main_menu
         self.main_menu.mainloop(pygame.event.get())
 
+    def runNewGame(self):
+        while True:
+            self.buildMain()
+            self.main()
 
-if __name__ == '__main__':
-    while True:
-        game = Metris()
-        game.buildMain()
-        game.main()
+# if __name__ == '__main__':
+#     while True:
+#         game = Metris()
+#         game.buildMain()
+#         game.main()
