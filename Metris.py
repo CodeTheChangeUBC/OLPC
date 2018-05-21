@@ -1274,7 +1274,7 @@ class Metris:
         if rand == 4 or rand == 5 or rand == 6 or rand == 7:
             controlSurf = self.BASICFONT.render("Lost controls.", True, self.TEXTCOLOR)
             controlRect = controlSurf.get_rect()
-            controlRect.center = (self.WIDTH / 2, self.BOTTOM_BOUNDARY + (self.HEIGHT - self.BOTTOM_BOUNDARY) / 2)
+            controlRect.center = (self.WIDTH / 2, self.BOTTOM_BOUNDARY + 0.5 * self.BLOCK_SIZE)
             self.GAMEDISPLAY.blit(controlSurf, controlRect)
 
 
