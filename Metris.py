@@ -49,10 +49,10 @@ class Metris:
         self.HEIGHT = 900
         # self.WIDTH = self.HEIGHT * 7 / 6
         self.WIDTH = self.HEIGHT * 4/3
-        self.LEFT_BOUNDARY = self.WIDTH / 3
-        self.RIGHT_BOUNDARY = self.WIDTH - self.WIDTH / 3
+        self.LEFT_BOUNDARY = int(self.WIDTH * 0.35)
+        self.RIGHT_BOUNDARY = self.WIDTH - int(self.WIDTH * 0.35)
         self.BLOCK_SIZE = (self.RIGHT_BOUNDARY - self.LEFT_BOUNDARY) / 10
-        self.TOP_BOUNDARY = self.BLOCK_SIZE
+        self.TOP_BOUNDARY = 4 * self.BLOCK_SIZE
         self.BOTTOM_BOUNDARY = self.TOP_BOUNDARY + 20 * self.BLOCK_SIZE
         self.INIT_X = self.LEFT_BOUNDARY + 5 * self.BLOCK_SIZE
         self.INIT_Y = self.BLOCK_SIZE
@@ -698,7 +698,7 @@ class Metris:
 
 
     def y2Index(self, y):
-        return y / self.BLOCK_SIZE
+        return y / self.BLOCK_SIZE;
 
 
     ## function to get the minimum vertical difference between current block and
