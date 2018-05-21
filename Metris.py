@@ -47,11 +47,12 @@ class Metris:
         self.BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
         self.BIGFONT = pygame.font.Font('freesansbold.ttf', 50)
         self.HEIGHT = 900
-        self.WIDTH = self.HEIGHT * 7 / 6
+        # self.WIDTH = self.HEIGHT * 7 / 6
+        self.WIDTH = self.HEIGHT * 4/3
         self.LEFT_BOUNDARY = self.WIDTH / 3
         self.RIGHT_BOUNDARY = self.WIDTH - self.WIDTH / 3
         self.BLOCK_SIZE = (self.RIGHT_BOUNDARY - self.LEFT_BOUNDARY) / 10
-        self.TOP_BOUNDARY = 4 * self.BLOCK_SIZE
+        self.TOP_BOUNDARY = self.BLOCK_SIZE
         self.BOTTOM_BOUNDARY = self.TOP_BOUNDARY + 20 * self.BLOCK_SIZE
         self.INIT_X = self.LEFT_BOUNDARY + 5 * self.BLOCK_SIZE
         self.INIT_Y = self.BLOCK_SIZE
@@ -1267,7 +1268,8 @@ class Metris:
             compliment = "Good job! Next questions worth points upon block landing."
         complimentSurf = self.BASICFONT.render(compliment, True, self.TEXTCOLOR)
         complimentRect = complimentSurf.get_rect()
-        complimentRect.center = (self.WIDTH / 2, self.TOP_BOUNDARY - 2.5 * self.BLOCK_SIZE)
+        complimentRect.center = (self.WIDTH / 2, self.TOP_BOUNDARY - 0.5 * self.BLOCK_SIZE)
+        # complimentRect.center = (self.WIDTH / 2, self.TOP_BOUNDARY - 2.5 * self.BLOCK_SIZE)
         self.GAMEDISPLAY.blit(complimentSurf, complimentRect)
         if rand == 4 or rand == 5 or rand == 6 or rand == 7:
             controlSurf = self.BASICFONT.render("Lost controls.", True, self.TEXTCOLOR)
