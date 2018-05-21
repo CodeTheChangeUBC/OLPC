@@ -15,7 +15,8 @@ class MetrisActivity(activity.Activity):
 
     def __init__(self, handle):
         activity.Activity.__init__(self, handle)
-        self.game = Metris.runGame() # call menu instead
+        self.game = Metris.buildMenu() # call menu instead
+        self.game.main()
 
         toolbarbox = ToolbarBox()
         activity_button = ActivityToolbarButton(self)
