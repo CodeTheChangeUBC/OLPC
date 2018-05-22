@@ -47,9 +47,10 @@ class Metris:
         self.BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
         self.BIGFONT = pygame.font.Font('freesansbold.ttf', 50)
         self.HEIGHT = 900
-        self.WIDTH = self.HEIGHT * 7 / 6
-        self.LEFT_BOUNDARY = self.WIDTH / 3
-        self.RIGHT_BOUNDARY = self.WIDTH - self.WIDTH / 3
+        # self.WIDTH = self.HEIGHT * 7 / 6
+        self.WIDTH = self.HEIGHT * 4/3
+        self.LEFT_BOUNDARY = int(self.WIDTH * 0.35) # make game window 25 BLOCK_SIZE by 33.33 BLOCK_SIZE
+        self.RIGHT_BOUNDARY = self.WIDTH - self.LEFT_BOUNDARY
         self.BLOCK_SIZE = (self.RIGHT_BOUNDARY - self.LEFT_BOUNDARY) / 10
         self.TOP_BOUNDARY = 4 * self.BLOCK_SIZE
         self.BOTTOM_BOUNDARY = self.TOP_BOUNDARY + 20 * self.BLOCK_SIZE
@@ -697,7 +698,7 @@ class Metris:
 
 
     def y2Index(self, y):
-        return y / self.BLOCK_SIZE
+        return y / self.BLOCK_SIZE;
 
 
     ## function to get the minimum vertical difference between current block and
@@ -802,8 +803,15 @@ class Metris:
             return
 
         block = None;
-        # self.holdBlock = None
-        offset_x = self.RIGHT_BOUNDARY + self.BLOCK_SIZE * 4
+        # let holdBorder width = l.
+        # let x = padding on either side of the block
+        # let k = location of block[1] = x + BLOCK_SIZE
+        # then 4 * BLOCK_SIZE + 2x = l
+        # k = (l - 4 * BLOCK_SIZE) / 2 + 1
+        offset_x =    (self.RIGHT_BOUNDARY + self.BLOCK_SIZE + 
+                    (((self.WIDTH - self.BLOCK_SIZE) - (self.RIGHT_BOUNDARY + self.BLOCK_SIZE) - 4 * self.BLOCK_SIZE) / 2) +
+                       self.BLOCK_SIZE)
+                       
         offset_y = self.TOP_BOUNDARY + self.BLOCK_SIZE * 14
         offset_x += self.getOffsetX(blockType)
         offset_y += self.getOffsetY(blockType)
@@ -839,7 +847,15 @@ class Metris:
 
         y_spacing = self.BLOCK_SIZE * 5
         offset_y = self.TOP_BOUNDARY + self.BLOCK_SIZE * 8
-        offset_x = self.RIGHT_BOUNDARY + self.BLOCK_SIZE * 4
+
+        # let holdBorder width = l.
+        # let x = padding on either side of the block
+        # let k = location of block[1] = x + BLOCK_SIZE
+        # then 4 * BLOCK_SIZE + 2x = l
+        # k = (l - 4 * BLOCK_SIZE) / 2 + 1
+        offset_x =    (self.RIGHT_BOUNDARY + self.BLOCK_SIZE + 
+                    (((self.WIDTH - self.BLOCK_SIZE) - (self.RIGHT_BOUNDARY + self.BLOCK_SIZE) - 4 * self.BLOCK_SIZE) / 2) +
+                       self.BLOCK_SIZE)
 
         for i in range(0, 1):
             if self.blockSet[i] == 0:
@@ -867,8 +883,8 @@ class Metris:
     def drawHoldBorder(self):
         BORDER_WIDTH = 2
         borderList = [(self.RIGHT_BOUNDARY + self.BLOCK_SIZE, self.TOP_BOUNDARY + 12 * self.BLOCK_SIZE),
-                      (self.RIGHT_BOUNDARY + 9 * self.BLOCK_SIZE, self.TOP_BOUNDARY + 12 * self.BLOCK_SIZE),
-                      (self.RIGHT_BOUNDARY + 9 * self.BLOCK_SIZE, self.TOP_BOUNDARY + 17 * self.BLOCK_SIZE),
+                      (self.WIDTH - self.BLOCK_SIZE, self.TOP_BOUNDARY + 12 * self.BLOCK_SIZE),
+                      (self.WIDTH - self.BLOCK_SIZE, self.TOP_BOUNDARY + 17 * self.BLOCK_SIZE),
                       (self.RIGHT_BOUNDARY + self.BLOCK_SIZE, self.TOP_BOUNDARY + 17 * self.BLOCK_SIZE)]
         pygame.draw.lines(self.GAMEDISPLAY, self.BORDER_COLOR, True, borderList, BORDER_WIDTH)
 
@@ -881,8 +897,8 @@ class Metris:
     def drawNextBlocksBorder(self):
         BORDER_WIDTH = 2
         borderList = [(self.RIGHT_BOUNDARY + self.BLOCK_SIZE, self.TOP_BOUNDARY + 6 * self.BLOCK_SIZE),
-                      (self.RIGHT_BOUNDARY + 9 * self.BLOCK_SIZE, self.TOP_BOUNDARY + 6 * self.BLOCK_SIZE),
-                      (self.RIGHT_BOUNDARY + 9 * self.BLOCK_SIZE, self.TOP_BOUNDARY + 11 * self.BLOCK_SIZE),
+                      (self.WIDTH - self.BLOCK_SIZE, self.TOP_BOUNDARY + 6 * self.BLOCK_SIZE),
+                      (self.WIDTH - self.BLOCK_SIZE, self.TOP_BOUNDARY + 11 * self.BLOCK_SIZE),
                       (self.RIGHT_BOUNDARY + self.BLOCK_SIZE, self.TOP_BOUNDARY + 11 * self.BLOCK_SIZE)]
         pygame.draw.lines(self.GAMEDISPLAY, self.BORDER_COLOR, True, borderList, BORDER_WIDTH)
 
@@ -894,8 +910,9 @@ class Metris:
 
     def drawVarsBorder(self):
         BORDER_WIDTH = 2
-        borderList = [(self.RIGHT_BOUNDARY + self.BLOCK_SIZE, self.TOP_BOUNDARY), (self.RIGHT_BOUNDARY + 9 * self.BLOCK_SIZE, self.TOP_BOUNDARY),
-                      (self.RIGHT_BOUNDARY + 9 * self.BLOCK_SIZE, self.TOP_BOUNDARY + 5 * self.BLOCK_SIZE),
+        borderList = [(self.RIGHT_BOUNDARY + self.BLOCK_SIZE, self.TOP_BOUNDARY), 
+                      (self.WIDTH - self.BLOCK_SIZE, self.TOP_BOUNDARY),
+                      (self.WIDTH - self.BLOCK_SIZE, self.TOP_BOUNDARY + 5 * self.BLOCK_SIZE),
                       (self.RIGHT_BOUNDARY + self.BLOCK_SIZE, self.TOP_BOUNDARY + 5 * self.BLOCK_SIZE)]
         pygame.draw.lines(self.GAMEDISPLAY, self.WHITE, True, borderList, BORDER_WIDTH)
 
@@ -1267,12 +1284,13 @@ class Metris:
             compliment = "Good job! Next questions worth points upon block landing."
         complimentSurf = self.BASICFONT.render(compliment, True, self.TEXTCOLOR)
         complimentRect = complimentSurf.get_rect()
-        complimentRect.center = (self.WIDTH / 2, self.TOP_BOUNDARY - 2.5 * self.BLOCK_SIZE)
+        complimentRect.center = (self.WIDTH / 2, self.TOP_BOUNDARY - 0.5 * self.BLOCK_SIZE)
+        # complimentRect.center = (self.WIDTH / 2, self.TOP_BOUNDARY - 2.5 * self.BLOCK_SIZE)
         self.GAMEDISPLAY.blit(complimentSurf, complimentRect)
         if rand == 4 or rand == 5 or rand == 6 or rand == 7:
             controlSurf = self.BASICFONT.render("Lost controls.", True, self.TEXTCOLOR)
             controlRect = controlSurf.get_rect()
-            controlRect.center = (self.WIDTH / 2, self.BOTTOM_BOUNDARY + (self.HEIGHT - self.BOTTOM_BOUNDARY) / 2)
+            controlRect.center = (self.WIDTH / 2, self.BOTTOM_BOUNDARY + 0.5 * self.BLOCK_SIZE)
             self.GAMEDISPLAY.blit(controlSurf, controlRect)
 
 
