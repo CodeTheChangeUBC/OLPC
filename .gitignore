@@ -4,4 +4,4 @@
 Block/*.pyc
 pygameMenu/*.pyc
 *.json
-
+venv/
