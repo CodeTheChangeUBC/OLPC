@@ -1,12 +1,21 @@
-from sugar.activity import activity
-import subprocess
+##from sugar.activity import activity
+from Metris import Metris
 
+##class MetrisActivity():
+##    def __init__(self):
+##        self.metris = Metris()
 
-class MetrisActivity(activity.Activity):
+##    def run(act):
+##        act.m.main()
+##    
+##
+##def main():
+##    MOB = MetrisActivity()
+##    MOB.run(MOB)
 
-    def runFile(self):
-        subprocess.call('python ./Metris.py')
+##
+##    
+##if __name__ == '__main__':
+##    main()
 
-
-Act = MetrisActivity()
-Act.runFile()
+Metris().runGame()

@@ -27,6 +27,24 @@ class BlockO(object):
     def rotateR(self):
         return
 
+    def rotateL2(self):
+        return
+
+    def rotateR2(self):
+        return
+
+    def rotateL3(self):
+        return
+
+    def rotateR3(self):
+        return
+
+    def rotateL4(self):
+        return
+
+    def rotateR4(self):
+        return
+
     def getX(self):
         return self.x
 

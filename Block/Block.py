@@ -42,9 +42,10 @@ class Block(object):
         self.x += dx
 
     def display(self, gameDisplay):
-        pygame.draw.rect(gameDisplay, self.color2, [self.x, self.y, self.size, self.size])
-        pygame.draw.rect(gameDisplay, self.color, [self.x, self.y, self.size - self.size / 10, self.size - self.size / 10])
-        pygame.draw.rect(gameDisplay, (255,255,255), [self.x, self.y, self.size / 10, self.size / 10])
+        pygame.draw.rect(gameDisplay, (0,0,0), [self.x, self.y, self.size, self.size])
+        pygame.draw.rect(gameDisplay, self.color2, [self.x + self.size/10, self.y + self.size/10, self.size - self.size/5, self.size - self.size/5])
+        pygame.draw.rect(gameDisplay, self.color, [self.x + self.size/4, self.y + self.size/4, self.size - self.size/2, self.size - self.size/2])
+        pygame.draw.rect(gameDisplay, (255,255,255), [self.x + self.size/10, self.y + self.size/10, self.size /10, self.size /10])
 
     black = (0, 0, 0)
     red = (255, 0, 0)

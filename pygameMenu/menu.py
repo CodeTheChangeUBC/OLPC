@@ -149,14 +149,14 @@ class Menu(object):
         assert isinstance(window_width, int)
 
         # Other asserts
-        if dopause:
-            assert isinstance(bgfun, types.FunctionType), \
-                'Bgfun must be a function (or None if menu does not pause ' \
-                'execution of the application)'
-        else:
-            assert isinstance(bgfun, type(None)), \
-                'Bgfun must be None if menu does not pause execution of the ' \
-                'application'
+        # if dopause:
+        #     assert isinstance(bgfun, types.FunctionType), \
+        #         'Bgfun must be a function (or None if menu does not pause ' \
+        #         'execution of the application)'
+        # else:
+        #     assert isinstance(bgfun, type(None)), \
+        #         'Bgfun must be None if menu does not pause execution of the ' \
+        #         'application'
         assert window_height > 0 and window_width > 0, \
             'Window size must be greater than zero'
         assert rect_width >= 0, 'rect_width must be greater or equal than zero'
@@ -168,9 +168,9 @@ class Menu(object):
             'Font sizes must be greater than zero'
         assert draw_region_y >= 0 and draw_region_x >= 0, \
             'Drawing regions must be greater or equal than zero'
-        assert dopause and bgfun is not None or not dopause and bgfun is None, \
-            'If pause main execution is enabled then bgfun (Background ' \
-            'function drawing) must be defined (not None)'
+        # assert dopause and bgfun is not None or not dopause and bgfun is None, \
+        #     'If pause main execution is enabled then bgfun (Background ' \
+        #     'function drawing) must be defined (not None)'
         assert 0 <= menu_alpha <= 100, 'Menu_alpha must be between 0 and 100'
 
         # Store configuration
@@ -558,8 +558,8 @@ class Menu(object):
         :return: None
         """
         global pre_index
-        if self._actual._dopause:  # If menu pauses game then apply function
-            self._bgfun()
+        # if self._actual._dopause:  # If menu pauses game then apply function
+        #     self._bgfun()
         self.draw()
         if events is None:
             events = _pygame.event.get()
