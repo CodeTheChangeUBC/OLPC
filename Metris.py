@@ -724,8 +724,7 @@ class Metris:
             if self.landed[x][y] == None:
                 return False
         return True
-
-
+      
     def deleteRows(self, rows):
         self.total_lines += len(rows)
         # delete rows
@@ -1180,7 +1179,6 @@ class Metris:
                 self.TOP_BOUNDARY + (self.BOTTOM_BOUNDARY - self.TOP_BOUNDARY) / 2 + 2 * textHeight))
             pygame.display.update()
             self.clock.tick(15)
-
 
     def gameOver(self):
         pause = True
@@ -1808,6 +1806,7 @@ class Metris:
     def main_background(self):
         """
         Function used by menus, draw on background while menu is active.
+
 
         :return: None
         """
