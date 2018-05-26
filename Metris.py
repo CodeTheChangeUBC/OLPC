@@ -24,11 +24,17 @@ class Metris:
         self.RED = (255, 0, 0)
         self.BLACK = (20, 20, 20)
         self.GRAY = (185, 185, 185)
-        self.BORDER_COLOR = (200, 200, 200)
+        self.BORDER_COLOR = (255, 255, 255)
         self.INNER_BG = (0, 75, 75)
         self.INNER_BG2 = (0, 50, 50)
         self.TEXTCOLOR = self.WHITE
         self.TEXTSHADOWCOLOR = self.GRAY
+        self.COLORS = [(255,0,0), (0,255,0), (0,0,255), (255,255,0), (255,0,255)]
+        self.COLORS2 = [(200,0,0), (0,200,0), (0,0,200), (200,200,0), (200,0,200)]
+        self.random_color = []
+        for i in range(0, 9):
+            for j in range(0, 12):
+                self.random_color.insert(len(self.random_color), randint(0, len(self.COLORS)-1))
 
         self.INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
                        'Rotate-clockwise with UP key*',
@@ -45,22 +51,24 @@ class Metris:
         self.SCOREFONT = pygame.font.Font('freesansbold.ttf', 18)
         self.BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
         self.BIGFONT = pygame.font.Font('freesansbold.ttf', 50)
+        self.TIMEFONT = pygame.font.Font('freesansbold.ttf', 48)
+        self.TIMEFONT2 = pygame.font.Font('freesansbold.ttf', 50)
         self.HEIGHT = 900
-        self.WIDTH = self.HEIGHT * 7 / 6
-        self.LEFT_BOUNDARY = self.WIDTH / 3
-        self.RIGHT_BOUNDARY = self.WIDTH - self.WIDTH / 3
-        self.BLOCK_SIZE = (self.RIGHT_BOUNDARY - self.LEFT_BOUNDARY) / 10
+        self.WIDTH = self.HEIGHT * 4 / 3
+        self.BLOCK_SIZE = self.HEIGHT / 28
+        self.LEFT_BOUNDARY = self.WIDTH / 2 - 5 * self.BLOCK_SIZE
+        self.RIGHT_BOUNDARY = self.WIDTH /2 + 5 * self.BLOCK_SIZE
         self.TOP_BOUNDARY = 4 * self.BLOCK_SIZE
         self.BOTTOM_BOUNDARY = self.TOP_BOUNDARY + 20 * self.BLOCK_SIZE
         self.INIT_X = self.LEFT_BOUNDARY + 5 * self.BLOCK_SIZE
-        self.INIT_Y = self.BLOCK_SIZE
+        self.INIT_Y = 3*self.BLOCK_SIZE
 
         self.MID_FILES = ['mp3s/m0', 'mp3s/m1', 'mp3s/m2', 'mp3s/m3',
                         'mp3s/m4', 'mp3s/m5', 'mp3s/m6', 'mp3s/m7',
                         'mp3s/m8', 'mp3s/m9', 'mp3s/m10', 'mp3s/m11', 'mp3s/m12', 'mp3s/m13']
 
         self.score = 0
-        self.GAMEDISPLAY = pygame.display.set_mode((self.WIDTH, self.HEIGHT),  pygame.FULLSCREEN, pygame.RESIZABLE)
+        self.GAMEDISPLAY = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
 
         pygame.display.set_caption('Metris')
         pygame.display.update()
@@ -69,8 +77,9 @@ class Metris:
 
         self.dx = 0
         self.dy = 0
+        self.first_touch = True
         self.hasMove = False
-        self.font = pygame.font.SysFont(None, 25)
+        # self.font = pygame.font.SysFont(None, 25)
         self.gone_down = False
         self.currentBlock = False
         self.block = None
@@ -100,8 +109,24 @@ class Metris:
         self.mult = 0
         self.level = 0
         self.total_lines = 0
+        self.spin = False
+        self.d_tspin = False
+        self.t_tspin = False
+        self.tetris = False
+        self.triple = False
+        self.double = False
+        self.single = False
         
         self.main_menu = None
+
+        self.MOVE = pygame.USEREVENT + 4
+        self.accl = 500
+        self.SLACK = pygame.USEREVENT + 5
+        self.NOSLACK = pygame.USEREVENT + 6
+        self.tolerance = False
+        self.tolerable = True
+
+        self.lock = False
 
     ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -141,13 +166,15 @@ class Metris:
         TICK = pygame.USEREVENT + 1
         pygame.time.set_timer(TICK, 1000)
         time = 300000
-        self.timeleft  = self.BASICFONT.render(str(time/1000/60) + " : " + str(time/1000 - (time/1000/60)*60), True, self.TEXTCOLOR)
+        # self.timeleft  = self.BASICFONT.render(str(time/1000/60) + " : " + str(time/1000 - (time/1000/60)*60), True, self.TEXTCOLOR)
         TIMEREMAINING = pygame.USEREVENT + 2
         pygame.time.set_timer(TIMEREMAINING, 1000)
     ##    TIMEUP = pygame.USEREVENT + 3
     ##    pygame.time.set_timer(TIMEUP, time)
-        MOVE = pygame.USEREVENT + 4
-        pygame.time.set_timer(MOVE, 125)
+        # self.MOVE = pygame.USEREVENT + 4
+        pygame.time.set_timer(self.MOVE, 0)
+        pygame.time.set_timer(self.SLACK, 0)
+        pygame.time.set_timer(self.NOSLACK, 0)
 
         while not self.gameExit:
         
@@ -189,37 +216,116 @@ class Metris:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         self.dx = -self.BLOCK_SIZE
+                        # self.move()
+                        if self.dy is 0:
+                            pygame.time.set_timer(self.MOVE, 250)
+                        self.block.setX(self.block.getX() + self.dx)
+                        if self.checkCollision():
+                            self.block.setX(self.block.getX() - self.dx)
 
                     elif event.key == pygame.K_RIGHT:
                         self.dx = self.BLOCK_SIZE
-
+                        # self.move()
+                        if self.dy is 0:
+                            pygame.time.set_timer(self.MOVE, 250)
+                        self.block.setX(self.block.getX() + self.dx)
+                        if self.checkCollision():
+                            self.block.setX(self.block.getX() - self.dx)
 
                     elif event.key == pygame.K_DOWN:
                         self.dy = self.BLOCK_SIZE
                         self.playSound('beep.wav')
+                        self.block.setY(self.block.getY() + self.dy)
+                        if self.checkCollision():
+                            self.block.setY(self.block.getY() - self.dy)
+                        pygame.time.set_timer(self.MOVE, 100)
 
                     elif event.key == pygame.K_UP and controlsOn == True:
                         if self.currentBlock:
                             self.block.rotateR()
-                            if self.checkCollisionRotation():
+                            # if self.checkCollisionRotation():
+                            #     self.block.rotateL4()
+                            if self.checkCollision():
                                 self.block.rotateL()
-                            elif self.checkBlockCollision():
-                                self.block.rotateL()
+                                self.block.rotateR2()
+                                self.spin = True
+                                if self.checkCollision():
+                                    self.block.setY(self.block.getY() + self.BLOCK_SIZE)
+                                    if self.checkCollision():
+                                        self.block.setY(self.block.getY() - self.BLOCK_SIZE)
+                                        self.block.rotateL2()
+                                        self.block.rotateR3()
+                                        if self.checkCollision():
+                                            self.block.setY(self.block.getY() + self.BLOCK_SIZE)
+                                            if self.checkCollision():
+                                                self.block.setY(self.block.getY() - self.BLOCK_SIZE)
+                                                self.block.rotateL3()
+                                                self.block.rotateR4()
+                                                if self.checkCollision():
+                                                    self.block.setY(self.block.getY() + self.BLOCK_SIZE)
+                                                    if self.checkCollision():
+                                                        self.block.setY(self.block.getY() - self.BLOCK_SIZE)
+                                                        self.block.rotateL4()
+                                                        self.spin = False
+                                if self.tolerable:
+                                    self.tolerance = True
+                                    pygame.time.set_timer(self.SLACK, 2500 - self.fallFreq*2)
+                            else:
+                                self.spin = False
+                                if self.tolerable:
+                                    self.tolerance = True
+                                    pygame.time.set_timer(self.SLACK, 2500 - self.fallFreq*2)
+                            # elif self.checkBlockCollision():
+                            #     self.block.rotateL4()
 
                     elif event.key == pygame.K_z and controlsOn == True:
                         if self.currentBlock:
                             self.block.rotateL()
-                            if self.checkCollisionRotation():
+                            # if self.checkCollisionRotation():
+                            #     self.block.rotateR4()
+                            if self.checkCollision():
                                 self.block.rotateR()
-                            elif self.checkBlockCollision():
-                                self.block.rotateR()
+                                self.block.rotateL2()
+                                self.spin = True
+                                # self.block.setY(self.block.getY() + self.BLOCK_SIZE)
+                                # if self.checkCollision():
+                                #     self.block.setY(self.block.getY() - self.BLOCK_SIZE)
+                                #     if self.checkCollision():
+                                if self.checkCollision():
+                                    self.block.setY(self.block.getY() + self.BLOCK_SIZE)
+                                    if self.checkCollision():
+                                        self.block.setY(self.block.getY() - self.BLOCK_SIZE)
+                                        self.block.rotateR2()
+                                        self.block.rotateL3()
+                                        if self.checkCollision():
+                                            self.block.setY(self.block.getY() + self.BLOCK_SIZE)
+                                            if self.checkCollision():
+                                                self.block.setY(self.block.getY() - self.BLOCK_SIZE)
+                                                self.block.rotateR3()
+                                                self.block.rotateL4()
+                                                if self.checkCollision():
+                                                    self.block.setY(self.block.getY() + self.BLOCK_SIZE)
+                                                    if self.checkCollision():
+                                                        self.block.setY(self.block.getY() - self.BLOCK_SIZE)
+                                                        self.block.rotateR4()
+                                                        self.spin = False
+                                if self.tolerable:
+                                    self.tolerance = True
+                                    pygame.time.set_timer(self.SLACK, 2000)
+                            else:
+                                self.spin = False
+                                if self.tolerable:
+                                    self.tolerance = True
+                                    pygame.time.set_timer(self.SLACK, 2000)
+                            # elif self.checkBlockCollision():
+                            #     self.block.rotateR4()
 
                     elif event.key == pygame.K_SPACE:
                         while not self.checkCollision():
                             self.block.setY(self.block.getY() + self.BLOCK_SIZE)
-
                         self.block.setY(self.block.getY() - self.BLOCK_SIZE)
-
+                        self.tolerance = False
+                        self.tolerable = False
                         self.tick()
 
                     elif event.key == pygame.K_p:
@@ -272,14 +378,21 @@ class Metris:
                     if event.key == pygame.K_LEFT:
                         if self.dx < 0:
                             self.dx = 0
+                            if self.dy is 0:
+                                pygame.time.set_timer(self.MOVE, 0)
+                        # self.accl = 500
                     if event.key == pygame.K_RIGHT:
                         if self.dx > 0:
                             self.dx = 0
+                            if self.dy is 0:
+                                pygame.time.set_timer(self.MOVE, 0)
+                        # self.accl = 500
                     if event.key == pygame.K_DOWN:
                         self.dy = 0
+                        pygame.time.set_timer(self.MOVE, 0)
                 if event.type == TICK:
                     self.tick()
-                if event.type == MOVE:
+                if event.type == self.MOVE:
                     self.move()
                 #=============TIMED METRIS============
                 if event.type == TIMEREMAINING:
@@ -287,21 +400,48 @@ class Metris:
                     if time <= 0:
                         self.gameOver()
                 #=====================================
+                if event.type == self.SLACK:
+                    self.tolerance = False
+                    pygame.time.set_timer(self.SLACK, 0)
+                if event.type == self.NOSLACK:
+                    self.tolerable = True
+                    pygame.time.set_timer(self.NOSLACK, 0)
 
 
             # drawing bg
-
             self.GAMEDISPLAY.fill(self.BLACK, [0, 0, self.WIDTH, self.HEIGHT])
-            
+            #=========GRADIENT BG===================
+            spacing = self.HEIGHT / 100
+            for i in range (14, 100):
+                self.GAMEDISPLAY.fill((100+i, 105+i, 155+i), [0, spacing*i, self.WIDTH, spacing])
+
+            #=========RANDOM BLOCK BG===============
+            # selector = 0
+            # for i in range (0, 10):
+            #     for j in range (0, 12):
+            #         self.GAMEDISPLAY.fill((0, 150, 200),
+            #                               [i*4*self.BLOCK_SIZE, j*4*self.BLOCK_SIZE, 3.5*self.BLOCK_SIZE,
+            #                                3.5*self.BLOCK_SIZE])
+            #         self.GAMEDISPLAY.fill((0, 100, 150),
+            #                               [i*4*self.BLOCK_SIZE + self.BLOCK_SIZE/4, j*4* self.BLOCK_SIZE + self.BLOCK_SIZE/4,
+            #                                3.5*self.BLOCK_SIZE - 0.5*self.BLOCK_SIZE, 3.5 * self.BLOCK_SIZE - 0.5*self.BLOCK_SIZE])
+            #         selector += 1
+            # drawing game bg
             self.GAMEDISPLAY.fill(self.INNER_BG2, [self.LEFT_BOUNDARY, self.TOP_BOUNDARY, 10 * self.BLOCK_SIZE, 20 * self.BLOCK_SIZE])
             self.GAMEDISPLAY.fill(self.INNER_BG, [self.LEFT_BOUNDARY + self.BLOCK_SIZE / 2, self.TOP_BOUNDARY + self.BLOCK_SIZE / 2, 9 * self.BLOCK_SIZE, 19 * self.BLOCK_SIZE])
-            
+            # drawing hold bg
             self.GAMEDISPLAY.fill(self.INNER_BG2, [self.RIGHT_BOUNDARY + self.BLOCK_SIZE, self.TOP_BOUNDARY + 12 * self.BLOCK_SIZE, 8 * self.BLOCK_SIZE, 5 * self.BLOCK_SIZE])
             self.GAMEDISPLAY.fill(self.INNER_BG, [self.RIGHT_BOUNDARY + 1.5 * self.BLOCK_SIZE, self.TOP_BOUNDARY + 12.5 * self.BLOCK_SIZE, 7 * self.BLOCK_SIZE, 4 * self.BLOCK_SIZE])
-            
+            # drawing next block bg
             self.GAMEDISPLAY.fill(self.INNER_BG2, [self.RIGHT_BOUNDARY + self.BLOCK_SIZE, self.TOP_BOUNDARY + 6 * self.BLOCK_SIZE, 8 * self.BLOCK_SIZE, 5 * self.BLOCK_SIZE])
             self.GAMEDISPLAY.fill(self.INNER_BG, [self.RIGHT_BOUNDARY + 1.5 * self.BLOCK_SIZE, self.TOP_BOUNDARY + 6.5 * self.BLOCK_SIZE, 7 * self.BLOCK_SIZE, 4 * self.BLOCK_SIZE])
-                    
+            # drawing QA bg
+            self.GAMEDISPLAY.fill(self.INNER_BG2, [self.BLOCK_SIZE, self.TOP_BOUNDARY, self.LEFT_BOUNDARY - 2 * self.BLOCK_SIZE, 10*self.BLOCK_SIZE])
+            self.GAMEDISPLAY.fill(self.INNER_BG, [1.5 * self.BLOCK_SIZE, self.TOP_BOUNDARY + 0.5 * self.BLOCK_SIZE, self.LEFT_BOUNDARY - 3 * self.BLOCK_SIZE, 9 * self.BLOCK_SIZE])
+            # drawing stats bg
+            self.GAMEDISPLAY.fill(self.INNER_BG2, [self.RIGHT_BOUNDARY + self.BLOCK_SIZE, self.TOP_BOUNDARY, 8 * self.BLOCK_SIZE, 5 * self.BLOCK_SIZE])
+            self.GAMEDISPLAY.fill(self.INNER_BG, [self.RIGHT_BOUNDARY + 1.5 * self.BLOCK_SIZE, self.TOP_BOUNDARY + 0.5 * self.BLOCK_SIZE, 7 * self.BLOCK_SIZE, 4 * self.BLOCK_SIZE])
+
             # draw grid lines
             self.drawGridLines()
 
@@ -324,6 +464,10 @@ class Metris:
                 # draw new block
                 self.newBlock(nextBlocks)
                 self.currentBlock = True
+                self.first_touch = True
+                self.spin = False
+                self.tolerance = False
+                self.tolerable = True
                 hasSwap = True
                 
             # drawing shadow
@@ -391,7 +535,7 @@ class Metris:
                 if x == 3:
                     list_count = 0
 
-            # drawing self.landed blocks
+            # drawing landed blocks
             for i in range(0, len(self.landed)):
                 for j in range(0, len(self.landed[i])):
                     if (self.landed[i][j] != None):
@@ -399,14 +543,27 @@ class Metris:
                 self.block.display(self.GAMEDISPLAY)
 
             # drawing top cover
-            self.GAMEDISPLAY.fill(self.BLACK, [0, 0, self.WIDTH, self.TOP_BOUNDARY])
+            # self.GAMEDISPLAY.fill((0,150,200), [0, 0, self.WIDTH, self.TOP_BOUNDARY])
+            for i in range (0, 14):
+                self.GAMEDISPLAY.fill((100+i, 105+i, 155+i), [0, spacing*i, self.WIDTH, spacing])
 
             # drawing timeleft ======================TIMED METRIS=================
             if time / 1000 - (time / 1000 / 60) * 60 < 10:
-                timeleft_text = self.BASICFONT.render("Time: " + str(time/1000/60) + " : 0" + str(time/1000 - (time/1000/60)*60), True, (255,255,0))
+                timeleft_text_outline = self.TIMEFONT.render(str(time / 1000 / 60) + " : 0" + str(time / 1000 - (time / 1000 / 60) * 60), True, (50, 50, 100))
+                timeleft_text = self.TIMEFONT.render(str(time/1000/60) + " : 0" + str(time/1000 - (time/1000/60)*60), True, (255,255,0))
+                time_rect = timeleft_text.get_rect()
+                time_rect.center = (self.WIDTH/2, self.TOP_BOUNDARY - 1.5 * self.BLOCK_SIZE)
+                time_outline_rect = timeleft_text.get_rect()
+                time_outline_rect.center = (self.WIDTH / 2 + 5, self.TOP_BOUNDARY - 1.5 * self.BLOCK_SIZE + 5)
             else:
-                timeleft_text = self.BASICFONT.render("Time: " + str(time/1000/60) + " : " + str(time/1000 - (time/1000/60)*60), True, (255,255,0))
-            self.GAMEDISPLAY.blit(timeleft_text, (self.WIDTH / 2 - 2*self.BLOCK_SIZE, self.TOP_BOUNDARY - 1.5 * self.BLOCK_SIZE))
+                timeleft_text_outline = self.TIMEFONT.render(str(time / 1000 / 60) + " : " + str(time / 1000 - (time / 1000 / 60) * 60), True, (50, 50, 100))
+                timeleft_text = self.TIMEFONT.render(str(time/1000/60) + " : " + str(time/1000 - (time/1000/60)*60), True, (255,255,0))
+                time_rect = timeleft_text.get_rect()
+                time_rect.center = (self.WIDTH/2, self.TOP_BOUNDARY - 1.5 * self.BLOCK_SIZE)
+                time_outline_rect = timeleft_text.get_rect()
+                time_outline_rect.center = (self.WIDTH / 2 + 5, self.TOP_BOUNDARY - 1.5 * self.BLOCK_SIZE + 5)
+            self.GAMEDISPLAY.blit(timeleft_text_outline, time_outline_rect)
+            self.GAMEDISPLAY.blit(timeleft_text, time_rect)
             #=====================================================================
 
             # draw self.score, self.level, multiplier
@@ -493,6 +650,8 @@ class Metris:
             # draw compliment
             self.drawCompliment(comp_input)
 
+            self.drawCombo()
+
             self.drawSoundIcon()
             self.drawMusicIcon()
             if self.level_prev != self.level:
@@ -527,18 +686,28 @@ class Metris:
     def tick(self):
         if self.gameExit:
             return
+        self.lock = True
+        if self.tolerable and (self.dy is not 0 or self.dx is not 0):
+            self.tolerance = True
+            pygame.time.set_timer(self.SLACK, 1100 - self.fallFreq)
         if self.block != None:
             self.block.setY(self.block.getY() + self.BLOCK_SIZE)
             if self.checkCollision():
                 self.block.setY(self.block.getY() - self.BLOCK_SIZE)
-                self.currentBlock = False
-
+                if not self.tolerance:  # self.dy is 0:
+                    self.currentBlock = False
+                if self.tolerance:  # self.dy is not 0:
+                    self.tolerable = False
+                    # self.first_touch = False
+                    pygame.time.set_timer(self.NOSLACK, 1500)
+            if not self.currentBlock:
                 for i in range(0, len(self.block.getPerimeter())):
                     self.landed[self.x2Index(self.block.getPerimeter()[i].getX())][self.y2Index(self.block.getPerimeter()[i].getY())] = \
                         self.block.getPerimeter()[i]
                 self.checkLandedAndDelete()
                 self.playSound('landSound.wav')
                 self.checkGameOver()
+        self.lock = False
 
     def checkLandedAndDelete(self):
         y = 0
@@ -574,12 +743,29 @@ class Metris:
             self.playSound('clr.wav')
 
         # update self.score
+        self.d_tspin = False
+        self.t_tspin = False
+        self.tetris = False
+        self.triple = False
+        self.double = False
+        self.single = False
         if len(rows) == 1:
             self.bankedpoints += 10
+            self.single = True
         else:
             ret = 0
             multiplier = 1
             pt_score = 5
+            if self.spin and len(rows) == 2:
+                self.d_tspin = True
+            elif self.spin and len(rows) == 3:
+                self.t_tspin = True
+            elif len(rows) == 2:
+                self.double = True
+            elif len(rows) == 3:
+                self.triple = True
+            elif len(rows) == 4:
+                self.tetris = True
             for x in range(0, len(rows)):
                 ret += multiplier * pt_score
                 multiplier += 1
@@ -719,9 +905,11 @@ class Metris:
     def drawShadow(self, blockList, dist_y):
         for i in range(0, len(blockList)):
             pygame.draw.rect(self.GAMEDISPLAY, blockList[i].getColor(),
-                             [blockList[i].getX(), blockList[i].getY() + dist_y, self.BLOCK_SIZE, self.BLOCK_SIZE])
-            pygame.draw.rect(self.GAMEDISPLAY, (100, 100, 100),
-                             [blockList[i].getX() + 1, blockList[i].getY() + dist_y + 1, self.BLOCK_SIZE - 2, self.BLOCK_SIZE - 2])
+                             [blockList[i].getX() + self.BLOCK_SIZE/10, blockList[i].getY() + dist_y + self.BLOCK_SIZE/10,
+                              self.BLOCK_SIZE - self.BLOCK_SIZE/5, self.BLOCK_SIZE - self.BLOCK_SIZE/5])
+            pygame.draw.rect(self.GAMEDISPLAY, (0, 25, 25),
+                             [blockList[i].getX() + self.BLOCK_SIZE/8, blockList[i].getY() + dist_y + self.BLOCK_SIZE/8,
+                              self.BLOCK_SIZE - self.BLOCK_SIZE/4, self.BLOCK_SIZE - self.BLOCK_SIZE/4])
 
 
     def getRandomBlockSet(self, lastBlock):
@@ -896,7 +1084,7 @@ class Metris:
         borderList = [(self.RIGHT_BOUNDARY + self.BLOCK_SIZE, self.TOP_BOUNDARY), (self.RIGHT_BOUNDARY + 9 * self.BLOCK_SIZE, self.TOP_BOUNDARY),
                       (self.RIGHT_BOUNDARY + 9 * self.BLOCK_SIZE, self.TOP_BOUNDARY + 5 * self.BLOCK_SIZE),
                       (self.RIGHT_BOUNDARY + self.BLOCK_SIZE, self.TOP_BOUNDARY + 5 * self.BLOCK_SIZE)]
-        pygame.draw.lines(self.GAMEDISPLAY, self.WHITE, True, borderList, BORDER_WIDTH)
+        pygame.draw.lines(self.GAMEDISPLAY, self.BORDER_COLOR, True, borderList, BORDER_WIDTH)
 
 
     def drawQuesAnsBorder(self):
@@ -905,15 +1093,15 @@ class Metris:
                       (self.LEFT_BOUNDARY - self.BLOCK_SIZE, self.TOP_BOUNDARY),
                       (self.LEFT_BOUNDARY - self.BLOCK_SIZE, self.TOP_BOUNDARY + 10 * self.BLOCK_SIZE),
                       (self.BLOCK_SIZE, self.TOP_BOUNDARY + 10 * self.BLOCK_SIZE)]
-        pygame.draw.lines(self.GAMEDISPLAY, self.WHITE, True, borderList, BORDER_WIDTH)
+        pygame.draw.lines(self.GAMEDISPLAY, self.BORDER_COLOR, True, borderList, BORDER_WIDTH)
 
 
     def drawGameAreaBorder(self):
-        BORDER_WIDTH = 2
-        borderList = [(self.LEFT_BOUNDARY, self.TOP_BOUNDARY),
-                      (self.LEFT_BOUNDARY + 10 * self.BLOCK_SIZE, self.TOP_BOUNDARY),
+        BORDER_WIDTH = 4
+        borderList = [(self.LEFT_BOUNDARY - BORDER_WIDTH/2, self.TOP_BOUNDARY - BORDER_WIDTH/2),
+                      (self.LEFT_BOUNDARY + 10 * self.BLOCK_SIZE, self.TOP_BOUNDARY - BORDER_WIDTH/2),
                       (self.LEFT_BOUNDARY + 10 * self.BLOCK_SIZE, self.TOP_BOUNDARY + 20 * self.BLOCK_SIZE),
-                      (self.LEFT_BOUNDARY, self.TOP_BOUNDARY + 20 * self.BLOCK_SIZE)]
+                      (self.LEFT_BOUNDARY - BORDER_WIDTH/2, self.TOP_BOUNDARY + 20 * self.BLOCK_SIZE)]
         pygame.draw.lines(self.GAMEDISPLAY, self.BORDER_COLOR, True, borderList, BORDER_WIDTH)
 
 
@@ -969,7 +1157,7 @@ class Metris:
                     elif event.key == pygame.K_s:
                         self.flipSoundIcon()
 
-            self.GAMEDISPLAY.fill(self.WHITE, [self.LEFT_BOUNDARY, self.TOP_BOUNDARY, 11 * self.BLOCK_SIZE, 21 * self.BLOCK_SIZE])
+            self.GAMEDISPLAY.fill(self.WHITE, [self.LEFT_BOUNDARY, self.TOP_BOUNDARY, 10 * self.BLOCK_SIZE, 20 * self.BLOCK_SIZE])
             myfont = pygame.font.SysFont('Comic Sans MS', 30)
             pausedText = myfont.render("Paused", True, self.BLACK)
             textWidth = pausedText.get_rect().width
@@ -1009,16 +1197,22 @@ class Metris:
             self.block.display(self.GAMEDISPLAY)
 
         # drawing top cover
-        self.GAMEDISPLAY.fill(self.BLACK, [0, 0, self.WIDTH, self.TOP_BOUNDARY])
+        # self.GAMEDISPLAY.fill(self.BLACK, [0, 0, self.WIDTH, self.TOP_BOUNDARY])
+        spacing = self.HEIGHT / 100
+        for i in range(0, 14):
+            self.GAMEDISPLAY.fill((100, 105 + i, 155 + i), [0, spacing * i, self.WIDTH, spacing])
+
+        self.drawGameAreaBorder()
+        self.drawQuesAnsBorder()
 
         # draw self.score, self.level, multiplier
         self.drawVarsBorder()
 
-        self.GAMEDISPLAY.fill(self.BLACK, [self.RIGHT_BOUNDARY + self.BLOCK_SIZE + 10, self.TOP_BOUNDARY + 1.5 * self.BLOCK_SIZE, 7.5 * self.BLOCK_SIZE, self.BLOCK_SIZE])
-        screen_text = self.BASICFONT.render("Score: ", True, self.WHITE)
-        score_text = self.SCOREFONT.render("            " + str(self.score), True, self.WHITE)
-        self.GAMEDISPLAY.blit(score_text, (self.RIGHT_BOUNDARY + self.BLOCK_SIZE + 10, self.TOP_BOUNDARY + 1.5 * self.BLOCK_SIZE))
-        self.GAMEDISPLAY.blit(screen_text, (self.RIGHT_BOUNDARY + self.BLOCK_SIZE + 10, self.TOP_BOUNDARY + 1.5 * self.BLOCK_SIZE))
+        # self.GAMEDISPLAY.fill(self.BLACK, [self.RIGHT_BOUNDARY + self.BLOCK_SIZE + 10, self.TOP_BOUNDARY + 1.5 * self.BLOCK_SIZE, 7.5 * self.BLOCK_SIZE, self.BLOCK_SIZE])
+        # screen_text = self.BASICFONT.render("Score: ", True, self.WHITE)
+        # score_text = self.SCOREFONT.render("            " + str(self.score), True, self.WHITE)
+        # self.GAMEDISPLAY.blit(score_text, (self.RIGHT_BOUNDARY + self.BLOCK_SIZE + 10, self.TOP_BOUNDARY + 1.5 * self.BLOCK_SIZE))
+        # self.GAMEDISPLAY.blit(screen_text, (self.RIGHT_BOUNDARY + self.BLOCK_SIZE + 10, self.TOP_BOUNDARY + 1.5 * self.BLOCK_SIZE))
 
 
     #==================================================================================
@@ -1109,12 +1303,12 @@ class Metris:
     ##                                (self.LEFT_BOUNDARY + j * SPACING + SPACING, self.TOP_BOUNDARY + i * self.BLOCK_SIZE),
     ##                                1)
         for i in range (1, 10):
-            pygame.draw.line(self.GAMEDISPLAY, (200, 200, 200),
+            pygame.draw.line(self.GAMEDISPLAY, (0, 150, 150),
                             (self.LEFT_BOUNDARY + i * self.BLOCK_SIZE, self.TOP_BOUNDARY),
                             (self.LEFT_BOUNDARY + i * self.BLOCK_SIZE, self.BOTTOM_BOUNDARY),
                             1)
         for i in range (1, 20):
-            pygame.draw.line(self.GAMEDISPLAY, (200, 200, 200),
+            pygame.draw.line(self.GAMEDISPLAY, (0, 150, 150),
                             (self.LEFT_BOUNDARY, self.TOP_BOUNDARY + i * self.BLOCK_SIZE),
                             (self.LEFT_BOUNDARY + 10 * self.BLOCK_SIZE, self.TOP_BOUNDARY + i * self.BLOCK_SIZE),
                             1)
@@ -1122,10 +1316,15 @@ class Metris:
     def move(self):
         if self.block is None:
             return
+        if self.lock:
+            return
+        # self.accl = self.accl * 3 / 5
+        pygame.time.set_timer(self.MOVE, 100)
         self.block.setX(self.block.getX() + self.dx)
-        self.block.setY(self.block.getY() + self.dy)
         if self.checkCollision():
             self.block.setX(self.block.getX() - self.dx)
+        self.block.setY(self.block.getY() + self.dy)
+        if self.checkCollision():
             self.block.setY(self.block.getY() - self.dy)
 
     def generateQues(self):
@@ -1271,8 +1470,40 @@ class Metris:
         if rand == 4 or rand == 5 or rand == 6 or rand == 7:
             controlSurf = self.BASICFONT.render("Lost controls.", True, self.TEXTCOLOR)
             controlRect = controlSurf.get_rect()
-            controlRect.center = (self.WIDTH / 2, self.BOTTOM_BOUNDARY + (self.HEIGHT - self.BOTTOM_BOUNDARY) / 2)
+            controlRect.center = (self.WIDTH / 2, self.BOTTOM_BOUNDARY + 2.5 * self.BLOCK_SIZE)
             self.GAMEDISPLAY.blit(controlSurf, controlRect)
+
+    def drawCombo(self):
+        if self.single:
+            combo_surf = self.BASICFONT.render("Single", True, self.TEXTCOLOR)
+            combo_rect = combo_surf.get_rect()
+            combo_rect.center = (self.WIDTH / 2, self.BOTTOM_BOUNDARY + 1.5 * self.BLOCK_SIZE)
+            self.GAMEDISPLAY.blit(combo_surf, combo_rect)
+        elif self.double:
+            combo_surf = self.BASICFONT.render("Double", True, self.TEXTCOLOR)
+            combo_rect = combo_surf.get_rect()
+            combo_rect.center = (self.WIDTH / 2, self.BOTTOM_BOUNDARY + 1.5 * self.BLOCK_SIZE)
+            self.GAMEDISPLAY.blit(combo_surf, combo_rect)
+        elif self.triple:
+            combo_surf = self.BASICFONT.render("Triple", True, self.TEXTCOLOR)
+            combo_rect = combo_surf.get_rect()
+            combo_rect.center = (self.WIDTH / 2, self.BOTTOM_BOUNDARY + 1.5 * self.BLOCK_SIZE)
+            self.GAMEDISPLAY.blit(combo_surf, combo_rect)
+        elif self.tetris:
+            combo_surf = self.BASICFONT.render("Tetris", True, self.TEXTCOLOR)
+            combo_rect = combo_surf.get_rect()
+            combo_rect.center = (self.WIDTH / 2, self.BOTTOM_BOUNDARY + 1.5 * self.BLOCK_SIZE)
+            self.GAMEDISPLAY.blit(combo_surf, combo_rect)
+        elif self.d_tspin:
+            combo_surf = self.BASICFONT.render("T-spin Double", True, self.TEXTCOLOR)
+            combo_rect = combo_surf.get_rect()
+            combo_rect.center = (self.WIDTH / 2, self.BOTTOM_BOUNDARY + 1.5 * self.BLOCK_SIZE)
+            self.GAMEDISPLAY.blit(combo_surf, combo_rect)
+        elif self.t_tspin:
+            combo_surf = self.BASICFONT.render("T-spin Triple", True, self.TEXTCOLOR)
+            combo_rect = combo_surf.get_rect()
+            combo_rect.center = (self.WIDTH / 2, self.BOTTOM_BOUNDARY + 1.5 * self.BLOCK_SIZE)
+            self.GAMEDISPLAY.blit(combo_surf, combo_rect)
 
 
     def playSound(self, soundSource):
@@ -1340,7 +1571,7 @@ class Metris:
                 return -1
 
             for i in range (len(data)-1, 0, -1):
-                if self.score * (self.total_lines / 10.0) > data[i]["score"] and self.score <= data[i-1]["score"]:
+                if self.score * (self.total_lines / 10.0) > data[i]["score"] and self.score * (self.total_lines / 10.0) <= data[i-1]["score"]:
                     return i
             if self.score * (self.total_lines / 10.0) > int(data[0]["score"]):
                 return 0
@@ -1373,7 +1604,7 @@ class Metris:
         i = 0
         new_score = pts
         if abs(new_score - int(pts * (tL/10.0))) > 1000:
-            self.speed = 300
+            self.speed = 900
         elif abs(new_score - int(pts * (tL/10.0))) > 100:
             self.speed = 60
         elif abs(new_score - int(pts * (tL/10.0))) > 10:
