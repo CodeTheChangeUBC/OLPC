@@ -50,21 +50,24 @@ def ask(screen, question):
     global current_string
     current_string = []
     display_box(screen, question + ": " + string.join(current_string, ""))
-    counter = 20
+    counter = 15
     while True:
         inkey = get_key()
-        if inkey == K_BACKSPACE:
-            current_string = current_string[0:-1]
-            counter += 2
+        if inkey == K_BACKSPACE and counter <= 15:
+            if not counter == 15:
+                current_string = current_string[0:-1]
+                counter += 1
         elif inkey == K_RETURN:
             break
         elif inkey == K_MINUS:
-            current_string.append("-")
+            if counter > 0:
+                current_string.append("-")
+                counter -= 1
         elif inkey <= 127:
             if counter > 0:
                 current_string.append(chr(inkey))
+                counter -= 1
         display_box(screen, question + ": " + string.join(current_string, ""))
-        counter -= 1
 
     return '{:_^15}'.format(string.join(current_string, ""))[:15]
 
