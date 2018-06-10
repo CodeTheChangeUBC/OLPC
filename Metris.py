@@ -72,9 +72,16 @@ class Metris:
                         'mp3s/m8', 'mp3s/m9', 'mp3s/m10', 'mp3s/m11', 'mp3s/m12', 'mp3s/m13']
 
         self.score = 0
-        self.GAMEDISPLAY = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+        if pygame.display.get_surface() != None:
+            self.GAMEDISPLAY = pygame.display.get_surface()
+        else:
+            self.GAMEDISPLAY = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
 
         pygame.display.set_caption('Metris')
+        # dirty = []
+        # dirty.append(pygame.draw.rect(self.GAMEDISPLAY, (255, 255, 255),
+        #                               pygame.Rect(0, 0, self.WIDTH, self.HEIGHT)))
+        # pygame.display.update(dirty)
         pygame.display.update()
 
         self.gameExit = False
@@ -2016,17 +2023,17 @@ class Metris:
         self.main_menu.add_option('Quit', PYGAME_MENU_EXIT)
 
 
-    def main(self):
+    def runMain(self):
         # global self.main_menu
         self.main_menu.mainloop(pygame.event.get())
 
     def runNewGame(self):
         while True:
             self.buildMain()
-            self.main()
+            self.runMain()
 
 if __name__ == '__main__':
     while True:
         game = Metris()
         game.buildMain()
-        game.main()
+        game.runMain()
