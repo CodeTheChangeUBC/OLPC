@@ -22,6 +22,22 @@ class Metris:
 
         pygame.init()
 
+        if pygame.display.get_surface() != None:
+            self.GAMEDISPLAY = pygame.display.get_surface()
+            self.HEIGHT = self.GAMEDISPLAY.get_height()
+            self.WIDTH = self.HEIGHT * 4 / 3
+        else:
+            self.HEIGHT = 900
+            self.WIDTH = self.HEIGHT * 4 / 3
+            self.GAMEDISPLAY = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+
+        pygame.display.set_caption('Metris')
+        # dirty = []
+        # dirty.append(pygame.draw.rect(self.GAMEDISPLAY, (255, 255, 255),
+        #                               pygame.Rect(0, 0, self.WIDTH, self.HEIGHT)))
+        # pygame.display.update(dirty)
+        pygame.display.update()
+
         self.WHITE = (255, 255, 255)
         self.RED = (255, 0, 0)
         self.BLACK = (0, 0, 0)
@@ -51,8 +67,7 @@ class Metris:
                        'Press B to go back',
                        'Press M to mute/unmute',
                        ]
-        self.HEIGHT = 900
-        self.WIDTH = self.HEIGHT * 4 / 3
+
         self.BLOCK_SIZE = self.HEIGHT / 28
         self.LEFT_BOUNDARY = self.WIDTH / 2 - 5 * self.BLOCK_SIZE
         self.RIGHT_BOUNDARY = self.WIDTH /2 + 5 * self.BLOCK_SIZE
@@ -73,17 +88,6 @@ class Metris:
                         'mp3s/m8', 'mp3s/m9', 'mp3s/m10', 'mp3s/m11', 'mp3s/m12', 'mp3s/m13']
 
         self.score = 0
-        if pygame.display.get_surface() != None:
-            self.GAMEDISPLAY = pygame.display.get_surface()
-        else:
-            self.GAMEDISPLAY = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
-
-        pygame.display.set_caption('Metris')
-        # dirty = []
-        # dirty.append(pygame.draw.rect(self.GAMEDISPLAY, (255, 255, 255),
-        #                               pygame.Rect(0, 0, self.WIDTH, self.HEIGHT)))
-        # pygame.display.update(dirty)
-        pygame.display.update()
 
         self.gameExit = False
 
@@ -1908,13 +1912,13 @@ class Metris:
                                     menu_alpha=100,
                                     menu_color=MENU_BACKGROUND_COLOR,
                                     menu_color_title=COLOR_RED,
-                                    menu_height=int(WINDOW_SIZE[1] * 1),
-                                    menu_width=int(WINDOW_SIZE[0] * 1),
+                                    menu_height=int(self.HEIGHT),  #WINDOW_SIZE[1] * 1),
+                                    menu_width=int(self.WIDTH),  #WINDOW_SIZE[0] * 1),
                                     onclose=PYGAME_MENU_DISABLE_CLOSE,
                                     option_shadow=False,
                                     title='Play menu',
-                                    window_height=WINDOW_SIZE[1],
-                                    window_width=WINDOW_SIZE[0]
+                                    window_height=self.HEIGHT,  #WINDOW_SIZE[1],
+                                    window_width=self.WIDTH  #WINDOW_SIZE[0]
                                     )
 
         play_menu.add_option('Start', self.play_function)
@@ -1930,15 +1934,15 @@ class Metris:
                                                font_size_title=30,
                                                font_title=font_tit,
                                                menu_color_title=COLOR_GREEN,
-                                               menu_height=int(WINDOW_SIZE[1] * 1),
-                                               menu_width=int(WINDOW_SIZE[0] * 1),
+                                               menu_height=int(self.HEIGHT),  #WINDOW_SIZE[1] * 1),
+                                               menu_width=int(self.WIDTH),  #WINDOW_SIZE[0] * 1),
                                                onclose=PYGAME_MENU_DISABLE_CLOSE,
                                                option_shadow=True,
                                                text_color=COLOR_WHITE,
                                                text_fontsize=20,
                                                title='Instruction',
-                                               window_height=WINDOW_SIZE[1],
-                                               window_width=WINDOW_SIZE[0],
+                                               window_height=self.HEIGHT,  #WINDOW_SIZE[1],
+                                               window_width=self.WIDTH,  #WINDOW_SIZE[0],
                                                # menu_color=MENU_BACKGROUND_COLOR,
                                                font_size=30,
                                                menu_alpha=100,
@@ -1961,15 +1965,15 @@ class Metris:
                                                font_title=font_tit,
                                                # menu_color=MENU_BACKGROUND_COLOR,
                                                menu_color_title=COLOR_BLUE,
-                                               menu_height=int(WINDOW_SIZE[1] * 1),
-                                               menu_width=int(WINDOW_SIZE[0] * 1),
+                                               menu_height=int(self.HEIGHT),  #WINDOW_SIZE[1] * 1),
+                                               menu_width=int(self.WIDTH),  #WINDOW_SIZE[0] * 1),
                                                onclose=PYGAME_MENU_DISABLE_CLOSE,
                                                option_shadow=True,
                                                text_color=COLOR_WHITE,
                                                text_fontsize=20,
                                                title='Leaderboard',
-                                               window_height=WINDOW_SIZE[1],
-                                               window_width=WINDOW_SIZE[0],
+                                               window_height=self.HEIGHT,  #WINDOW_SIZE[1],
+                                               window_width=self.WIDTH,  #WINDOW_SIZE[0],
                                                font_size=30,
                                                menu_alpha=100,
                                                menu_color=COLOR_BLACK
@@ -2008,15 +2012,15 @@ class Metris:
                                     font_size=30,
                                     menu_alpha=100,
                                     menu_color=COLOR_BLACK,
-                                    menu_height=int(WINDOW_SIZE[1] * 1),
-                                    menu_width=int(WINDOW_SIZE[0] * 1),
+                                    menu_height=int(self.HEIGHT),  #WINDOW_SIZE[1] * 1),
+                                    menu_width=int(self.WIDTH),  #WINDOW_SIZE[0] * 1),
                                     menu_color_title=COLOR_RED,
                                     onclose=PYGAME_MENU_DISABLE_CLOSE,
                                     font_title=font_tit,
                                     option_shadow=True,
                                     title='Metris',
-                                    window_height=WINDOW_SIZE[1],
-                                    window_width=WINDOW_SIZE[0]
+                                    window_height=self.HEIGHT,  #WINDOW_SIZE[1],
+                                    window_width=self.WIDTH  #WINDOW_SIZE[0]
                                     )
         self.main_menu.add_option('Play', play_menu)
         self.main_menu.add_option('Instruction', instruction_menu)
@@ -2029,7 +2033,8 @@ class Metris:
         self.main_menu.mainloop(pygame.event.get())
 
     def runNewGame(self):
-        while True:
+        self.running = True
+        while self.running:
             self.buildMain()
             self.runMain()
             while Gtk.events_pending():
