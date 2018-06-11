@@ -2,7 +2,7 @@
 name = Metris
 activity_version = 2
 bundle_id = ctcubc.Metris
-icon = metris
+icon = activity
 show_launcher = yes
 exec = sugar-activity TestActivity.TestActivity
 repository = https://github.com/CodeTheChangeUBC/OLPC

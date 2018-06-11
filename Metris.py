@@ -1,4 +1,5 @@
 import pygame
+from gi.repository import Gtk
 import inputbox
 import random, time, sys, math
 import json
@@ -2031,6 +2032,8 @@ class Metris:
         while True:
             self.buildMain()
             self.runMain()
+            while Gtk.events_pending():
+                Gtk.main_iteration()
 
 if __name__ == '__main__':
     while True:
