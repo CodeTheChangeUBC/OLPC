@@ -19,7 +19,9 @@ from menu import *
 class Metris:
 
     def __init__(self):
+        pass
 
+    def makeGameObject(self):
         pygame.init()
 
         if pygame.display.get_surface() != None:
@@ -151,6 +153,7 @@ class Metris:
 
     def runGame(self):
 
+
         self.gameExit = False
 
         self.blockSet = self.getRandomBlockSet(None)
@@ -200,6 +203,9 @@ class Metris:
             self.GAMEDISPLAY.fill((100 + i, 105 + i, 155 + i), [0, spacing * i, self.WIDTH, spacing])
 
         while not self.gameExit:
+
+            while Gtk.events_pending():
+                Gtk.main_iteration()
 
             if self.bankedpoints > 0:
                 self.score += 1
@@ -1626,8 +1632,12 @@ class Metris:
 
     def checkForQuit(self):
         for event in pygame.event.get(QUIT):  # get all the QUIT events
+            while Gtk.events_pending():
+                Gtk.main_iteration()
             self.terminate()  # terminate if any QUIT events are present
         for event in pygame.event.get(KEYUP):  # get all the KEYUP events
+            while Gtk.events_pending():
+                Gtk.main_iteration()
             if event.key == K_ESCAPE:
                 self.terminate()  # terminate if the KEYUP event was for the Esc key
             pygame.event.post(event)  # put the other KEYUP event objects back
@@ -1649,6 +1659,8 @@ class Metris:
                 return -1
 
             for i in range (len(data)-1, 0, -1):
+                while Gtk.events_pending():
+                    Gtk.main_iteration()
                 if self.score * (self.total_lines / 10.0) > data[i]["score"] and self.score * (self.total_lines / 10.0) <= data[i-1]["score"]:
                     return i
             if self.score * (self.total_lines / 10.0) > int(data[0]["score"]):
@@ -1811,6 +1823,9 @@ class Metris:
             # Application events
             playevents = pygame.event.get()
             for e in playevents:
+                while Gtk.events_pending():
+                    Gtk.main_iteration()
+
                 if e.type == QUIT:
                     exit()
                 elif e.type == KEYDOWN:
@@ -1865,6 +1880,9 @@ class Metris:
             # Application events
             playevents = pygame.event.get()
             for e in playevents:
+                while Gtk.events_pending():
+                    Gtk.main_iteration()
+
                 if e.type == QUIT:
                     exit()
                 elif e.type == KEYDOWN:
@@ -2033,15 +2051,15 @@ class Metris:
         self.main_menu.mainloop(pygame.event.get())
 
     def runNewGame(self):
+        self.makeGameObject()
         self.running = True
         while self.running:
             self.buildMain()
             self.runMain()
-            while Gtk.events_pending():
-                Gtk.main_iteration()
+            self.runGame()
 
-if __name__ == '__main__':
-    while True:
-        game = Metris()
-        game.buildMain()
-        game.runMain()
+# if __name__ == '__main__':
+#     while True:
+#         game = Metris()
+#         game.buildMain()
+#         game.runMain()

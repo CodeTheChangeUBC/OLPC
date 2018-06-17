@@ -21,7 +21,9 @@ import time
 import config_controls as _ctrl
 import config_menu as _cfg
 import locals as _locals
-
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 # Library imports
 from selector import Selector as _Selector
 import pygame as _pygame
@@ -683,6 +685,8 @@ class Menu(object):
             return
         if self._actual._dopause:
             while not self._done:
+                while Gtk.events_pending():
+                    Gtk.main_iteration()
                 time.sleep(0.016666)
                 if self._main():
                     return
