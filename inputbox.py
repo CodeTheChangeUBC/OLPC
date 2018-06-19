@@ -15,11 +15,17 @@
 import pygame, pygame.font, pygame.event, pygame.draw, string
 from pygame.locals import *
 
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
+
 import re
 
 
 def get_key():
     while 1:
+        while Gtk.events_pending():
+            Gtk.main_iteration()
         event = pygame.event.poll()
         if event.type == KEYDOWN:
             return event.key
@@ -52,6 +58,8 @@ def ask(screen, question):
     display_box(screen, question + ": " + string.join(current_string, ""))
     counter = 15
     while True:
+        while Gtk.events_pending():
+            Gtk.main_iteration()
         inkey = get_key()
         if inkey == K_BACKSPACE and counter <= 15:
             if not counter == 15:

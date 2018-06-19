@@ -1,4 +1,6 @@
 import pygame
+import gi
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import inputbox
 import random, time, sys, math
@@ -27,7 +29,7 @@ class Metris:
         if pygame.display.get_surface() != None:
             self.GAMEDISPLAY = pygame.display.get_surface()
             self.HEIGHT = self.GAMEDISPLAY.get_height()
-            self.WIDTH = self.HEIGHT * 4 / 3
+            self.WIDTH = self.GAMEDISPLAY.get_width()
         else:
             self.HEIGHT = 900
             self.WIDTH = self.HEIGHT * 4 / 3
@@ -1195,6 +1197,10 @@ class Metris:
         self.startTime = pygame.mixer.music.get_pos()
 
         while pause:
+
+            while Gtk.events_pending():
+                Gtk.main_iteration()
+
             self.checkForQuit()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -1218,18 +1224,18 @@ class Metris:
                         self.flipSoundIcon()
 
             self.GAMEDISPLAY.fill(self.WHITE, [self.LEFT_BOUNDARY, self.TOP_BOUNDARY, 10 * self.BLOCK_SIZE, 20 * self.BLOCK_SIZE])
-            myfont = pygame.font.SysFont('Comic Sans MS', 30)
+            myfont = pygame.font.SysFont('Comic Sans MS', self.BLOCK_SIZE * 3 / 4)
             pausedText = myfont.render("Paused", True, self.BLACK)
             textWidth = pausedText.get_rect().width
             textHeight = pausedText.get_rect().height
 
             self.GAMEDISPLAY.blit(pausedText, (self.LEFT_BOUNDARY + (self.RIGHT_BOUNDARY - self.LEFT_BOUNDARY) / 2 - textWidth / 2,
                                           self.TOP_BOUNDARY + (self.BOTTOM_BOUNDARY - self.TOP_BOUNDARY) / 2 - textHeight / 2))
-            myfont = pygame.font.SysFont('Comic Sans MS', 15)
+            myfont = pygame.font.SysFont('Comic Sans MS', self.BLOCK_SIZE / 2)
             additionalText = myfont.render("Press \"p\" to resume!", True, self.BLACK)
             additionalTextWidth = additionalText.get_rect().width
             additionalTextHeight = additionalText.get_rect().height
-            myfont = pygame.font.SysFont('Comic Sans MS', 15)
+            myfont = pygame.font.SysFont('Comic Sans MS', self.BLOCK_SIZE / 2)
             additionalText2 = myfont.render("Press \"Esc\" to quit!", True, self.BLACK)
 
             self.GAMEDISPLAY.blit(additionalText,
@@ -1280,11 +1286,14 @@ class Metris:
         pygame.mixer.music.stop()
         self.playSound('end.wav')
 
-        initialSize = 16
+        initialSize = self.BLOCK_SIZE
 
         self.updateHiscore(self.checkForNewHiscore())
 
         while pause:
+
+            while Gtk.events_pending():
+                Gtk.main_iteration()
 
             self.checkForQuit()
             for event in pygame.event.get():
@@ -1317,7 +1326,7 @@ class Metris:
             gameOverText = myfont.render("Game Over", True, self.BLACK)
             textWidth = gameOverText.get_rect().width
             textHeight = gameOverText.get_rect().height
-            myfont = pygame.font.SysFont('Comic Sans MS', initialSize - 15)
+            myfont = pygame.font.SysFont('Comic Sans MS', initialSize - self.BLOCK_SIZE / 2)
             additionalText = myfont.render("Press \"r\" to restart!", True, self.BLACK)
             additionalTextWidth = additionalText.get_rect().width
             additionalTextHeight = additionalText.get_rect().height
@@ -1340,7 +1349,7 @@ class Metris:
             self.GAMEDISPLAY.blit(gameOverText2, (self.LEFT_BOUNDARY + (self.RIGHT_BOUNDARY - self.LEFT_BOUNDARY) / 2 - textWidth / 2 + 2,
                                              self.TOP_BOUNDARY + (self.BOTTOM_BOUNDARY - self.TOP_BOUNDARY) / 2 - textHeight / 2))
             pygame.display.update()
-            if initialSize < 30:
+            if initialSize < self.BLOCK_SIZE:
                 initialSize += 1
             self.clock.tick(15)
 
@@ -1712,35 +1721,37 @@ class Metris:
             if i == 1:
                 # Level text.
                 pressKeySurf, pressKeyRect = self.makeTextObjs('Level: ' + str(lvl), self.BASICFONT, self.TEXTCOLOR)
-                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + 95)
+                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + self.BLOCK_SIZE * 3)
                 self.GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
             if i == 2:
                 # Score text.
                 pressKeySurf, pressKeyRect = self.makeTextObjs('Score: ' + str(pts), self.BASICFONT, self.TEXTCOLOR)
-                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + 120)
+                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + self.BLOCK_SIZE * 4)
                 self.GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
             if i == 3:
                 # Lines text.
                 pressKeySurf, pressKeyRect = self.makeTextObjs('Lines Cleared: ' + str(tL), self.BASICFONT, self.TEXTCOLOR)
-                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + 145)
+                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + self.BLOCK_SIZE * 5)
                 self.GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
             if i == 4:
                 # Total text.
                 pressKeySurf, pressKeyRect = self.makeTextObjs('Total = ' + str(pts) + " x " + str(tL/10.0), self.BASICFONT, self.TEXTCOLOR)
-                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + 170)
+                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + self.BLOCK_SIZE * 6)
                 self.GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
             if i == 5:
                 pressKeySurf, pressKeyRect = self.makeTextObjs("press any key to skip", self.BASICFONT, self.TEXTCOLOR)
-                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + 270)
+                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + self.BLOCK_SIZE * 9)
                 self.GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
             while i == 5 and new_score != int(pts * (tL/10.0)):
+                while Gtk.events_pending():
+                    Gtk.main_iteration()
                 event = pygame.event.poll()
                 if event.type == pygame.KEYDOWN:
                     # if event.key == pygame.K_RETURN:
                     new_score = int(pts * (tL/10.0))
                 pressKeySurf, pressKeyRect = self.makeTextObjs(str(int(new_score)), self.BASICFONT, self.TEXTCOLOR)
-                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + 220)
-                pygame.draw.rect(self.GAMEDISPLAY, self.BLACK, [0, int(self.HEIGHT / 2) + 180, self.WIDTH, 2 * self.BLOCK_SIZE])
+                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + self.BLOCK_SIZE * 7)
+                pygame.draw.rect(self.GAMEDISPLAY, self.BLACK, [0, int(self.HEIGHT / 2) + self.BLOCK_SIZE * 6.75, self.WIDTH, 2 * self.BLOCK_SIZE])
                 self.GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
                 if new_score > int(pts * (tL/10.0)):
                     new_score -= 1
@@ -1750,8 +1761,8 @@ class Metris:
                 self.clock.tick(self.speed)
             if i == 5 and new_score == int(pts * (tL/10.0)):
                 pressKeySurf, pressKeyRect = self.makeTextObjs(str(int(new_score)), self.BASICFONT, self.TEXTCOLOR)
-                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + 220)
-                pygame.draw.rect(self.GAMEDISPLAY, self.BLACK, [0, int(self.HEIGHT / 2) + 180, self.WIDTH, 2 * self.BLOCK_SIZE])
+                pressKeyRect.center = (int(self.WIDTH / 2), int(self.HEIGHT / 2) + self.BLOCK_SIZE * 7)
+                pygame.draw.rect(self.GAMEDISPLAY, self.BLACK, [0, int(self.HEIGHT / 2) + self.BLOCK_SIZE * 6.75, self.WIDTH, 2 * self.BLOCK_SIZE])
                 self.GAMEDISPLAY.blit(pressKeySurf, pressKeyRect)
             i += 1
             pygame.display.update()
@@ -1926,7 +1937,7 @@ class Metris:
                                     font=fontdir,
                                     font_color=COLOR_WHITE,
                                     font_title=font_tit,
-                                    font_size=30,
+                                    font_size=self.BLOCK_SIZE,
                                     menu_alpha=100,
                                     menu_color=MENU_BACKGROUND_COLOR,
                                     menu_color_title=COLOR_RED,
@@ -1949,7 +1960,7 @@ class Metris:
                                                color_selected=COLOR_GREEN,
                                                font=fontdir,
                                                font_color=COLOR_WHITE,
-                                               font_size_title=30,
+                                               font_size_title=self.BLOCK_SIZE,
                                                font_title=font_tit,
                                                menu_color_title=COLOR_GREEN,
                                                menu_height=int(self.HEIGHT),  #WINDOW_SIZE[1] * 1),
@@ -1957,12 +1968,12 @@ class Metris:
                                                onclose=PYGAME_MENU_DISABLE_CLOSE,
                                                option_shadow=True,
                                                text_color=COLOR_WHITE,
-                                               text_fontsize=20,
+                                               text_fontsize=self.BLOCK_SIZE * 2 / 3,
                                                title='Instruction',
                                                window_height=self.HEIGHT,  #WINDOW_SIZE[1],
                                                window_width=self.WIDTH,  #WINDOW_SIZE[0],
                                                # menu_color=MENU_BACKGROUND_COLOR,
-                                               font_size=30,
+                                               font_size=self.BLOCK_SIZE,
                                                menu_alpha=100,
                                                menu_color=COLOR_BLACK
                                                )
@@ -1979,7 +1990,7 @@ class Metris:
                                                color_selected=COLOR_BLUE,
                                                font=fontdir,
                                                font_color=COLOR_WHITE,
-                                               font_size_title=30,
+                                               font_size_title=self.BLOCK_SIZE,
                                                font_title=font_tit,
                                                # menu_color=MENU_BACKGROUND_COLOR,
                                                menu_color_title=COLOR_BLUE,
@@ -1988,11 +1999,11 @@ class Metris:
                                                onclose=PYGAME_MENU_DISABLE_CLOSE,
                                                option_shadow=True,
                                                text_color=COLOR_WHITE,
-                                               text_fontsize=20,
+                                               text_fontsize=self.BLOCK_SIZE * 2 / 3,
                                                title='Leaderboard',
                                                window_height=self.HEIGHT,  #WINDOW_SIZE[1],
                                                window_width=self.WIDTH,  #WINDOW_SIZE[0],
-                                               font_size=30,
+                                               font_size=self.BLOCK_SIZE,
                                                menu_alpha=100,
                                                menu_color=COLOR_BLACK
                                                )
@@ -2027,7 +2038,7 @@ class Metris:
                                     color_selected=self.RED,
                                     font=fontdir,
                                     font_color=COLOR_WHITE,
-                                    font_size=30,
+                                    font_size=self.BLOCK_SIZE,
                                     menu_alpha=100,
                                     menu_color=COLOR_BLACK,
                                     menu_height=int(self.HEIGHT),  #WINDOW_SIZE[1] * 1),
