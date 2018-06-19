@@ -265,7 +265,7 @@ class Metris:
 
                     elif event.key == pygame.K_DOWN:
                         self.dy = self.BLOCK_SIZE
-                        self.playSound('beep.wav')
+                        self.playSound('wavs/beep.wav')
                         self.block.setY(self.block.getY() + self.dy)
                         if self.checkCollision():
                             self.block.setY(self.block.getY() - self.dy)
@@ -376,7 +376,7 @@ class Metris:
                         self.flipSoundIcon()
                     # check for correct answer
                     elif event.key == out_list[9]:
-                        self.playSound('cor.wav')
+                        self.playSound('wavs/cor.wav')
                         if numTries < 1:
                             hard_q = False
                             if diff1 > 4:
@@ -402,7 +402,7 @@ class Metris:
                         self.mult = 0
                         if num_q <= 5 and numTries <= 1:
                             controlsOn = False
-                            self.playSound('incor.wav')
+                            self.playSound('wavs/incor.wav')
                             comp_input = randint(4, 7)
 
                 if event.type == pygame.KEYUP:
@@ -740,7 +740,7 @@ class Metris:
                     self.landed[self.x2Index(self.block.getPerimeter()[i].getX())][self.y2Index(self.block.getPerimeter()[i].getY())] = \
                         self.block.getPerimeter()[i]
                 self.checkLandedAndDelete()
-                self.playSound('landSound.wav')
+                self.playSound('wavs/landSound.wav')
                 self.checkGameOver()
         #self.lock.release()
 
@@ -801,7 +801,7 @@ class Metris:
                         if self.landed[x][y - 1] != None:
                             self.landed[x][y - 1].setRelativeY(self.BLOCK_SIZE)
                         self.landed[x][y] = self.landed[x][y - 1]
-            self.playSound('clr.wav')
+            self.playSound('wavs/clr.wav')
 
         self.d_tspin = False
         self.t_tspin = False
@@ -1247,7 +1247,6 @@ class Metris:
             pygame.display.update()
             self.clock.tick(15)
 
-
     def gameOver(self):
         pause = True
         self.score += self.bankedpoints
@@ -1284,7 +1283,7 @@ class Metris:
     #==================================================================================
 
         pygame.mixer.music.stop()
-        self.playSound('end.wav')
+        self.playSound('wavs/end.wav')
 
         initialSize = self.BLOCK_SIZE
 
@@ -1919,6 +1918,7 @@ class Metris:
     def main_background(self):
         """
         Function used by menus, draw on background while menu is active.
+
 
         :return: None
         """
