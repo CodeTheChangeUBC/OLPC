@@ -296,3 +296,5 @@ class BlockZ(object):
         for i in range(0, len(self.blockList)):
             self.blockList[i].setRelativeX(dx)
 
+    def getColor(self):
+        return self.color

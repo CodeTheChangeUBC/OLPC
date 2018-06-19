@@ -8,7 +8,7 @@ class BlockJ(object):
         self.isCurrent = False
         self.size = size
         self.orientation = 0
-        self.color = (0,0,139)
+        self.color = (0,77,255)
 
 ##   |1|
 ##   |2||0||3|
@@ -64,32 +64,40 @@ class BlockJ(object):
     def rotateL2(self):
         if self.orientation % 4 == 0:
             self.blockList[0].setRelativeX(self.size)
-            self.blockList[0].setRelativeY(-self.size)
+            self.blockList[0].setRelativeY(-self.size)  # + self.size)
             self.blockList[1].setRelativeX(self.size)
-            self.blockList[1].setRelativeY(self.size)
+            self.blockList[1].setRelativeY(self.size)  # + self.size)
             self.blockList[2].setRelativeX(2*self.size)
-            self.blockList[3].setRelativeY(-2*self.size)
+            # self.blockList[2].setRelativeY(self.size)  ####
+            self.blockList[3].setRelativeY(-2*self.size)  # + self.size)
+            # move everything down 1
         elif self.orientation % 4 == 1:
             self.blockList[0].setRelativeX(-self.size)
-            self.blockList[0].setRelativeY(-self.size)
+            self.blockList[0].setRelativeY(-self.size)  # + self.size)
             self.blockList[1].setRelativeX(self.size)
-            self.blockList[1].setRelativeY(-self.size)
-            self.blockList[2].setRelativeY(-2 * self.size)
+            self.blockList[1].setRelativeY(-self.size)  # + self.size)
+            self.blockList[2].setRelativeY(-2 * self.size)  # + self.size)
             self.blockList[3].setRelativeX(-2 * self.size)
+            # self.blockList[3].setRelativeY(self.size)  ####
+            # move everything down 1
         elif self.orientation % 4 == 2:
             self.blockList[0].setRelativeX(-self.size)
-            self.blockList[0].setRelativeY(self.size)
+            self.blockList[0].setRelativeY(self.size)  # - self.size)
             self.blockList[1].setRelativeX(-self.size)
-            self.blockList[1].setRelativeY(-self.size)
+            self.blockList[1].setRelativeY(-self.size)  # - self.size)
             self.blockList[2].setRelativeX(-2 * self.size)
-            self.blockList[3].setRelativeY(2 * self.size)
+            # self.blockList[2].setRelativeY(-self.size)  ####
+            self.blockList[3].setRelativeY(2 * self.size)  # - self.size)
+            # move everything up 1
         elif self.orientation % 4 == 3:
             self.blockList[0].setRelativeX(self.size)
-            self.blockList[0].setRelativeY(self.size)
+            self.blockList[0].setRelativeY(self.size)  # - self.size)
             self.blockList[1].setRelativeX(-self.size)
-            self.blockList[1].setRelativeY(self.size)
-            self.blockList[2].setRelativeY(2 * self.size)
+            self.blockList[1].setRelativeY(self.size)  # - self.size)
+            self.blockList[2].setRelativeY(2 * self.size)  # - self.size)
             self.blockList[3].setRelativeX(2 * self.size)
+            # self.blockList[3].setRelativeY(-self.size)  ####
+            # move everything up 1
 
         # if self.orientation % 4 == 0:
         #     self.blockList[0].setRelativeY(-2*self.size)
@@ -121,32 +129,40 @@ class BlockJ(object):
     def rotateR2(self):
         if self.orientation % 4 == 0:
             self.blockList[0].setRelativeX(-self.size)
-            self.blockList[0].setRelativeY(-self.size)
+            self.blockList[0].setRelativeY(-self.size)  # + self.size)
             self.blockList[1].setRelativeX(self.size)
-            self.blockList[1].setRelativeY(-self.size)
-            self.blockList[2].setRelativeY(-2 * self.size)
+            self.blockList[1].setRelativeY(-self.size)  # + self.size)
+            self.blockList[2].setRelativeY(-2 * self.size)  # + self.size)
             self.blockList[3].setRelativeX(-2 * self.size)
+            # self.blockList[3].setRelativeY(self.size)  ####
+            # move everything down 1
         elif self.orientation % 4 == 1:
             self.blockList[0].setRelativeX(-self.size)
-            self.blockList[0].setRelativeY(self.size)
+            self.blockList[0].setRelativeY(self.size)  # - self.size)
             self.blockList[1].setRelativeX(-self.size)
-            self.blockList[1].setRelativeY(-self.size)
+            self.blockList[1].setRelativeY(-self.size)  # - self.size)
             self.blockList[2].setRelativeX(-2 * self.size)
-            self.blockList[3].setRelativeY(2 * self.size)
+            # self.blockList[2].setRelativeY(-self.size)  ####
+            self.blockList[3].setRelativeY(2 * self.size)  # - self.size)
+            # move everything up 1
         elif self.orientation % 4 == 2:
             self.blockList[0].setRelativeX(self.size)
-            self.blockList[0].setRelativeY(self.size)
+            self.blockList[0].setRelativeY(self.size)  # - self.size)
             self.blockList[1].setRelativeX(-self.size)
-            self.blockList[1].setRelativeY(self.size)
-            self.blockList[2].setRelativeY(2 * self.size)
+            self.blockList[1].setRelativeY(self.size)  # - self.size)
+            self.blockList[2].setRelativeY(2 * self.size)  # - self.size)
             self.blockList[3].setRelativeX(2 * self.size)
+            # self.blockList[3].setRelativeY(-self.size)  ####
+            # move everything up 1
         elif self.orientation % 4 == 3:
             self.blockList[0].setRelativeX(self.size)
-            self.blockList[0].setRelativeY(-self.size)
+            self.blockList[0].setRelativeY(-self.size)  # + self.size)
             self.blockList[1].setRelativeX(self.size)
-            self.blockList[1].setRelativeY(self.size)
+            self.blockList[1].setRelativeY(self.size)  # + self.size)
             self.blockList[2].setRelativeX(2 * self.size)
-            self.blockList[3].setRelativeY(-2 * self.size)
+            # self.blockList[2].setRelativeY(self.size)  ####
+            self.blockList[3].setRelativeY(-2 * self.size)  # + self.size)
+            # move everything down 1
 
         # if self.orientation % 4 == 0:
         #     self.blockList[0].setRelativeX(-2 * self.size)
@@ -356,3 +372,5 @@ class BlockJ(object):
         for i in range(0, len(self.blockList)):
             self.blockList[i].setRelativeX(dx)
                 
+    def getColor(self):
+        return self.color
