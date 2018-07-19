@@ -61,15 +61,14 @@ class Metris:
                 self.random_color.insert(len(self.random_color), randint(0, len(self.COLORS)-1))
 
         self.INSTRUCTION = ['Choose an answer by pressing keys 1, 2, 3, 4',
-                       'Rotate-clockwise with UP key*',
-                       'Rotate-counter-clockwise with Z key*',
+                       'Rotate-clockwise with UP key',
+                       'Rotate-counter-clockwise with Z key',
                        'Move the block with LEFT, RIGHT, DOWN',
                        'Hard drop by pressing SPACE',
-                       'Press Shift to hold the current piece'
+                       'Press Shift to hold the current piece',
                        'Pause the game by pressing P',
-                       'Exit the game pressing ESCAPE key',
-                       'Press B to go back',
-                       'Press M to mute/unmute',
+                       'Press S to toggle sound effects',
+                       'Press M to toggle music',
                        ]
 
         self.BLOCK_SIZE = self.HEIGHT / 28
@@ -575,7 +574,7 @@ class Metris:
 
             # drawing top cover
             # self.GAMEDISPLAY.fill((0,150,200), [0, 0, self.WIDTH, self.TOP_BOUNDARY])
-            for i in range (0, 14):
+            for i in range (0, 15):
                 self.GAMEDISPLAY.fill((100+i, 105+i, 155+i), [0, spacing*i, self.WIDTH, spacing])
 
             # drawing timeleft ======================TIMED METRIS=================
@@ -1265,7 +1264,7 @@ class Metris:
         # drawing top cover
         # self.GAMEDISPLAY.fill(self.BLACK, [0, 0, self.WIDTH, self.TOP_BOUNDARY])
         spacing = self.HEIGHT / 100
-        for i in range(0, 14):
+        for i in range(0, 15):
             self.GAMEDISPLAY.fill((100, 105 + i, 155 + i), [0, spacing * i, self.WIDTH, spacing])
 
         self.drawGameAreaBorder()
@@ -1316,6 +1315,8 @@ class Metris:
 
                         self.gameExit = True
                         pause = False
+                        self.runMain()
+
 
                     elif event.key == pygame.K_m:
                         self.flipMusicIcon()
@@ -1922,7 +1923,7 @@ class Metris:
 
         :return: None
         """
-        self.GAMEDISPLAY.fill(self.RED)
+        self.GAMEDISPLAY.fill(self.BLACK)
 
     # global self.main_menu
     def buildMain(self):
@@ -1937,7 +1938,7 @@ class Metris:
                                     font=fontdir,
                                     font_color=COLOR_WHITE,
                                     font_title=font_tit,
-                                    font_size=self.BLOCK_SIZE,
+                                    font_size=self.BLOCK_SIZE * 3 /2,
                                     menu_alpha=100,
                                     menu_color=MENU_BACKGROUND_COLOR,
                                     menu_color_title=COLOR_RED,
@@ -1960,7 +1961,7 @@ class Metris:
                                                color_selected=COLOR_GREEN,
                                                font=fontdir,
                                                font_color=COLOR_WHITE,
-                                               font_size_title=self.BLOCK_SIZE,
+                                               font_size_title=self.BLOCK_SIZE* 3/2,
                                                font_title=font_tit,
                                                menu_color_title=COLOR_GREEN,
                                                menu_height=int(self.HEIGHT),  #WINDOW_SIZE[1] * 1),
@@ -1968,7 +1969,7 @@ class Metris:
                                                onclose=PYGAME_MENU_DISABLE_CLOSE,
                                                option_shadow=True,
                                                text_color=COLOR_WHITE,
-                                               text_fontsize=self.BLOCK_SIZE * 2 / 3,
+                                               text_fontsize=self.BLOCK_SIZE * 3 / 2,
                                                title='Instruction',
                                                window_height=self.HEIGHT,  #WINDOW_SIZE[1],
                                                window_width=self.WIDTH,  #WINDOW_SIZE[0],
@@ -1990,7 +1991,7 @@ class Metris:
                                                color_selected=COLOR_BLUE,
                                                font=fontdir,
                                                font_color=COLOR_WHITE,
-                                               font_size_title=self.BLOCK_SIZE,
+                                               font_size_title=self.BLOCK_SIZE*3/2,
                                                font_title=font_tit,
                                                # menu_color=MENU_BACKGROUND_COLOR,
                                                menu_color_title=COLOR_BLUE,
@@ -1999,7 +2000,7 @@ class Metris:
                                                onclose=PYGAME_MENU_DISABLE_CLOSE,
                                                option_shadow=True,
                                                text_color=COLOR_WHITE,
-                                               text_fontsize=self.BLOCK_SIZE * 2 / 3,
+                                               text_fontsize=self.BLOCK_SIZE * 3 / 2,
                                                title='Leaderboard',
                                                window_height=self.HEIGHT,  #WINDOW_SIZE[1],
                                                window_width=self.WIDTH,  #WINDOW_SIZE[0],
@@ -2038,7 +2039,7 @@ class Metris:
                                     color_selected=self.RED,
                                     font=fontdir,
                                     font_color=COLOR_WHITE,
-                                    font_size=self.BLOCK_SIZE,
+                                    font_size=self.BLOCK_SIZE * 3 /2,
                                     menu_alpha=100,
                                     menu_color=COLOR_BLACK,
                                     menu_height=int(self.HEIGHT),  #WINDOW_SIZE[1] * 1),
@@ -2069,8 +2070,8 @@ class Metris:
             self.runMain()
             self.runGame()
 
-# if __name__ == '__main__':
-#     while True:
-#         game = Metris()
-#         game.buildMain()
-#         game.runMain()
+if __name__ == '__main__':
+    while True:
+        game = Metris()
+        game.buildMain()
+        game.runMain()

@@ -5,7 +5,7 @@ from pygameMenu import fonts
 import pygame, pygame.font, pygame.event, pygame.draw, string
 from pygame.locals import *
 
-fontdir = pygameMenu.fonts.FONT_BEBAS
+fontdir = pygameMenu.fonts.FONT_FRANCHISE
 font_tit = pygameMenu.fonts.FONT_BEBAS
 
 # ABOUT = ['Metris {0}'.format(Metris.__version__),
@@ -13,7 +13,7 @@ font_tit = pygameMenu.fonts.FONT_BEBAS
 #          PYGAMEMENU_TEXT_NEWLINE,
 #          'Email: {0}'.format(Metris.__email__)]
 
-COLOR_BACKGROUND = (255, 0, 0)
+COLOR_BACKGROUND = (0, 0, 0)
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 COLOR_RED = (255, 0, 0)
