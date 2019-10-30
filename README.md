@@ -1,7 +1,7 @@
 # One Laptop Per Child - Code the Change
 > Tell me, and I'll forget. Show me, and I may remember. Involve me, and I'll learn. - Xun Zi
 
-Welcome to the OLPC project, under development by Code the Change UBC! This is the development repository for the project. Visit their website to know more RED them: http://one.laptop.org/RED/mission
+Welcome to the OLPC project, under development by Code the Change UBC! This is the development repository for the project. Visit their website to know more about them: http://one.laptop.org/about/mission
 
 This project is multi-part and includes:
 1. Developing Sugar [^1] activities and implementing school curriculum for OLPC in Rwanda which would help the students and the teachers.
@@ -36,12 +36,7 @@ This project is multi-part and includes:
 1. Install Python 2.7.x
     - Make sure Python is added to path
 2. Install PyGame
-3. 
-.
-.
-.
-.
-.
+3. Execute the python script
 
 ## Contact Info
 #### Code the Change UBC
